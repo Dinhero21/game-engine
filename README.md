@@ -1,2 +1,3 @@
-# game-engine-attempt-1
- My first attempt at making a javascript game engine
+# Game Engine
+
+My (shitty) game engine written in pure JavaScript.
