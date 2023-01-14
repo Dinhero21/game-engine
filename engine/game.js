@@ -1,70 +1,59 @@
-import Vec2 from './vec2.js'
+import Frame from './frame.js'
 
 export class Game {
   #lastTime = Date.now()
   #context
 
-  #entity
+  #entity = null
 
   constructor (context) {
     this.#context = context
 
-    const canvas = context.canvas
-
-    const screenSize = new Vec2(
-      canvas.width,
-      canvas.height
-    )
-
     this.gameLoop()
   }
 
-  gameLoop () {
+  gameLoop() {
+    const delta = Date.now() - this.#lastTime
+
+    this.update(delta)
+    this.draw()
+
+    this.#lastTime = Date.now()
+
+    requestAnimationFrame(() => this.gameLoop())
+  }
+
+  update (delta) {
+    const entity = this.#entity
+
+    if (entity === undefined || entity === null) return
+
+    entity.update(delta)
+  }
+
+  draw () {
+    const entity = this.#entity
+
+    if (entity === undefined || entity === null) return
+
+    const frame = new Frame()
+
+    frame.offset = entity.position
+    
+    entity.draw(frame)
+
     const context = this.#context
     const canvas = context.canvas
 
-    // TODO: Make this configurable
     context.clearRect(0, 0, canvas.width, canvas.height)
 
-    if (this.#entity !== null && this.#entity !== undefined) {
-      const delta = Date.now() - this.#lastTime
-
-      this.#entity.update(delta)
-      this.#entity.draw(context)
-
-      this.#lastTime = Date.now()
-    }
-
-    requestAnimationFrame(() => {
-      this.gameLoop()
-    })
+    frame.draw(this.#context)
   }
 
   setEntity (entity) {
-    entity.setGame(this)
-
     this.#entity = entity
-  }
 
-  getContext () {
-    return this.#context
-  }
-
-  getCanvas () {
-    const context = this.getContext()
-
-    return context.canvas
-  }
-
-  getScreenSize () {
-    const canvas = this.getCanvas()
-
-    const screenSize = new Vec2(
-      canvas.width,
-      canvas.height
-    )
-
-    return screenSize
+    return this
   }
 }
 
