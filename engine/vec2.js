@@ -90,7 +90,9 @@ export class Vec2 {
   }
 
   scaled (scalar) {
-    return new Vec2(this.x * scalar, this.y * scalar)
+    if (typeof scalar === 'number') scalar = this.vectorize(scalar)
+
+    return new Vec2(this.x * scalar.x, this.y * scalar.y)
   }
 
   abs () {
@@ -171,8 +173,10 @@ export class Vec2 {
   }
 
   scale (scalar) {
-    this.x *= scalar
-    this.y *= scalar
+    if (typeof scalar === 'number') scalar = this.vectorize(scalar)
+
+    this.x *= scalar.x
+    this.y *= scalar.y
 
     return this
   }
@@ -187,6 +191,12 @@ export class Vec2 {
 
   toArray () {
     return [this.x, this.y]
+  }
+
+  vectorize (value) {
+    if (typeof value === 'number') value = new Vec2(value, value)
+
+    return value
   }
 }
 

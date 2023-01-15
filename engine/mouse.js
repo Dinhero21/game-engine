@@ -26,12 +26,34 @@ export class Mouse extends EventTarget {
   }
 
   onMouseMove (event) {
+    const position = this.#position
     const element = this.#element
 
-    this.#position.set(
-      event.clientX - element.offsetLeft,
-      event.clientY - element.offsetTop
+    position.set(
+      event.clientX,
+      event.clientY
     )
+
+    position.divide(
+      new Vec2(
+        window.innerWidth,
+        window.innerHeight
+      )
+    )
+
+    position.scale(
+      new Vec2(
+        element.width,
+        element.height
+      )
+    )
+
+    // position.subtract(
+    //   new Vec2(
+    //     element.offsetLeft,
+    //     element.offsetTop
+    //   )
+    // )
   }
 
   getPosition () {
