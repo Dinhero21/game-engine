@@ -9,10 +9,16 @@ export class TestEntity extends BaseEntity {
   update (delta) {
     this.#time += delta / 1000
 
-    this.position.set(
-      (Math.sin(this.#time * Math.PI * 2 * 0.2) + 1) * 100,
-      (Math.cos(this.#time * Math.PI * 2 * 0.2) + 1) * 100
-    )
+    const game = this.getGame()
+    const mouse = game.getMouse()
+    const mousePosition = mouse.getPosition()
+
+    // this.position.set(
+    //   (Math.sin(this.#time * Math.PI * 2 * 0.2) + 1) * 100,
+    //   (Math.cos(this.#time * Math.PI * 2 * 0.2) + 1) * 100
+    // )
+
+    this.position.set(mousePosition.x, mousePosition.y)
 
     super.update(delta)
   }

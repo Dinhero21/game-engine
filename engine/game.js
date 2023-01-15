@@ -1,13 +1,22 @@
 import Frame from './frame.js'
+import Mouse from './mouse.js'
+import Vec2 from './vec2.js'
 
 export class Game {
   #lastTime = Date.now()
+
   #context
+  #mouse
 
   #entity = null
 
   constructor (context) {
     this.#context = context
+    
+    const canvas = this.getCanvas()
+    const mouse = new Mouse(canvas)
+
+    this.#mouse = mouse
 
     this.gameLoop()
   }
@@ -51,9 +60,34 @@ export class Game {
   }
 
   setEntity (entity) {
+    entity.setGame(this)
+
     this.#entity = entity
 
     return this
+  }
+
+  getContext () {
+    return this.#context
+  }
+
+  getCanvas () {
+    const context = this.getContext()
+
+    return context.canvas
+  }
+
+  getCanvasSize () {
+    const canvas = this.getCanvas()
+
+    return new Vec2(
+      canvas.width,
+      canvas.height
+    )
+  }
+
+  getMouse () {
+    return this.#mouse
   }
 }
 

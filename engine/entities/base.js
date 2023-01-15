@@ -3,6 +3,7 @@ import Vec2 from '../vec2.js'
 
 export class BaseEntity {
   #children = []
+  #game = null
 
   position = new Vec2(0, 0)
 
@@ -25,12 +26,28 @@ export class BaseEntity {
   }
 
   addChild (child) {
+    child.setGame(this.#game)
+
     this.#children.push(child)
   }
 
   removeChild (child) {
     this.#children = this.#children
       .filter(entity => entity !== child)
+  }
+
+  setGame (game) {
+    this.#game = game
+
+    for (const child of this.#children) {
+      child.setGame(game)
+    }
+    
+    return this
+  }
+
+  getGame (game) {
+    return this.#game
   }
 }
 
