@@ -3,7 +3,10 @@ import Vec2 from '../vec2.js'
 
 export class BaseEntity {
   #children = []
+
   #game = null
+  #mouse = null
+  #keyboard = null
 
   position = new Vec2(0, 0)
 
@@ -39,6 +42,9 @@ export class BaseEntity {
   setGame (game) {
     this.#game = game
 
+    this.#mouse = game.getMouse()
+    this.#keyboard = game.getKeyboard()
+
     for (const child of this.#children) {
       child.setGame(game)
     }
@@ -46,8 +52,16 @@ export class BaseEntity {
     return this
   }
 
-  getGame (game) {
+  getGame () {
     return this.#game
+  }
+
+  getMouse () {
+    return this.#mouse
+  }
+
+  getKeyboard () {
+    return this.#keyboard
   }
 }
 

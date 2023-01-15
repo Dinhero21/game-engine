@@ -1,12 +1,13 @@
 import Frame from './frame.js'
 import Mouse from './mouse.js'
-import Vec2 from './vec2.js'
+import { Keyboard } from './keyboard.js'
 
 export class Game {
   #lastTime = Date.now()
 
   #context
   #mouse
+  #keyboard
 
   #entity = null
 
@@ -17,6 +18,8 @@ export class Game {
     const mouse = new Mouse(canvas)
 
     this.#mouse = mouse
+
+    this.#keyboard = new Keyboard()
 
     this.gameLoop()
   }
@@ -77,17 +80,12 @@ export class Game {
     return context.canvas
   }
 
-  getCanvasSize () {
-    const canvas = this.getCanvas()
-
-    return new Vec2(
-      canvas.width,
-      canvas.height
-    )
-  }
-
   getMouse () {
     return this.#mouse
+  }
+
+  getKeyboard () {
+    return this.#keyboard
   }
 }
 

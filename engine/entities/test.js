@@ -9,16 +9,14 @@ export class TestEntity extends BaseEntity {
   update (delta) {
     this.#time += delta / 1000
 
-    const game = this.getGame()
-    const mouse = game.getMouse()
+    const mouse = this.getMouse()
     const mousePosition = mouse.getPosition()
 
-    // this.position.set(
-    //   (Math.sin(this.#time * Math.PI * 2 * 0.2) + 1) * 100,
-    //   (Math.cos(this.#time * Math.PI * 2 * 0.2) + 1) * 100
-    // )
-
     this.position.set(mousePosition.x, mousePosition.y)
+
+    const keyboard = this.getKeyboard()
+
+    if (keyboard.isKeyPressed('R')) this.#time = 0
 
     super.update(delta)
   }
@@ -26,7 +24,11 @@ export class TestEntity extends BaseEntity {
   draw (frame) {
     frame.outlineRect(0, 0, 256, 256, '#61AFEF', 10)
     frame.drawRect(0, 0, 256, 256, '#61AFEF20')
-    frame.drawImage(image, this.#time * 100, 0)
+    frame.drawImage(
+      image,
+      ((Math.cos(this.#time * Math.PI * 2) + 1) / 2) * 256,
+      ((Math.sin(this.#time * Math.PI * 2) + 1) / 2) * 256
+      )
 
     super.draw(frame)
   }
