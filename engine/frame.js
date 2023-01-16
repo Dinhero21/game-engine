@@ -1,4 +1,4 @@
-import Vec2 from "./vec2.js"
+import Vec2 from './vec2.js'
 
 export class Frame {
   #queue = []
@@ -8,7 +8,7 @@ export class Frame {
 
   setFillStyle (fillStyle) {
     const queue = this.#queue
-    
+
     queue.push(context => {
       if (context instanceof Frame) context.setFillStyle(fillStyle)
 
@@ -22,7 +22,7 @@ export class Frame {
     queue.push(context => {
       if (context instanceof Frame) {
         context.setStrokeStyle(strokeStyle)
-      
+
         return
       }
 
@@ -36,7 +36,7 @@ export class Frame {
     queue.push(context => {
       if (context instanceof Frame) {
         context.setLineWidth(lineWidth)
-      
+
         return
       }
 
@@ -48,7 +48,7 @@ export class Frame {
 
   fillRect (x, y, w, h) {
     const queue = this.#queue
-    
+
     queue.push(context => {
       const offset = this.offset
 
@@ -115,7 +115,7 @@ export class Frame {
     if (size !== undefined && size !== null) this.setLineWidth(size)
     this.strokeRect(x, y, w, h)
   }
-  
+
   draw (context) {
     for (const f of this.#queue) f(context)
   }

@@ -1,5 +1,5 @@
-import TestEntity from "./engine/entities/test.js"
-import Game from "./engine/game.js"
+import TestEntity from './engine/entities/test.js'
+import Game from './engine/game.js'
 
 const screen = document.getElementById('screen')
 const context = screen.getContext('2d')
@@ -15,7 +15,7 @@ const entity = new TestEntity()
 game.setEntity(entity)
 
 // TODO: Separate screen logic
-function updateScreenSize() {
+function updateScreenSize () {
   screen.width = window.innerWidth
   screen.height = window.innerHeight
 }

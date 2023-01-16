@@ -14,7 +14,7 @@ export class Game {
 
   constructor (context) {
     this.#context = context
-    
+
     const canvas = this.getCanvas()
     const mouse = new Mouse(canvas)
 
@@ -25,7 +25,7 @@ export class Game {
     this.gameLoop()
   }
 
-  gameLoop() {
+  gameLoop () {
     const delta = Date.now() - this.#lastTime
 
     this.update(delta)
@@ -52,7 +52,7 @@ export class Game {
     const frame = new Frame()
 
     frame.offset = entity.position
-    
+
     entity.draw(frame)
 
     const context = this.#context

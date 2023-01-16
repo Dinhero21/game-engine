@@ -50,7 +50,7 @@ export class Vec2 {
   translate (dx, dy) {
     this.x += dx
     this.y += dy
-    
+
     return this
   }
 
@@ -71,7 +71,7 @@ export class Vec2 {
   multiply (other) {
     this.x *= other.x
     this.y *= other.y
-    
+
     return this
   }
 
@@ -198,6 +198,11 @@ export class Vec2 {
 
     return value
   }
+}
+
+export function euclideanMod (numerator, denominator) {
+  const result = numerator % denominator
+  return result < 0 ? result + denominator : result
 }
 
 export default Vec2

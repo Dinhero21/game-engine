@@ -1,4 +1,4 @@
-import BaseEntity from "./base.js";
+import BaseEntity from './base.js'
 
 const image = new Image()
 image.src = 'me.png'
@@ -20,7 +20,7 @@ export class TestEntity extends BaseEntity {
 
     super.update(delta)
   }
-  
+
   draw (frame) {
     frame.outlineRect(0, 0, 256, 256, '#61AFEF', 10)
     frame.drawRect(0, 0, 256, 256, '#61AFEF20')
@@ -28,7 +28,7 @@ export class TestEntity extends BaseEntity {
       image,
       ((Math.cos(this.#time * Math.PI * 2) + 1) / 2) * 256,
       ((Math.sin(this.#time * Math.PI * 2) + 1) / 2) * 256
-      )
+    )
 
     super.draw(frame)
   }

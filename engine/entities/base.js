@@ -1,4 +1,4 @@
-import Frame from "../frame.js"
+import Frame from '../frame.js'
 import Vec2 from '../vec2.js'
 
 export class BaseEntity {
@@ -48,7 +48,7 @@ export class BaseEntity {
     for (const child of this.#children) {
       child.setGame(game)
     }
-    
+
     return this
   }
 
