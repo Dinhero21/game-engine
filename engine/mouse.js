@@ -48,6 +48,7 @@ export class Mouse extends EventTarget {
       )
     )
 
+    // ? Should I include this?
     // position.subtract(
     //   new Vec2(
     //     element.offsetLeft,

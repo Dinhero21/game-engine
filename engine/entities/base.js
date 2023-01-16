@@ -10,6 +10,8 @@ export class BaseEntity {
 
   position = new Vec2(0, 0)
 
+  // Game loop
+
   update (delta) {
     for (const child of this.#children) {
       child.update(delta)
@@ -28,6 +30,8 @@ export class BaseEntity {
     }
   }
 
+  // Entity relationship
+
   addChild (child) {
     child.setGame(this.#game)
 
@@ -38,6 +42,8 @@ export class BaseEntity {
     this.#children = this.#children
       .filter(entity => entity !== child)
   }
+
+  // Getter/Setters
 
   setGame (game) {
     this.#game = game

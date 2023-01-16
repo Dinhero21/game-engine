@@ -25,6 +25,8 @@ export class Game {
     this.gameLoop()
   }
 
+  // Game loop
+
   gameLoop () {
     const delta = Date.now() - this.#lastTime
 
@@ -62,6 +64,8 @@ export class Game {
 
     frame.draw(this.#context)
   }
+
+  // Getter/Setters
 
   setEntity (entity) {
     entity.setGame(this)
