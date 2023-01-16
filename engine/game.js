@@ -1,3 +1,4 @@
+import isNone from './is-none.js'
 import Frame from './frame.js'
 import Mouse from './mouse.js'
 import { Keyboard } from './keyboard.js'
@@ -38,7 +39,7 @@ export class Game {
   update (delta) {
     const entity = this.#entity
 
-    if (entity === undefined || entity === null) return
+    if (isNone(entity)) return
 
     entity.update(delta)
   }
@@ -46,7 +47,7 @@ export class Game {
   draw () {
     const entity = this.#entity
 
-    if (entity === undefined || entity === null) return
+    if (isNone(entity)) return
 
     const frame = new Frame()
 
