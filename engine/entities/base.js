@@ -1,3 +1,4 @@
+import isNone from '../is-none.js'
 import Frame from '../frame.js'
 import Vec2 from '../vec2.js'
 
@@ -7,6 +8,8 @@ export class BaseEntity {
   #game = null
   #mouse = null
   #keyboard = null
+
+  #parent = null
 
   position = new Vec2(0, 0)
 
@@ -34,6 +37,7 @@ export class BaseEntity {
 
   addChild (child) {
     child.setGame(this.#game)
+    child.setParent(this)
 
     this.#children.push(child)
   }
@@ -41,6 +45,14 @@ export class BaseEntity {
   removeChild (child) {
     this.#children = this.#children
       .filter(entity => entity !== child)
+  }
+
+  isRoot () {
+    return isNone(this.#parent)
+  }
+
+  isLeaf () {
+    return this.#children.length === 0
   }
 
   // Getter/Setters
@@ -60,6 +72,12 @@ export class BaseEntity {
 
   getGame () {
     return this.#game
+  }
+
+  setParent (parent) {
+    this.#parent = parent
+
+    return this
   }
 
   getMouse () {
