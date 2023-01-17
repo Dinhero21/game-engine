@@ -1,5 +1,6 @@
 import Vec2 from './vec2.js'
 
+// TODO: Global mouse position
 export class Mouse extends EventTarget {
   #position = new Vec2()
   #buttons = 0

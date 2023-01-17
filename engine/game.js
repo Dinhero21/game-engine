@@ -53,7 +53,7 @@ export class Game {
 
     const frame = new Frame()
 
-    frame.offset = entity.position
+    frame.offset = entity.getPosition()
 
     entity.draw(frame)
 

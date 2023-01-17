@@ -1,3 +1,4 @@
+import Vec2 from '../vec2.js'
 import BaseEntity from './base.js'
 
 const image = new Image()
@@ -12,7 +13,7 @@ export class TestEntity extends BaseEntity {
     const mouse = this.getMouse()
     const mousePosition = mouse.getPosition()
 
-    this.position.set(mousePosition.x, mousePosition.y)
+    this.setPosition(new Vec2(mousePosition.x, mousePosition.y))
 
     const keyboard = this.getKeyboard()
 

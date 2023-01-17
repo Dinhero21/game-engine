@@ -11,7 +11,7 @@ export class BaseEntity {
 
   #parent = null
 
-  position = new Vec2(0, 0)
+  #position = new Vec2(0, 0)
 
   // Game loop
 
@@ -27,7 +27,7 @@ export class BaseEntity {
 
       child.draw(childFrame)
 
-      childFrame.offset = child.position
+      childFrame.offset = child.getPosition()
 
       childFrame.draw(frame)
     }
@@ -48,11 +48,23 @@ export class BaseEntity {
   }
 
   isRoot () {
-    return isNone(this.#parent)
+    const parent = this.getParent()
+
+    return isNone(parent)
   }
 
   isLeaf () {
     return this.#children.length === 0
+  }
+
+  setParent (parent) {
+    this.#parent = parent
+
+    return this
+  }
+
+  getParent () {
+    return this.#parent
   }
 
   // Getter/Setters
@@ -74,18 +86,52 @@ export class BaseEntity {
     return this.#game
   }
 
-  setParent (parent) {
-    this.#parent = parent
-
-    return this
-  }
-
   getMouse () {
     return this.#mouse
   }
 
   getKeyboard () {
     return this.#keyboard
+  }
+
+  getPosition () {
+    return this.#position.clone()
+  }
+
+  setPosition (position) {
+    this.#position = position
+
+    return this
+  }
+
+  getGlobalPosition () {
+    const position = this.getPosition()
+
+    if (this.isRoot()) return position
+
+    const parent = this.getParent()
+    const parentGlobalPosition = parent.getGlobalPosition()
+
+    const globalPosition = position.plus(parentGlobalPosition)
+
+    return globalPosition
+  }
+
+  setGlobalPosition (globalPosition) {
+    if (this.isRoot()) {
+      this.setPosition(globalPosition)
+
+      return this
+    }
+
+    const parent = this.getParent()
+    const parentGlobalPosition = parent.getGlobalPosition()
+
+    const position = globalPosition.minus(parentGlobalPosition)
+
+    this.setPosition(position)
+
+    return this
   }
 }
 
