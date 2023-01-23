@@ -59,7 +59,7 @@ export class Mouse extends EventTarget {
   }
 
   getPosition () {
-    return this.#position
+    return this.#position.clone()
   }
 
   isButtonPressed (id) {

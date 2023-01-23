@@ -46,7 +46,7 @@ export class Frame {
 
   // Context methods
 
-  fillRect (x, y, w, h) {
+  _fillRect (x, y, w, h) {
     const queue = this.#queue
 
     queue.push(context => {
@@ -56,7 +56,7 @@ export class Frame {
       y += offset.y
 
       if (context instanceof Frame) {
-        context.fillRect(x, y, w, h)
+        context._fillRect(x, y, w, h)
 
         return
       }
@@ -65,7 +65,7 @@ export class Frame {
     })
   }
 
-  strokeRect (x, y, w, h) {
+  _strokeRect (x, y, w, h) {
     const queue = this.#queue
 
     queue.push(context => {
@@ -75,7 +75,7 @@ export class Frame {
       y += offset.y
 
       if (context instanceof Frame) {
-        context.strokeRect(x, y, w, h)
+        context._strokeRect(x, y, w, h)
 
         return
       }
@@ -84,7 +84,7 @@ export class Frame {
     })
   }
 
-  drawImage (image, x, y) {
+  _drawImage (image, x, y) {
     const queue = this.#queue
 
     queue.push(context => {
@@ -94,7 +94,7 @@ export class Frame {
       y += offset.y
 
       if (context instanceof Frame) {
-        context.drawImage(image, x, y)
+        context._drawImage(image, x, y)
 
         return
       }
@@ -107,13 +107,26 @@ export class Frame {
 
   drawRect (x, y, w, h, color) {
     if (color !== undefined && color !== null) this.setFillStyle(color)
-    this.fillRect(x, y, w, h)
+    this._fillRect(x, y, w, h)
   }
 
   outlineRect (x, y, w, h, color, size) {
     if (color !== undefined && color !== null) this.setStrokeStyle(color)
     if (size !== undefined && size !== null) this.setLineWidth(size)
-    this.strokeRect(x, y, w, h)
+    this._strokeRect(x, y, w, h)
+  }
+
+  drawRectRGBA (x, y, w, h, r, g, b, a = 1) {
+    this.drawRect(x, y, w, h, `rgba(${r},${g},${b},${a})`)
+  }
+
+  outlineRectRGBA (x, y, w, h, r, g, b, a = 1, size) {
+    this.outlineRect(x, y, w, h, `rgba(${r},${g},${b},${a})`, size)
+  }
+
+  drawFancyRectRGBA (x, y, w, h, r, g, b, a = 1, outlineSize = 8) {
+    this.outlineRectRGBA(x, y, w, h, r, g, b, a, outlineSize)
+    this.drawRectRGBA(x, y, w, h, r, g, b, a * 0.20)
   }
 
   draw (context) {
