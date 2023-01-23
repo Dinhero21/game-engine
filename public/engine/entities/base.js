@@ -133,6 +133,27 @@ export class BaseEntity {
 
     return this
   }
+
+  // Collision
+
+  getBoundingBox () {
+    return new Vec2(256, 256)
+  }
+
+  isCollidingWith (entity) {
+    const position = this.getPosition()
+    const boundingBox = this.getBoundingBox()
+
+    const entityPosition = entity.getPosition()
+    const entityBoundingBox = entity.getBoundingBox()
+
+    return (
+      position.x < entityPosition.x + entityBoundingBox.x &&
+      position.x + boundingBox.x > entityPosition.x &&
+      position.y < entityPosition.y + entityBoundingBox.y &&
+      boundingBox.y + position.y > entityPosition.y
+    )
+  }
 }
 
 export default BaseEntity
