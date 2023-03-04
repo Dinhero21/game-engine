@@ -2,8 +2,7 @@ import BaseEntity from './base.js'
 
 export class MouseEntity extends BaseEntity {
   update (delta) {
-    const mouse = this.getMouse()
-    const mousePosition = mouse.getPosition()
+    const mousePosition = this.getMouseGlobalPosition()
 
     this.setGlobalPosition(mousePosition)
 
