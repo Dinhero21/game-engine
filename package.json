@@ -2,10 +2,20 @@
   "name": "game-engine",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-ts": "tsc",
+    "build": "npm run build-ts && npm run lint",
+    "debug": "npm run build && npm run watch-debug",
+    "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
+    "run-once": "node dist/index.js",
+    "start": "nodemon dist/index.js",
+    "test": "jest --forceExit --coverage --verbose",
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node-debug\"",
+    "watch-node": "nodemon dist/index.js",
+    "watch-node-debug": "nodemon --inspect dist/index.js",
+    "watch-test": "npm run test -- --watchAll",
+    "watch-ts": "tsc -w",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
   },
   "repository": {
     "type": "git",
@@ -14,19 +24,20 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "eslint": "^8.32.0",
+    "eslint-config-standard-with-typescript": "^33.0.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  },
   "bugs": {
     "url": "https://github.com/Dinhero21/game-engine/issues"
   },
-  "homepage": "https://github.com/Dinhero21/game-engine#readme",
-  "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.5.4"
-  },
-  "devDependencies": {
-    "eslint": "^8.32.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^15.6.1",
-    "eslint-plugin-promise": "^6.1.1"
-  }
+  "homepage": "https://github.com/Dinhero21/game-engine#readme"
 }
