@@ -134,6 +134,22 @@ export class BaseEntity {
     return this
   }
 
+  // IO
+
+  // Mouse
+
+  getMousePosition () {
+    const mouse = this.getMouse()
+
+    return mouse.getPosition()
+  }
+
+  getMouseGlobalPosition () {
+    const mousePosition = this.getMousePosition()
+
+    return mousePosition.plus(this.getGlobalPosition())
+  }
+
   // Collision
 
   getBoundingBox () {
