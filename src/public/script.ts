@@ -15,6 +15,9 @@ const game = new Game(context)
 const root = new Entity()
 game.root = root
 
+const child = new Entity()
+root.children.push(child)
+
 updateViewSize()
 
 window.addEventListener('resize', updateViewSize)
