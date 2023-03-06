@@ -2,6 +2,7 @@
   "name": "game-engine",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
     "build-ts": "tsc && npm run copy-public-files",
     "build": "npm run build-ts && npm run lint",
