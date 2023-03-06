@@ -2,10 +2,6 @@ import Frame from '../frame.js'
 import Vec2 from '../vec2.js'
 
 export class Entity {
-  private readonly offset = Math.random()
-
-  private frame = 0
-
   public position: Vec2 = new Vec2(0, 0)
 
   // Entity relationship
@@ -13,8 +9,6 @@ export class Entity {
   public children: Entity[] = []
 
   public draw (frame: Frame): void {
-    this.frame++
-
     frame.drawFancyRectRGBA(0, 0, 256, 256, 0x61, 0xAF, 0xEF)
 
     for (const child of this.children) {
