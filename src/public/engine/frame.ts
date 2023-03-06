@@ -123,6 +123,70 @@ export class Frame {
     return this
   }
 
+  public _beginPath (): this {
+    const queue = this.queue
+
+    queue.push(context => {
+      if (context instanceof Frame) {
+        context._beginPath()
+
+        return
+      }
+
+      context.beginPath()
+    })
+
+    return this
+  }
+
+  public _moveTo (x: number, y: number): this {
+    const queue = this.queue
+
+    queue.push(context => {
+      if (context instanceof Frame) {
+        context._moveTo(x, y)
+
+        return
+      }
+
+      context.moveTo(x, y)
+    })
+
+    return this
+  }
+
+  public _lineTo (x: number, y: number): this {
+    const queue = this.queue
+
+    queue.push(context => {
+      if (context instanceof Frame) {
+        context._lineTo(x, y)
+
+        return
+      }
+
+      context.lineTo(x, y)
+    })
+
+    return this
+  }
+
+  public _stroke (): this {
+    const queue = this.queue
+
+    queue.push(context => {
+      if (context instanceof Frame) {
+        context._stroke()
+
+        return
+      }
+
+      context.stroke()
+    })
+
+    return this
+  }
+
   // High level methods
 
   public drawRect (x: number, y: number, w: number, h: number, color: CanvasRenderingContext2D['fillStyle'] | None): this {
@@ -157,6 +221,18 @@ export class Frame {
   public drawFancyRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: CanvasRenderingContext2D['lineWidth'] | None = 8): this {
     this.outlineRectRGBA(x, y, w, h, r, g, b, a, outlineWidth)
     this.drawRectRGBA(x, y, w, h, r, g, b, a * 0.20)
+
+    return this
+  }
+
+  public drawLine (startX: number, startY: number, endX: number, endY: number, color: CanvasRenderingContext2D['strokeStyle'] | None, width: CanvasRenderingContext2D['lineWidth'] | None = 8): this {
+    if (!isNone(color)) this.setStrokeStyle(color)
+    if (!isNone(width)) this.setLineWidth(width)
+
+    this._beginPath()
+    this._moveTo(startX, startY)
+    this._lineTo(endX, endY)
+    this._stroke()
 
     return this
   }
