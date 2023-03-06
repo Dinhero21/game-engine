@@ -1,5 +1,4 @@
-import Game from './engine/game.js'
-import Entity from './engine/entities/base.js'
+import createGame from './game/index.js'
 
 const view = document.getElementById('view')
 
@@ -10,13 +9,7 @@ const context = view.getContext('2d')
 
 if (context === null) throw new Error('Could not get view context')
 
-const game = new Game(context)
-
-const root = new Entity()
-game.root = root
-
-const child = new Entity()
-root.children.push(child)
+/* const game = */ createGame(context)
 
 updateViewSize()
 

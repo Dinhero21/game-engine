@@ -1,12 +1,11 @@
 import type Entity from './entities/base.js'
 import { type None, isNone } from '../none.js'
 import Frame from './frame.js'
+import Keyboard from './keyboard.js'
 
 export class Game {
   private readonly context: CanvasRenderingContext2D
   private lastTime = Date.now()
-
-  public root?: Entity | None
 
   constructor (context: CanvasRenderingContext2D) {
     this.context = context
@@ -51,6 +50,29 @@ export class Game {
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     frame.draw(context)
+  }
+
+  // Entity relationship
+
+  private root: Entity | None
+
+  public setRoot (entity: Entity): this {
+    entity.setGameInstance(this)
+
+    this.root = entity
+
+    return this
+  }
+
+  public getRoot (): Entity | None {
+    return this.root
+  }
+
+  // IO
+
+  private readonly keyboard: Keyboard = new Keyboard()
+  public getKeyboard (): Keyboard {
+    return this.keyboard
   }
 }
 
