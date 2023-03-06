@@ -1,3 +1,6 @@
+import Game from './engine/game.js'
+import Entity from './engine/entities/base.js'
+
 const view = document.getElementById('view')
 
 if (view === null) throw new Error('Could not find the view element')
@@ -6,6 +9,11 @@ if (!(view instanceof HTMLCanvasElement)) throw new Error('The view element is n
 const context = view.getContext('2d')
 
 if (context === null) throw new Error('Could not get view context')
+
+const game = new Game(context)
+
+const root = new Entity()
+game.root = root
 
 updateViewSize()
 
