@@ -22,7 +22,4 @@ function updateViewSize (): void {
 
   view.width = window.innerWidth
   view.height = window.innerHeight
-
-  context.fillStyle = `rgba(${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},${Math.floor(Math.random() * 256)},1)`
-  context.fillRect(0, 0, view.width, view.height)
 }
