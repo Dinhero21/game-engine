@@ -1,5 +1,5 @@
 import Vec2 from './vec2.js'
-import { isNone, type None } from '../none.js'
+import { isNone, type None } from '../../none.js'
 
 export type Context = Frame | CanvasRenderingContext2D
 

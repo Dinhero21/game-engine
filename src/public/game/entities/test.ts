@@ -1,4 +1,4 @@
-import type Frame from '../../engine/frame.js'
+import type Frame from '../../engine/util/frame.js'
 import BoundingBox from '../../engine/bounding-box.js'
 import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/vec2.js'

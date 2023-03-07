@@ -1,7 +1,7 @@
 import type Entity from './entities/base.js'
 import { type None, isNone } from '../none.js'
-import Frame from './frame.js'
-import Keyboard from './keyboard.js'
+import Frame from './util/frame.js'
+import Keyboard from './util/input/keyboard.js'
 import Mouse from './mouse.js'
 
 export class Game {
