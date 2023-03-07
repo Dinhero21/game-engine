@@ -27,6 +27,14 @@ export class Entity {
     return this
   }
 
+  public getGlobalContext (): CanvasRenderingContext2D | undefined {
+    const game = this.game
+
+    if (game === undefined) return
+
+    return game.getContext()
+  }
+
   public getKeyboard (): Keyboard | undefined {
     const game = this.game
 

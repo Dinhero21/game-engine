@@ -5,8 +5,12 @@ import Keyboard from './keyboard.js'
 import Mouse from './mouse.js'
 
 export class Game {
-  private readonly context: CanvasRenderingContext2D
   private lastTime = Date.now()
+
+  private readonly context: CanvasRenderingContext2D
+  public getContext (): CanvasRenderingContext2D {
+    return this.context
+  }
 
   constructor (context: CanvasRenderingContext2D) {
     this.context = context
