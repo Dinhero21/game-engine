@@ -3,8 +3,38 @@ import Frame from '../frame.js'
 import Vec2 from '../vec2.js'
 import type Keyboard from '../keyboard.js'
 import type Mouse from '../mouse.js'
+import { BoundingBox } from '../bounding-box.js'
 
 export class Entity {
+  // Entity Relationship
+
+  protected readonly children = new Set<Entity>()
+
+  public addChild (child: Entity): this {
+    this.children.add(child)
+
+    const game = this.game
+    if (game !== undefined) child.setGameInstance(game)
+
+    child.setParent(this)
+
+    return this
+  }
+
+  public removeChild (child: Entity): this {
+    this.children.delete(child)
+
+    return this
+  }
+
+  protected parent?: Entity
+
+  public setParent (parent: Entity): this {
+    this.parent = parent
+
+    return this
+  }
+
   public position: Vec2 = new Vec2(0, 0)
 
   protected getParentGlobalPosition (): Vec2 {
@@ -13,6 +43,15 @@ export class Entity {
 
   public getGlobalPosition (): Vec2 {
     return this.position.plus(this.getParentGlobalPosition())
+  }
+
+  // Collision Detection
+
+  public getBoundingBox (): BoundingBox {
+    return new BoundingBox(
+      this.position,
+      new Vec2(0, 0)
+    )
   }
 
   // Game
@@ -67,32 +106,7 @@ export class Entity {
     return mousePosition.minus(this.getGlobalPosition())
   }
 
-  // Entity relationship
-
-  protected readonly children = new Set<Entity>()
-
-  public addChild (child: Entity): this {
-    this.children.add(child)
-
-    const game = this.game
-    if (game !== undefined) child.setGameInstance(game)
-
-    return this
-  }
-
-  public removeChild (child: Entity): this {
-    this.children.delete(child)
-
-    return this
-  }
-
-  protected parent?: Entity
-
-  public setParent (parent: Entity): this {
-    this.parent = parent
-
-    return this
-  }
+  // Game Loop
 
   public draw (frame: Frame): void {
     for (const child of this.children) {

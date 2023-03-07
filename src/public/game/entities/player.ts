@@ -1,21 +1,37 @@
+import BoundingBox from '../../engine/bounding-box.js'
 import Entity from '../../engine/entities/base.js'
 import type Frame from '../../engine/frame.js'
 import Vec2 from '../../engine/vec2.js'
 
-export class Player extends Entity {
-  protected velocity: Vec2 = new Vec2(0, 0)
+export class PlayerEntity extends Entity {
+  protected velocity = new Vec2(0, 0)
+  protected size = new Vec2(64, 64)
+
+  public getBoundingBox (): BoundingBox {
+    return new BoundingBox(
+      this.position,
+      this.size
+    )
+  }
 
   public draw (frame: Frame): void {
-    frame.drawFancyRectRGBA(0, 0, 64, 64, 0x61, 0xAF, 0xEF)
+    super.draw(frame)
+
+    const boundingBox = this.getBoundingBox()
+    const size = boundingBox.getSize()
+
+    frame.drawFancyRectRGBA(0, 0, size.x, size.y, 0x61, 0xAF, 0xEF)
 
     const globalMousePosition = this.getGlobalMousePosition()
 
     if (globalMousePosition === undefined) return
 
-    frame.drawLine(32, 32, globalMousePosition.x, globalMousePosition.y, '#e5c07b')
+    frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, '#e5c07b')
   }
 
   public update (delta: number): void {
+    super.update(delta)
+
     const keyboard = this.getKeyboard()
 
     if (keyboard === undefined) return
@@ -58,4 +74,4 @@ export class Player extends Entity {
   }
 }
 
-export default Player
+export default PlayerEntity
