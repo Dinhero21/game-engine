@@ -30,27 +30,29 @@ export class PlayerEntity extends Entity {
   }
 
   public update (delta: number): void {
+    (() => {
+      const keyboard = this.getKeyboard()
+
+      if (keyboard === undefined) return
+
+      let direction = 0
+
+      if (keyboard.isKeyDown('a')) direction--
+      if (keyboard.isKeyDown('d')) direction++
+
+      const velocity = this.velocity
+
+      velocity.x += direction * 100
+      velocity.y += 15
+
+      velocity.x /= 1.2
+      velocity.y /= 1.02
+
+      // TODO: Make this less convoluted
+      velocity.update(this.move(velocity.scaled(delta)).scaled(1 / delta))
+    })()
+
     super.update(delta)
-
-    const keyboard = this.getKeyboard()
-
-    if (keyboard === undefined) return
-
-    let direction = 0
-
-    if (keyboard.isKeyDown('a')) direction--
-    if (keyboard.isKeyDown('d')) direction++
-
-    const velocity = this.velocity
-
-    velocity.x += direction * 100
-    velocity.y += 15
-
-    velocity.x /= 1.2
-    velocity.y /= 1.02
-
-    // TODO: Make this less convoluted
-    velocity.update(this.move(velocity.scaled(delta)).scaled(1 / delta))
   }
 
   protected move (velocity: Vec2): Vec2 {
