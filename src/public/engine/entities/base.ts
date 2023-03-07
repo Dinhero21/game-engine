@@ -2,9 +2,18 @@ import type Game from '../game.js'
 import Frame from '../frame.js'
 import Vec2 from '../vec2.js'
 import type Keyboard from '../keyboard.js'
+import type Mouse from '../mouse.js'
 
 export class Entity {
   public position: Vec2 = new Vec2(0, 0)
+
+  protected getParentGlobalPosition (): Vec2 {
+    return this.parent?.getGlobalPosition() ?? new Vec2(0, 0)
+  }
+
+  public getGlobalPosition (): Vec2 {
+    return this.position.plus(this.getParentGlobalPosition())
+  }
 
   // Game
 
@@ -26,6 +35,30 @@ export class Entity {
     return game.getKeyboard()
   }
 
+  public getMouse (): Mouse | undefined {
+    const game = this.game
+
+    if (game === undefined) return
+
+    return game.getMouse()
+  }
+
+  public getMousePosition (): Vec2 | undefined {
+    const mouse = this.getMouse()
+
+    if (mouse === undefined) return
+
+    return mouse.getPosition()
+  }
+
+  public getGlobalMousePosition (): Vec2 | undefined {
+    const mousePosition = this.getMousePosition()
+
+    if (mousePosition === undefined) return
+
+    return mousePosition.minus(this.getGlobalPosition())
+  }
+
   // Entity relationship
 
   protected readonly children = new Set<Entity>()
@@ -41,6 +74,14 @@ export class Entity {
 
   public removeChild (child: Entity): this {
     this.children.delete(child)
+
+    return this
+  }
+
+  protected parent?: Entity
+
+  public setParent (parent: Entity): this {
+    this.parent = parent
 
     return this
   }

@@ -7,6 +7,12 @@ export class Player extends Entity {
 
   public draw (frame: Frame): void {
     frame.drawFancyRectRGBA(0, 0, 64, 64, 0x61, 0xAF, 0xEF)
+
+    const globalMousePosition = this.getGlobalMousePosition()
+
+    if (globalMousePosition === undefined) return
+
+    frame.drawLine(32, 32, globalMousePosition.x, globalMousePosition.y, '#e5c07b')
   }
 
   public update (delta: number): void {

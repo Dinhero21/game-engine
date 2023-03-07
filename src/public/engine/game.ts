@@ -2,6 +2,7 @@ import type Entity from './entities/base.js'
 import { type None, isNone } from '../none.js'
 import Frame from './frame.js'
 import Keyboard from './keyboard.js'
+import Mouse from './mouse.js'
 
 export class Game {
   private readonly context: CanvasRenderingContext2D
@@ -73,6 +74,11 @@ export class Game {
   private readonly keyboard: Keyboard = new Keyboard()
   public getKeyboard (): Keyboard {
     return this.keyboard
+  }
+
+  private readonly mouse: Mouse = new Mouse()
+  public getMouse (): Mouse {
+    return this.mouse
   }
 }
 
