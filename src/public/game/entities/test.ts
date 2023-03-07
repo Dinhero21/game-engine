@@ -20,13 +20,15 @@ export class TestEntity extends Entity {
   }
 
   public update (delta: number): void {
+    (() => {
+      const parentGlobalPosition = this.getParentGlobalPosition()
+
+      if (parentGlobalPosition === undefined) return
+
+      this.position.update(parentGlobalPosition.scale(-1))
+    })()
+
     super.update(delta)
-
-    const parentGlobalPosition = this.getParentGlobalPosition()
-
-    if (parentGlobalPosition === undefined) return
-
-    this.position.update(parentGlobalPosition.scale(-1))
   }
 
   public draw (frame: Frame): void {
