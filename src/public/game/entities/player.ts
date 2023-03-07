@@ -38,13 +38,19 @@ export class Player extends Entity {
   }
 
   protected move (velocity: Vec2): Vec2 {
+    const globalContext = this.getGlobalContext()
+
+    if (globalContext === undefined) return velocity
+
+    const canvas = globalContext.canvas
+
     const position = this.position
 
     const oldPosition = position.clone()
 
     position.add(velocity)
 
-    if (position.y > screen.height - 64) position.y = screen.height - 64
+    if (position.y > canvas.height - 64) position.y = canvas.height - 64
 
     const newVelocity = position.minus(oldPosition)
 
