@@ -23,10 +23,12 @@ export class Game {
     const now = Date.now()
     const delta = (now - lastTime) / 1000
 
-    this.lastTime = now
+    if (delta !== 0) {
+      this.lastTime = now
 
-    this.update(delta)
-    this.draw()
+      this.update(delta)
+      this.draw()
+    }
 
     requestAnimationFrame(() => { this.gameLoop() })
   }
