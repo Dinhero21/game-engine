@@ -44,10 +44,6 @@ export class TestEntity extends Entity {
     const position = boundingBox.getPosition()
     const size = boundingBox.getSize()
 
-    const distance = boundingBox.distanceTo(parentBoundingBox)
-
-    console.log(distance)
-
     if (boundingBox.colliding(parentBoundingBox)) {
       frame.drawFancyRectRGBA(
         position.x,
