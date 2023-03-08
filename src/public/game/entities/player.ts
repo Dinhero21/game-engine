@@ -22,11 +22,17 @@ export class PlayerEntity extends Entity {
 
     frame.drawFancyRectRGBA(0, 0, size.x, size.y, 0x61, 0xAF, 0xEF)
 
+    const velocity = this.velocity
+
+    frame.drawLine(size.x / 2, size.y / 2, size.x / 2, (velocity.y / 10) + (size.y / 2), '#e06c75', 3)
+    frame.drawLine(size.x / 2, size.y / 2, (velocity.x / 10) + (size.x / 2), size.y / 2, '#98c379', 3)
+    frame.drawLine(size.x / 2, size.y / 2, (velocity.x / 10) + (size.x / 2), (velocity.y / 10) + (size.y / 2), '#e5c07b', 3)
+
     const globalMousePosition = this.getGlobalMousePosition()
 
     if (globalMousePosition === undefined) return
 
-    frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, '#e5c07b')
+    frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, '#c678dd', 3)
   }
 
   public update (delta: number): void {
