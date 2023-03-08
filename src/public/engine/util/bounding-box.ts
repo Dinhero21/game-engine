@@ -28,19 +28,38 @@ export class BoundingBox {
     this.size = size
   }
 
-  public isCollidingWith (boundingBox: BoundingBox): boolean {
+  // ? Should I make this public or protected (or private)?
+  public distancesTo (other: BoundingBox): number[] {
     const start = this.getStart()
     const end = this.getEnd()
 
-    const otherStart = boundingBox.getStart()
-    const otherEnd = boundingBox.getEnd()
+    const otherStart = other.getStart()
+    const otherEnd = other.getEnd()
 
-    return (
-      start.x <= otherEnd.x &&
-      end.x >= otherStart.x &&
-      start.y <= otherEnd.y &&
-      end.y >= otherStart.y
-    )
+    return [
+      start.x - otherEnd.x,
+      otherStart.x - end.x,
+      start.y - otherEnd.y,
+      otherStart.y - end.y
+    ]
+  }
+
+  public distanceTo (other: BoundingBox): number {
+    const distances = this.distancesTo(other)
+
+    return Math.max(...distances)
+  }
+
+  public touching (other: BoundingBox): boolean {
+    return this.distanceTo(other) === 0
+  }
+
+  public overlapping (other: BoundingBox): boolean {
+    return this.distanceTo(other) < 0
+  }
+
+  public colliding (other: BoundingBox): boolean {
+    return this.overlapping(other) || this.touching(other)
   }
 }
 

@@ -44,12 +44,11 @@ export class TestEntity extends Entity {
     const position = boundingBox.getPosition()
     const size = boundingBox.getSize()
 
-    // console.log('Parent Start', parentBoundingBox.getStart())
-    // console.log('Parent End', parentBoundingBox.getEnd())
-    // console.log('Self   Start', boundingBox.getStart())
-    // console.log('Self   End', boundingBox.getEnd())
+    const distance = boundingBox.distanceTo(parentBoundingBox)
 
-    if (boundingBox.isCollidingWith(parentBoundingBox)) {
+    console.log(distance)
+
+    if (boundingBox.colliding(parentBoundingBox)) {
       frame.drawFancyRectRGBA(
         position.x,
         position.y,
