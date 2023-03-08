@@ -1,8 +1,8 @@
-import type Entity from './entities/base.js'
 import { type None, isNone } from '../none.js'
+import type Entity from './entities/base.js'
 import Frame from './util/frame.js'
 import Keyboard from './util/input/keyboard.js'
-import Mouse from './mouse.js'
+import Mouse from './util/input/mouse.js'
 
 export class Game {
   private lastTime = Date.now()

@@ -1,9 +1,9 @@
 import type Game from '../game.js'
-import Frame from '../util/frame.js'
-import Vec2 from '../vec2.js'
 import type Keyboard from '../util/input/keyboard.js'
-import type Mouse from '../mouse.js'
-import { BoundingBox } from '../bounding-box.js'
+import type Mouse from '../util/input/mouse.js'
+import BoundingBox from '../util/bounding-box.js'
+import Frame from '../util/frame.js'
+import Vec2 from '../util/vec2.js'
 
 export class Entity {
   // Entity Relationship
