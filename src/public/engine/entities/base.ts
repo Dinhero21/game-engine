@@ -35,6 +35,8 @@ export class Entity {
     return this
   }
 
+  // Position
+
   public position: Vec2 = new Vec2(0, 0)
 
   protected getParentGlobalPosition (): Vec2 {
@@ -47,10 +49,12 @@ export class Entity {
 
   // Collision Detection
 
+  protected size: Vec2 = new Vec2(0, 0)
+
   public getBoundingBox (): BoundingBox {
     return new BoundingBox(
       this.position,
-      new Vec2(0, 0)
+      this.size
     )
   }
 
