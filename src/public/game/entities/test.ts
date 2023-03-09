@@ -1,5 +1,5 @@
 import type Frame from '../../engine/util/frame.js'
-import BoundingBox from '../../engine/util/bounding-box.js'
+import BoundingBox from '../../engine/util/collision/bounding-box.js'
 import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 
