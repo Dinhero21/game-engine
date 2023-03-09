@@ -38,13 +38,11 @@ export class TestEntity extends Entity {
 
     if (parent === undefined) return
 
-    const parentBoundingBox = parent.getBoundingBox()
-
     const boundingBox = this.getBoundingBox()
     const position = boundingBox.getPosition()
     const size = boundingBox.getSize()
 
-    if (boundingBox.colliding(parentBoundingBox)) {
+    if (this.isColliding(parent)) {
       frame.drawFancyRectRGBA(
         position.x,
         position.y,

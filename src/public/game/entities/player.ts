@@ -41,9 +41,14 @@ export class PlayerEntity extends Entity {
       const velocity = this.velocity
 
       velocity.x += direction * 100
-      velocity.y += 15
-
       velocity.x /= 1.2
+
+      // Gravity
+      if (keyboard.isKeyDown('space') && this.onGround()) {
+        velocity.y = -800
+      } else {
+        velocity.y += 15
+      }
       velocity.y /= 1.02
 
       // TODO: Make this less convoluted
@@ -68,11 +73,21 @@ export class PlayerEntity extends Entity {
 
     const size = this.size
 
-    if (position.y > canvas.height - size.y) position.y = canvas.height - size.y
+    if (this.position.y > canvas.height - this.size.y) position.y = canvas.height - size.y
 
     const newVelocity = position.minus(oldPosition)
 
     return newVelocity
+  }
+
+  protected onGround (): boolean {
+    const globalContext = this.getGlobalContext()
+
+    if (globalContext === undefined) return false
+
+    const canvas = globalContext.canvas
+
+    return this.position.y === canvas.height - this.size.y
   }
 }
 

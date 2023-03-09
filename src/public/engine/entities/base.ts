@@ -58,6 +58,10 @@ export class Entity {
     )
   }
 
+  public isColliding (other: Entity): boolean {
+    return this.getBoundingBox().colliding(other.getBoundingBox())
+  }
+
   // Game
 
   protected game?: Game
