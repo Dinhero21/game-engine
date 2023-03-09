@@ -9,9 +9,9 @@ const context = view.getContext('2d')
 
 if (context === null) throw new Error('Could not get view context')
 
-/* const game = */ createGame(context)
-
 updateViewSize()
+
+/* const game = */ createGame(context)
 
 window.addEventListener('resize', updateViewSize)
 
