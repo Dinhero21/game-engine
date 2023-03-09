@@ -66,7 +66,9 @@ export class PlayerEntity extends Entity {
 
     position.add(velocity)
 
-    if (position.y > canvas.height - 64) position.y = canvas.height - 64
+    const size = this.size
+
+    if (position.y > canvas.height - size.y) position.y = canvas.height - size.y
 
     const newVelocity = position.minus(oldPosition)
 
