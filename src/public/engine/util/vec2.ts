@@ -81,6 +81,12 @@ export class Vec2 {
     return this
   }
 
+  divided (value: number | Vec2): Vec2 {
+    value = this.vectorize(value)
+
+    return new Vec2(this.x / value.x, this.y / value.y)
+  }
+
   plus (other: Vec2): Vec2 {
     return this.offset(other.x, other.y)
   }
