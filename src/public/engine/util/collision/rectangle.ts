@@ -1,7 +1,7 @@
 import type Vec2 from '../vec2.js'
 import { Collider } from './collider.js'
 
-export class BoundingBox extends Collider {
+export class RectangleCollider extends Collider {
   protected position: Vec2
   protected size: Vec2
 
@@ -31,7 +31,7 @@ export class BoundingBox extends Collider {
     this.size = size
   }
 
-  public _distanceLeft (other: BoundingBox): number {
+  public _distanceLeft (other: this): number {
     const start = this.getStart()
     // const end = this.getEnd()
 
@@ -41,7 +41,7 @@ export class BoundingBox extends Collider {
     return start.x - otherEnd.x
   }
 
-  public _distanceRight (other: BoundingBox): number {
+  public _distanceRight (other: this): number {
     // const start = this.getStart()
     const end = this.getEnd()
 
@@ -51,7 +51,7 @@ export class BoundingBox extends Collider {
     return otherStart.x - end.x
   }
 
-  public _distanceDown (other: BoundingBox): number {
+  public _distanceDown (other: this): number {
     const start = this.getStart()
     // const end = this.getEnd()
 
@@ -61,7 +61,7 @@ export class BoundingBox extends Collider {
     return start.y - otherEnd.y
   }
 
-  public _distanceUp (other: BoundingBox): number {
+  public _distanceUp (other: this): number {
     // const start = this.getStart()
     const end = this.getEnd()
 
@@ -72,4 +72,4 @@ export class BoundingBox extends Collider {
   }
 }
 
-export default BoundingBox
+export default RectangleCollider

@@ -1,18 +1,10 @@
 import type Frame from '../../engine/util/frame.js'
-import BoundingBox from '../../engine/util/collision/bounding-box.js'
 import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 
 export class PlayerEntity extends Entity {
   protected velocity = new Vec2(0, 0)
   protected size = new Vec2(64, 64)
-
-  public getBoundingBox (): BoundingBox {
-    return new BoundingBox(
-      this.position,
-      this.size
-    )
-  }
 
   public draw (frame: Frame): void {
     super.draw(frame)
