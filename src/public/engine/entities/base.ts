@@ -1,7 +1,7 @@
 import type Game from '../game.js'
 import type Keyboard from '../util/input/keyboard.js'
 import type Mouse from '../util/input/mouse.js'
-import BoundingBox from '../util/bounding-box.js'
+import BoundingBox from '../util/collision/bounding-box.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
