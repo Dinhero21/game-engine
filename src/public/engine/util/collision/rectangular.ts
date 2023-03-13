@@ -1,11 +1,11 @@
 import type Vec2 from '../vec2.js'
 import { Collider } from './collider.js'
 
-export abstract class RectangularlyApproximatable extends Collider<RectangularlyApproximatable> {
+export abstract class RectangularlyApproximatableCollider extends Collider<RectangularlyApproximatableCollider> {
   abstract getRectangularApproximation (): RectangularCollider
 }
 
-export class RectangularCollider extends RectangularlyApproximatable {
+export class RectangularCollider extends RectangularlyApproximatableCollider {
   protected position: Vec2
   protected size: Vec2
 
@@ -39,7 +39,7 @@ export class RectangularCollider extends RectangularlyApproximatable {
     this.size = size
   }
 
-  public _distanceLeft (other: RectangularlyApproximatable): number {
+  public _distanceLeft (other: RectangularlyApproximatableCollider): number {
     const otherRectangularCollider = other.getRectangularApproximation()
 
     const start = this.getStart()
@@ -51,7 +51,7 @@ export class RectangularCollider extends RectangularlyApproximatable {
     return start.x - otherEnd.x
   }
 
-  public _distanceRight (other: RectangularlyApproximatable): number {
+  public _distanceRight (other: RectangularlyApproximatableCollider): number {
     const otherRectangularCollider = other.getRectangularApproximation()
 
     // const start = this.getStart()
@@ -63,7 +63,7 @@ export class RectangularCollider extends RectangularlyApproximatable {
     return otherStart.x - end.x
   }
 
-  public _distanceDown (other: RectangularlyApproximatable): number {
+  public _distanceDown (other: RectangularlyApproximatableCollider): number {
     const otherRectangularCollider = other.getRectangularApproximation()
 
     const start = this.getStart()
@@ -75,7 +75,7 @@ export class RectangularCollider extends RectangularlyApproximatable {
     return start.y - otherEnd.y
   }
 
-  public _distanceUp (other: RectangularlyApproximatable): number {
+  public _distanceUp (other: RectangularlyApproximatableCollider): number {
     const otherRectangularCollider = other.getRectangularApproximation()
 
     // const start = this.getStart()
