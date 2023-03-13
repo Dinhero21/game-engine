@@ -2,10 +2,10 @@ import type Vec2 from '../vec2.js'
 import { Collider } from './collider.js'
 
 export abstract class RectangularlyApproximatable extends Collider<RectangularlyApproximatable> {
-  abstract getRectangularApproximation (): RectangleCollider
+  abstract getRectangularApproximation (): RectangularCollider
 }
 
-export class RectangleCollider extends RectangularlyApproximatable {
+export class RectangularCollider extends RectangularlyApproximatable {
   protected position: Vec2
   protected size: Vec2
 
@@ -28,7 +28,7 @@ export class RectangleCollider extends RectangularlyApproximatable {
     return start.plus(size)
   }
 
-  public getRectangularApproximation (): RectangleCollider {
+  public getRectangularApproximation (): RectangularCollider {
     return this
   }
 
@@ -88,4 +88,4 @@ export class RectangleCollider extends RectangularlyApproximatable {
   }
 }
 
-export default RectangleCollider
+export default RectangularCollider

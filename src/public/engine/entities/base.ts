@@ -1,7 +1,7 @@
 import type Game from '../game.js'
 import type Keyboard from '../util/input/keyboard.js'
 import type Mouse from '../util/input/mouse.js'
-import RectangleCollider from '../util/collision/rectangle.js'
+import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
@@ -51,8 +51,8 @@ export class Entity {
 
   protected size: Vec2 = new Vec2(0, 0)
 
-  public getBoundingBox (): RectangleCollider {
-    return new RectangleCollider(
+  public getBoundingBox (): RectangularCollider {
+    return new RectangularCollider(
       this.position,
       this.size
     )
