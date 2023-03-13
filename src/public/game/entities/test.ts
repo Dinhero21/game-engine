@@ -1,10 +1,10 @@
 import type Frame from '../../engine/util/frame.js'
-import RectangleCollider from '../../engine/util/collision/rectangle.js'
+import RectangularCollider from '../../engine/util/collision/rectangular.js'
 import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 
 export class TestEntity extends Entity {
-  public getBoundingBox (): RectangleCollider {
+  public getBoundingBox (): RectangularCollider {
     const globalContext = this.getGlobalContext()
 
     if (globalContext === undefined) return super.getBoundingBox()
@@ -13,7 +13,7 @@ export class TestEntity extends Entity {
 
     const size = new Vec2(64, 64)
 
-    return new RectangleCollider(
+    return new RectangularCollider(
       (new Vec2((canvas.width - size.x) / 2, canvas.height - size.y)),
       size
     )
