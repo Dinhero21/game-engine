@@ -1,29 +1,30 @@
-export abstract class Collider {
-  public abstract _distanceLeft (other: this): number
+// ? Should I use any?
+export abstract class Collider<ValidCollidable extends Collider<any>> {
+  public abstract _distanceLeft (other: ValidCollidable): number
 
-  public distanceLeft (other: this): number {
+  public distanceLeft (other: ValidCollidable): number {
     return Math.max(this._distanceLeft(other), other._distanceRight(this))
   }
 
-  public abstract _distanceRight (other: this): number
+  public abstract _distanceRight (other: ValidCollidable): number
 
-  public distanceRight (other: this): number {
+  public distanceRight (other: ValidCollidable): number {
     return Math.max(this._distanceRight(other), other._distanceLeft(this))
   }
 
-  public abstract _distanceDown (other: this): number
+  public abstract _distanceDown (other: ValidCollidable): number
 
-  public distanceDown (other: this): number {
+  public distanceDown (other: ValidCollidable): number {
     return Math.max(this._distanceDown(other), other._distanceUp(this))
   }
 
-  public abstract _distanceUp (other: this): number
+  public abstract _distanceUp (other: ValidCollidable): number
 
-  public distanceUp (other: this): number {
+  public distanceUp (other: ValidCollidable): number {
     return Math.max(this._distanceUp(other), other._distanceDown(this))
   }
 
-  public distances (other: this): { left: number, right: number, down: number, up: number } {
+  public distances (other: ValidCollidable): { left: number, right: number, down: number, up: number } {
     const left = this._distanceLeft(other)
     const right = this._distanceRight(other)
     const down = this._distanceDown(other)
@@ -32,7 +33,7 @@ export abstract class Collider {
     return { left, right, down, up }
   }
 
-  public distanceArray (other: this): [number, number, number, number] {
+  public distanceArray (other: ValidCollidable): [number, number, number, number] {
     return [
       this._distanceLeft(other),
       this._distanceRight(other),
@@ -41,21 +42,21 @@ export abstract class Collider {
     ]
   }
 
-  public distance (other: this): number {
+  public distance (other: ValidCollidable): number {
     const distances = this.distanceArray(other)
 
     return Math.max(...distances)
   }
 
-  public touching (other: this): boolean {
+  public touching (other: ValidCollidable): boolean {
     return this.distance(other) === 0
   }
 
-  public overlapping (other: this): boolean {
+  public overlapping (other: ValidCollidable): boolean {
     return this.distance(other) < 0
   }
 
-  public colliding (other: this): boolean {
+  public colliding (other: ValidCollidable): boolean {
     return this.distance(other) <= 0
   }
 }
