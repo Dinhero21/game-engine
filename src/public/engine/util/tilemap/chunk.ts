@@ -25,6 +25,6 @@ export class Chunk {
   }
 
   public colliding (other: RectangleCollider): boolean {
-    return this.boundingBox.colliding(other) && this.tiles.every(tile => tile.collider?.colliding(other))
+    return this.boundingBox.colliding(other) && this.tiles.some(tile => tile.collider?.colliding(other))
   }
 }
