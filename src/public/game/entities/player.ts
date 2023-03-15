@@ -3,8 +3,19 @@ import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 
 export class PlayerEntity extends Entity {
-  protected velocity = new Vec2(0, 0)
   protected size = new Vec2(64, 64)
+
+  public id
+  public velocity
+
+  public controllable: boolean = false
+
+  constructor (id: string, velocity: Vec2) {
+    super()
+
+    this.id = id
+    this.velocity = velocity
+  }
 
   public draw (frame: Frame): void {
     super.draw(frame)
@@ -28,32 +39,49 @@ export class PlayerEntity extends Entity {
   }
 
   public update (delta: number): void {
-    (() => {
-      const keyboard = this.getKeyboard()
-
-      if (keyboard === undefined) return
-
-      let direction = 0
-
-      if (keyboard.isKeyDown('a')) direction--
-      if (keyboard.isKeyDown('d')) direction++
-
-      const velocity = this.velocity
-
-      velocity.x += direction * 100
-      velocity.y += 15
-
-      velocity.x /= 1.2
-      velocity.y /= 1.02
-
-      // TODO: Make this less convoluted
-      velocity.update(this.move(velocity.scaled(delta)).scaled(1 / delta))
-    })()
+    this.move(delta)
 
     super.update(delta)
   }
 
-  protected move (velocity: Vec2): Vec2 {
+  protected getUserInputDirection (): Vec2 {
+    const keyboard = this.getKeyboard()
+
+    if (keyboard === undefined) return new Vec2(0, 0)
+
+    const controllable = this.controllable
+
+    let horizontalDirection = 0
+
+    if (controllable) {
+      if (keyboard.isKeyDown('a')) horizontalDirection--
+      if (keyboard.isKeyDown('d')) horizontalDirection++
+    }
+
+    return new Vec2(horizontalDirection, 0)
+  }
+
+  protected move (delta: number): void {
+    const velocity = this.velocity
+
+    const direction = this.getUserInputDirection()
+
+    // velocity += direction * speed
+    velocity.add(direction.scaled(100))
+
+    // velocity.y += gravity
+    velocity.y += 15
+
+    // Friction
+    // velocity /= friction + 1
+    velocity.x /= 1.2
+    velocity.y /= 1.02
+
+    // TODO: Make this less convoluted
+    velocity.update(this.updatePosition(velocity.scaled(delta)).scaled(1 / delta))
+  }
+
+  protected updatePosition (velocity: Vec2): Vec2 {
     const globalContext = this.getGlobalContext()
 
     if (globalContext === undefined) return velocity

@@ -1,8 +1,7 @@
-import Entity from '../engine/entities/base.js'
+import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
 import { TileMapEntity } from '../engine/entities/tilemap.js'
+import Entity from '../engine/entities/base.js'
 import Game from '../engine/game.js'
-import PlayerEntity from './entities/player.js'
-import TestEntity from './entities/test.js'
 import Vec2 from '../engine/util/vec2.js'
 
 export default function createGame (context: CanvasRenderingContext2D): Game {
@@ -24,11 +23,8 @@ export default function createGame (context: CanvasRenderingContext2D): Game {
     }
   }
 
-  const player = new PlayerEntity()
-  root.addChild(player)
-
-  const test = new TestEntity()
-  player.addChild(test)
+  const multiplayerContainer = new MultiplayerContainerEntity()
+  root.addChild(multiplayerContainer)
 
   return game
 }

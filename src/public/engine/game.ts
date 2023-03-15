@@ -1,3 +1,5 @@
+import type { ClientToServerEvents, ServerToClientEvents } from '../../socket.io.js'
+import { type Socket } from '../socket.io/socket.io.esm.min.js'
 import { type None, isNone } from '../none.js'
 import type Entity from './entities/base.js'
 import Frame from './util/frame.js'

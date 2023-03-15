@@ -5,12 +5,12 @@ import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
-export class Entity {
+export class Entity<Children extends Entity<any> = Entity<any>> {
   // Entity Relationship
 
-  protected readonly children = new Set<Entity>()
+  protected readonly children = new Set<Children>()
 
-  public addChild (child: Entity): this {
+  public addChild (child: Children): this {
     this.children.add(child)
 
     const game = this.game
@@ -21,7 +21,7 @@ export class Entity {
     return this
   }
 
-  public removeChild (child: Entity): this {
+  public removeChild (child: Children): this {
     this.children.delete(child)
 
     return this
