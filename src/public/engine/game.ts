@@ -1,14 +1,13 @@
-import type { ClientToServerEvents, ServerToClientEvents } from '../../socket.io.js'
-import { type Socket } from '../socket.io/socket.io.esm.min.js'
 import { type None, isNone } from '../none.js'
 import type Entity from './entities/base.js'
+import RectangularCollider from './util/collision/rectangular.js'
 import Frame from './util/frame.js'
 import Keyboard from './util/input/keyboard.js'
 import Mouse from './util/input/mouse.js'
+import Vec2 from './util/vec2.js'
 
+// TODO: Separate Physics and Rendering logic into 2 separate classes (Game and Camera)
 export class Game {
-  private lastTime = Date.now()
-
   private readonly context: CanvasRenderingContext2D
   public getContext (): CanvasRenderingContext2D {
     return this.context
@@ -16,23 +15,22 @@ export class Game {
 
   constructor (context: CanvasRenderingContext2D) {
     this.context = context
+  }
 
+  public start (): void {
     this.gameLoop()
   }
 
-  private gameLoop (): void {
-    const lastTime = this.lastTime
+  private gameLoop (lastTime = Date.now()): void {
     const now = Date.now()
     const delta = (now - lastTime) / 1000
 
     if (delta !== 0) {
-      this.lastTime = now
-
       this.update(delta)
       this.draw()
     }
 
-    requestAnimationFrame(() => { this.gameLoop() })
+    requestAnimationFrame(() => { this.gameLoop(now) })
   }
 
   private update (delta: number): void {
@@ -61,7 +59,7 @@ export class Game {
     frame.draw(context)
   }
 
-  // Entity relationship
+  // Entity Relationship
 
   private root: Entity | None
 
@@ -75,6 +73,18 @@ export class Game {
 
   public getRoot (): Entity | None {
     return this.root
+  }
+
+  // Collision Detection
+
+  public getBoundingBox (): RectangularCollider {
+    const context = this.context
+    const canvas = context.canvas
+
+    return new RectangularCollider(
+      new Vec2(0, 0),
+      new Vec2(canvas.width, canvas.height)
+    )
   }
 
   // IO

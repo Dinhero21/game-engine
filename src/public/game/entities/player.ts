@@ -35,7 +35,13 @@ export class PlayerEntity extends Entity {
 
     if (globalMousePosition === undefined) return
 
-    frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, '#c678dd', 3)
+    const screenBoundingBox = this.getScreenBoundingBox()
+
+    if (screenBoundingBox === undefined) return
+
+    const isInScreen = this.getBoundingBox().colliding(screenBoundingBox)
+
+    frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, isInScreen ? '#98c379' : '#e06c75', 3)
   }
 
   public update (delta: number): void {

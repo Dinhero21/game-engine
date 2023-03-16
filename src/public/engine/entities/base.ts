@@ -5,7 +5,7 @@ import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
-export class Entity<Children extends Entity<any> = Entity<any>> {
+export class Entity<Children extends Entity = Entity<any>> {
   // Entity Relationship
 
   protected readonly children = new Set<Children>()
@@ -70,7 +70,7 @@ export class Entity<Children extends Entity<any> = Entity<any>> {
     return this
   }
 
-  public getGlobalContext (): CanvasRenderingContext2D | undefined {
+  protected getGlobalContext (): CanvasRenderingContext2D | undefined {
     const game = this.game
 
     if (game === undefined) return
@@ -78,7 +78,7 @@ export class Entity<Children extends Entity<any> = Entity<any>> {
     return game.getContext()
   }
 
-  public getKeyboard (): Keyboard | undefined {
+  protected getKeyboard (): Keyboard | undefined {
     const game = this.game
 
     if (game === undefined) return
@@ -86,7 +86,7 @@ export class Entity<Children extends Entity<any> = Entity<any>> {
     return game.getKeyboard()
   }
 
-  public getMouse (): Mouse | undefined {
+  protected getMouse (): Mouse | undefined {
     const game = this.game
 
     if (game === undefined) return
@@ -94,7 +94,7 @@ export class Entity<Children extends Entity<any> = Entity<any>> {
     return game.getMouse()
   }
 
-  public getMousePosition (): Vec2 | undefined {
+  protected getMousePosition (): Vec2 | undefined {
     const mouse = this.getMouse()
 
     if (mouse === undefined) return
@@ -102,12 +102,20 @@ export class Entity<Children extends Entity<any> = Entity<any>> {
     return mouse.getPosition()
   }
 
-  public getGlobalMousePosition (): Vec2 | undefined {
+  protected getGlobalMousePosition (): Vec2 | undefined {
     const mousePosition = this.getMousePosition()
 
     if (mousePosition === undefined) return
 
     return mousePosition.minus(this.getGlobalPosition())
+  }
+
+  protected getScreenBoundingBox (): RectangularCollider | undefined {
+    const game = this.game
+
+    if (game === undefined) return
+
+    return game.getBoundingBox()
   }
 
   // Game Loop

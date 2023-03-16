@@ -24,6 +24,14 @@ export class Chunk {
     this.tiles.push(tile)
   }
 
+  public touching (other: RectangularCollider): boolean {
+    return this.boundingBox.touching(other) && this.tiles.some(tile => tile.collider?.touching(other))
+  }
+
+  public overlapping (other: RectangularCollider): boolean {
+    return this.boundingBox.overlapping(other) && this.tiles.some(tile => tile.collider?.overlapping(other))
+  }
+
   public colliding (other: RectangularCollider): boolean {
     return this.boundingBox.colliding(other) && this.tiles.some(tile => tile.collider?.colliding(other))
   }
