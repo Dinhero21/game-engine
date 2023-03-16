@@ -5,7 +5,11 @@ import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
 export class Entity<Children extends Entity = Entity<any>> {
-  // Game Loop
+  public update (delta: number): void {
+    for (const child of this.children) {
+      child.update(delta)
+    }
+  }
 
   public draw (frame: Frame): void {
     for (const child of this.children) {
@@ -18,22 +22,12 @@ export class Entity<Children extends Entity = Entity<any>> {
     }
   }
 
-  public update (delta: number): void {
-    for (const child of this.children) {
-      child.update(delta)
-    }
-  }
+  public getScene (): Scene | undefined {
+    const parent = this.parent
 
-  // Game
+    if (parent === undefined) return
 
-  protected scene?: Scene
-
-  public setSceneInstance (scene: Scene): this {
-    this.scene = scene
-
-    for (const child of this.children) child.setSceneInstance(scene)
-
-    return this
+    return parent.getScene()
   }
 
   // Entity Relationship
@@ -42,9 +36,6 @@ export class Entity<Children extends Entity = Entity<any>> {
 
   public addChild (child: Children): this {
     this.children.add(child)
-
-    const scene = this.scene
-    if (scene !== undefined) child.setSceneInstance(scene)
 
     child.setParent(this)
 
