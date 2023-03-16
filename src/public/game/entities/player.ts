@@ -1,6 +1,7 @@
 import type Frame from '../../engine/util/frame.js'
 import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
+import keyboard from '../../engine/util/input/keyboard.js'
 
 export class PlayerEntity extends Entity {
   protected size = new Vec2(64, 64)
@@ -35,11 +36,12 @@ export class PlayerEntity extends Entity {
 
     if (globalMousePosition === undefined) return
 
-    const screenBoundingBox = this.getScreenBoundingBox()
+    // const screenBoundingBox = this.getScreenBoundingBox()
 
-    if (screenBoundingBox === undefined) return
+    // if (screenBoundingBox === undefined) return
 
-    const isInScreen = this.getBoundingBox().colliding(screenBoundingBox)
+    // const isInScreen = this.getBoundingBox().colliding(screenBoundingBox)
+    const isInScreen = true
 
     frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, isInScreen ? '#98c379' : '#e06c75', 3)
   }
@@ -51,10 +53,6 @@ export class PlayerEntity extends Entity {
   }
 
   protected getUserInputDirection (): Vec2 {
-    const keyboard = this.getKeyboard()
-
-    if (keyboard === undefined) return new Vec2(0, 0)
-
     const controllable = this.controllable
 
     let horizontalDirection = 0
@@ -88,11 +86,11 @@ export class PlayerEntity extends Entity {
   }
 
   protected updatePosition (velocity: Vec2): Vec2 {
-    const globalContext = this.getGlobalContext()
+    // const globalContext = this.getGlobalContext()
 
-    if (globalContext === undefined) return velocity
+    // if (globalContext === undefined) return velocity
 
-    const canvas = globalContext.canvas
+    // const canvas = globalContext.canvas
 
     const position = this.position
 
@@ -102,7 +100,8 @@ export class PlayerEntity extends Entity {
 
     const size = this.size
 
-    if (position.y > canvas.height - size.y) position.y = canvas.height - size.y
+    // if (position.y > canvas.height - size.y) position.y = canvas.height - size.y
+    if (position.y > 100 - size.y) position.y = 100 - size.y
 
     const newVelocity = position.minus(oldPosition)
 

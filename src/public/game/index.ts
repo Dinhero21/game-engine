@@ -1,19 +1,15 @@
 import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
 import { TileMapEntity } from '../engine/entities/tilemap.js'
-import Entity from '../engine/entities/base.js'
-import Game from '../engine/game.js'
+import Scene from '../engine/scene.js'
 import Vec2 from '../engine/util/vec2.js'
 
-export default function createGame (context: CanvasRenderingContext2D): Game {
+export default function createScene (context: CanvasRenderingContext2D): Scene {
   const canvas = context.canvas
 
-  const game = new Game(context)
-
-  const root = new Entity()
-  game.setRoot(root)
+  const scene = new Scene()
 
   const tileMap = new TileMapEntity()
-  root.addChild(tileMap)
+  scene.addChild(tileMap)
 
   for (let x = 0; x < canvas.width / 32; x++) {
     for (let y = 0; y < canvas.height / 32; y++) {
@@ -24,7 +20,7 @@ export default function createGame (context: CanvasRenderingContext2D): Game {
   }
 
   const multiplayerContainer = new MultiplayerContainerEntity()
-  root.addChild(multiplayerContainer)
+  scene.addChild(multiplayerContainer)
 
-  return game
+  return scene
 }

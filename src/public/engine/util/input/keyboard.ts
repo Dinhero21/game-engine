@@ -27,4 +27,4 @@ export class Keyboard {
   }
 }
 
-export default Keyboard
+export default new Keyboard()

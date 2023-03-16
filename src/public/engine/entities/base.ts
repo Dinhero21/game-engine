@@ -1,11 +1,41 @@
-import type Game from '../game.js'
-import type Keyboard from '../util/input/keyboard.js'
-import type Mouse from '../util/input/mouse.js'
+import type Scene from '../scene.js'
+import mouse from '../util/input/mouse.js'
 import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
 export class Entity<Children extends Entity = Entity<any>> {
+  // Game Loop
+
+  public draw (frame: Frame): void {
+    for (const child of this.children) {
+      const childFrame = new Frame()
+      childFrame.offset = child.position
+
+      child.draw(childFrame)
+
+      childFrame.draw(frame)
+    }
+  }
+
+  public update (delta: number): void {
+    for (const child of this.children) {
+      child.update(delta)
+    }
+  }
+
+  // Game
+
+  protected scene?: Scene
+
+  public setSceneInstance (scene: Scene): this {
+    this.scene = scene
+
+    for (const child of this.children) child.setSceneInstance(scene)
+
+    return this
+  }
+
   // Entity Relationship
 
   protected readonly children = new Set<Children>()
@@ -13,8 +43,8 @@ export class Entity<Children extends Entity = Entity<any>> {
   public addChild (child: Children): this {
     this.children.add(child)
 
-    const game = this.game
-    if (game !== undefined) child.setGameInstance(game)
+    const scene = this.scene
+    if (scene !== undefined) child.setSceneInstance(scene)
 
     child.setParent(this)
 
@@ -58,47 +88,9 @@ export class Entity<Children extends Entity = Entity<any>> {
     )
   }
 
-  // Game
-
-  protected game?: Game
-
-  public setGameInstance (game: Game): this {
-    this.game = game
-
-    for (const child of this.children) child.setGameInstance(game)
-
-    return this
-  }
-
-  protected getGlobalContext (): CanvasRenderingContext2D | undefined {
-    const game = this.game
-
-    if (game === undefined) return
-
-    return game.getContext()
-  }
-
-  protected getKeyboard (): Keyboard | undefined {
-    const game = this.game
-
-    if (game === undefined) return
-
-    return game.getKeyboard()
-  }
-
-  protected getMouse (): Mouse | undefined {
-    const game = this.game
-
-    if (game === undefined) return
-
-    return game.getMouse()
-  }
+  // IO
 
   protected getMousePosition (): Vec2 | undefined {
-    const mouse = this.getMouse()
-
-    if (mouse === undefined) return
-
     return mouse.getPosition()
   }
 
@@ -108,33 +100,6 @@ export class Entity<Children extends Entity = Entity<any>> {
     if (mousePosition === undefined) return
 
     return mousePosition.minus(this.getGlobalPosition())
-  }
-
-  protected getScreenBoundingBox (): RectangularCollider | undefined {
-    const game = this.game
-
-    if (game === undefined) return
-
-    return game.getBoundingBox()
-  }
-
-  // Game Loop
-
-  public draw (frame: Frame): void {
-    for (const child of this.children) {
-      const childFrame = new Frame()
-      childFrame.offset = child.position
-
-      child.draw(childFrame)
-
-      childFrame.draw(frame)
-    }
-  }
-
-  public update (delta: number): void {
-    for (const child of this.children) {
-      child.update(delta)
-    }
   }
 }
 

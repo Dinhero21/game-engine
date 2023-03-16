@@ -51,4 +51,4 @@ export class Mouse {
   }
 }
 
-export default Mouse
+export default new Mouse()

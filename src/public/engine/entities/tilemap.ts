@@ -9,12 +9,12 @@ export class TileMapEntity extends Entity {
   public draw (frame: Frame): void {
     super.draw(frame)
 
-    const screenBoundingBox = this.getScreenBoundingBox()
+    // const screenBoundingBox = this.getScreenBoundingBox()
 
-    if (screenBoundingBox === undefined) return
+    // if (screenBoundingBox === undefined) return
 
     for (const chunk of this.chunks) {
-      if (!chunk.overlapping(screenBoundingBox)) continue
+      // if (!chunk.overlapping(screenBoundingBox)) continue
 
       for (const tile of chunk.tiles) {
         const position = tile.position
