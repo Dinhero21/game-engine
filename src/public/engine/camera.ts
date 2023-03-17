@@ -26,6 +26,7 @@ export class Camera {
     // Scene -> Camera Context -> Context
 
     const frame = new Frame()
+    frame.offset = position.scaled(-1)
 
     // Scene -> Frame
     scene.draw(frame)
@@ -44,7 +45,7 @@ export class Camera {
     context.clearRect(0, 0, canvasSize.x, canvasSize.y)
 
     // Camera Context -> Context
-    context.drawImage(cameraCanvas, -position.x, -position.y, canvasSize.x, canvasSize.y)
+    context.drawImage(cameraCanvas, 0, 0, canvasSize.x, canvasSize.y)
   }
 }
 

@@ -69,6 +69,7 @@ export class Scene {
     return mouse.getPosition()
       .divided(windowSize)
       .scaled(camera.size)
+      .plus(camera.position)
   }
 }
 
