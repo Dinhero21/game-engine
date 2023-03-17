@@ -1,14 +1,17 @@
 import type Scene from '../scene.js'
-import mouse from '../util/input/mouse.js'
 import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
 export class Entity<Children extends Entity = Entity<any>> {
+  public getScene (): Scene | undefined {
+    return this.parent?.getScene()
+  }
+
+  // Game Loop
+
   public update (delta: number): void {
-    for (const child of this.children) {
-      child.update(delta)
-    }
+    for (const child of this.children) child.update(delta)
   }
 
   public draw (frame: Frame): void {
@@ -20,14 +23,6 @@ export class Entity<Children extends Entity = Entity<any>> {
 
       childFrame.draw(frame)
     }
-  }
-
-  public getScene (): Scene | undefined {
-    const parent = this.parent
-
-    if (parent === undefined) return
-
-    return parent.getScene()
   }
 
   // Entity Relationship
@@ -48,9 +43,9 @@ export class Entity<Children extends Entity = Entity<any>> {
     return this
   }
 
-  protected parent?: Entity
+  protected parent?: Entity | Scene
 
-  public setParent (parent: Entity): this {
+  public setParent (parent: Entity | Scene): this {
     this.parent = parent
 
     return this
@@ -82,15 +77,11 @@ export class Entity<Children extends Entity = Entity<any>> {
   // IO
 
   protected getMousePosition (): Vec2 | undefined {
-    return mouse.getPosition()
+    return this.getScene()?.getMousePosition()
   }
 
   protected getGlobalMousePosition (): Vec2 | undefined {
-    const mousePosition = this.getMousePosition()
-
-    if (mousePosition === undefined) return
-
-    return mousePosition.minus(this.getGlobalPosition())
+    return this.getMousePosition()?.minus(this.getGlobalPosition())
   }
 }
 

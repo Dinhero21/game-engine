@@ -1,4 +1,4 @@
-import Camera from './engine/camera.js'
+import Loop from './engine/util/loop.js'
 import createScene from './game/index.js'
 
 const view = document.getElementById('view')
@@ -11,11 +11,13 @@ const context = view.getContext('2d')
 if (context === null) throw new Error('Could not get view context')
 
 const scene = createScene(context)
+const camera = scene.camera
 
-const camera = new Camera(scene)
+// Call scene.update whenever possible
+Loop.instant()(delta => { scene.update(delta) })
 
-scene.updateLoop(delta => { scene.update(delta) })
-camera.drawLoop(() => { camera.draw(context) })
+// Call camera.render every animation frame
+Loop.draw()(delta => { camera.render() })
 
 updateViewSize()
 

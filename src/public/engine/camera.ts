@@ -12,15 +12,9 @@ export class Camera {
     this.scene = scene
   }
 
-  public drawLoop (callback: () => void): void {
-    callback()
-
-    setTimeout(() => { this.drawLoop(callback) })
-  }
-
-  public draw (context: CanvasRenderingContext2D): void {
+  public render (): void {
     const scene = this.scene
-
+    const context = scene.context
     const canvas = context.canvas
 
     const canvasSize = new Vec2(canvas.width, canvas.height)
