@@ -50,14 +50,22 @@ export class PlayerEntity extends Entity {
     this.move(delta)
 
     super.update(delta)
+
+    if (this.controllable) {
+      const scene = this.getScene()
+
+      if (scene === undefined) return
+
+      const camera = scene.camera
+
+      camera.position = camera.position.plus(this.position.minus(camera.position).scaled(delta))
+    }
   }
 
   protected getUserInputDirection (): Vec2 {
-    const controllable = this.controllable
-
     let horizontalDirection = 0
 
-    if (controllable) {
+    if (this.controllable) {
       if (keyboard.isKeyDown('a')) horizontalDirection--
       if (keyboard.isKeyDown('d')) horizontalDirection++
     }

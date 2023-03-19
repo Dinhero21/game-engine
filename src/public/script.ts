@@ -1,3 +1,4 @@
+import { ViewportGenerators } from './engine/camera.js'
 import Loop from './engine/util/loop.js'
 import createScene from './game/index.js'
 
@@ -12,6 +13,8 @@ if (context === null) throw new Error('Could not get view context')
 
 const scene = createScene(context)
 const camera = scene.camera
+
+camera.ViewportGenerator = ViewportGenerators.Center
 
 // Call scene.update whenever possible
 Loop.instant()(delta => { scene.update(delta) })

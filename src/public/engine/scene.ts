@@ -62,14 +62,15 @@ export class Scene {
   // IO
 
   public getMousePosition (): Vec2 {
-    const camera = this.camera
-
     const windowSize = new Vec2(window.innerWidth, window.innerHeight)
+
+    const camera = this.camera
+    const viewport = camera.getViewport()
 
     return mouse.getPosition()
       .divided(windowSize)
-      .scaled(camera.size)
-      .plus(camera.position)
+      .scaled(viewport.getSize())
+      .plus(viewport.getPosition())
   }
 }
 
