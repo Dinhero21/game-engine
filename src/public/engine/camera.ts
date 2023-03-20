@@ -7,15 +7,7 @@ export type ViewportGenerator = (camera: Camera) => RectangularCollider
 
 export const ViewportGenerators = {
   TopLeftCorner: (camera: Camera) => new RectangularCollider(camera.position, camera.size),
-  Center: (camera: Camera) => {
-    const scene = camera.scene
-    const context = scene.context
-    const canvas = context.canvas
-
-    const size = new Vec2(canvas.width, canvas.height)
-
-    return new RectangularCollider(camera.position.minus(size.divided(2)), camera.size)
-  }
+  Center: (camera: Camera) => new RectangularCollider(camera.position.minus(camera.size.divided(2)), camera.size)
 }
 
 export class Camera {
@@ -25,6 +17,7 @@ export class Camera {
   public ViewportGenerator: ViewportGenerator = ViewportGenerators.TopLeftCorner
 
   public getViewport (): RectangularCollider {
+    // TODO: Make it so you can chain ViewportGenerators
     return this.ViewportGenerator(this)
   }
 
