@@ -6,11 +6,13 @@ import Vec2 from '../../engine/util/vec2.js'
 
 export class TestEntity extends Entity {
   public getBoundingBox (): MultiRectangularCollider {
-    const globalContext = this.getGlobalContext()
+    const scene = this.getScene()
 
-    if (globalContext === undefined) return new MultiRectangularCollider([super.getBoundingBox()])
+    if (scene === undefined) return new MultiRectangularCollider([super.getBoundingBox()])
 
-    const canvas = globalContext.canvas
+    const context = scene.context
+
+    const canvas = context.canvas
 
     const size = new Vec2(64, 64)
 
@@ -46,6 +48,8 @@ export class TestEntity extends Entity {
     const parent = this.parent
 
     if (parent === undefined) return
+
+    if (!(parent instanceof Entity)) return
 
     const parentBoundingBox = parent.getBoundingBox()
 

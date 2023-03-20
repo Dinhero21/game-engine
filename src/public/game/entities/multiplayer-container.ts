@@ -17,7 +17,7 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
     socket.on('player.add', player => {
       // if (players.has(player.id)) throw new Error(`Player ${player.id} already exists!`)
 
-      const velocity = player.velocity
+      const velocity = new Vec2(...player.velocity)
 
       const entity = new PlayerEntity(player.id, new Vec2(velocity.x, velocity.y))
       entity.controllable = player.id === socket.id
@@ -42,8 +42,11 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
       // ? Should I warn or throw an error?
       if (entity === undefined) return
 
-      entity.position.set(player.position.x, player.position.y)
-      entity.velocity.set(player.velocity.x, player.velocity.y)
+      const position = new Vec2(...player.position)
+      const velocity = new Vec2(...player.velocity)
+
+      entity.position.set(position.x, position.y)
+      entity.velocity.set(velocity.x, velocity.y)
     })
   }
 
@@ -56,6 +59,6 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
 
     if (entity === undefined) return
 
-    socket.emit('physics.update', entity.position, entity.velocity)
+    socket.emit('physics.update', entity.position.toArray(), entity.velocity.toArray())
   }
 }

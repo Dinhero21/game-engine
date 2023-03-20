@@ -27,16 +27,10 @@ SocketData
 const players = new Set<Player>()
 
 io.on('connection', socket => {
-  const player = {
+  const player: Player = {
     id: socket.id,
-    position: {
-      x: 0,
-      y: 0
-    },
-    velocity: {
-      x: 0,
-      y: 0
-    }
+    position: [0, 0],
+    velocity: [0, 0]
   }
 
   io.emit('player.add', player)

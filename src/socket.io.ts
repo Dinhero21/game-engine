@@ -1,10 +1,7 @@
 // import type Vec2 from './public/engine/util/vec2'
 
 // Engine.io will strip the function methods from Vec2
-export interface Vec2 {
-  x: number
-  y: number
-}
+export type Vec2 = [number, number]
 
 // ? Should I define Player here?
 export interface Player {
