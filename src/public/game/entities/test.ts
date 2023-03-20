@@ -5,10 +5,10 @@ import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 
 export class TestEntity extends Entity {
-  public getBoundingBox (): MultiRectangularCollider {
+  public getBoundingBox (): MultiRectangularCollider | null {
     const scene = this.getScene()
 
-    if (scene === undefined) return new MultiRectangularCollider([super.getBoundingBox()])
+    if (scene === undefined) return null
 
     const context = scene.context
 
@@ -53,7 +53,11 @@ export class TestEntity extends Entity {
 
     const parentBoundingBox = parent.getBoundingBox()
 
+    if (parentBoundingBox === null) return
+
     const boundingBox = this.getBoundingBox()
+
+    if (boundingBox === null) return
 
     const colliding = boundingBox.colliding(parentBoundingBox)
 

@@ -1,5 +1,5 @@
 import type Scene from '../scene.js'
-import RectangularCollider from '../util/collision/rectangular.js'
+import type RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
@@ -65,13 +65,8 @@ export class Entity<Children extends Entity = Entity<any>> {
 
   // Collision Detection
 
-  protected size: Vec2 = new Vec2(0, 0)
-
-  public getBoundingBox (): RectangularCollider {
-    return new RectangularCollider(
-      this.position,
-      this.size
-    )
+  public getBoundingBox (): RectangularCollider | null {
+    return null
   }
 
   // IO

@@ -2,10 +2,9 @@ import type Frame from '../../engine/util/frame.js'
 import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 import keyboard from '../../engine/util/input/keyboard.js'
+import RectangularCollider from '../../engine/util/collision/rectangular.js'
 
 export class PlayerEntity extends Entity {
-  protected size = new Vec2(64, 64)
-
   public id
   public velocity
 
@@ -18,19 +17,32 @@ export class PlayerEntity extends Entity {
     this.velocity = velocity
   }
 
+  public getBoundingBox (): RectangularCollider {
+    const size = new Vec2(64, 64)
+
+    const globalPosition = this.getGlobalPosition()
+
+    return new RectangularCollider(globalPosition.minus(size.divided(2)), size)
+  }
+
   public draw (frame: Frame): void {
     super.draw(frame)
 
+    const globalPosition = this.getGlobalPosition()
+
     const boundingBox = this.getBoundingBox()
     const size = boundingBox.getSize()
+    const position = boundingBox.getPosition().minus(globalPosition)
 
-    frame.drawFancyRectRGBA(0, 0, size.x, size.y, 0x61, 0xAF, 0xEF)
+    frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, 0x61, 0xAF, 0xEF)
 
     const velocity = this.velocity
 
-    frame.drawLine(size.x / 2, size.y / 2, size.x / 2, (velocity.y / 10) + (size.y / 2), '#e06c75', 3)
-    frame.drawLine(size.x / 2, size.y / 2, (velocity.x / 10) + (size.x / 2), size.y / 2, '#98c379', 3)
-    frame.drawLine(size.x / 2, size.y / 2, (velocity.x / 10) + (size.x / 2), (velocity.y / 10) + (size.y / 2), '#e5c07b', 3)
+    const delta = velocity.divided(10)
+
+    frame.drawLine(0, 0, 0, delta.y, '#e06c75', 3)
+    frame.drawLine(0, 0, delta.x, 0, '#98c379', 3)
+    frame.drawLine(0, 0, delta.x, delta.y, '#e5c07b', 3)
 
     const globalMousePosition = this.getGlobalMousePosition()
 
@@ -43,7 +55,7 @@ export class PlayerEntity extends Entity {
     // const isInScreen = this.getBoundingBox().colliding(screenBoundingBox)
     const isInScreen = true
 
-    frame.drawLine(size.x / 2, size.y / 2, globalMousePosition.x, globalMousePosition.y, isInScreen ? '#98c379' : '#e06c75', 3)
+    frame.drawLine(0, 0, globalMousePosition.x, globalMousePosition.y, isInScreen ? '#98c379' : '#e06c75', 3)
   }
 
   public update (delta: number): void {
@@ -106,7 +118,8 @@ export class PlayerEntity extends Entity {
 
     position.add(velocity)
 
-    const size = this.size
+    const boundingBox = this.getBoundingBox()
+    const size = boundingBox.getSize()
 
     // if (position.y > canvas.height - size.y) position.y = canvas.height - size.y
     if (position.y > 100 - size.y) position.y = 100 - size.y
