@@ -32,4 +32,9 @@ function updateViewSize (): void {
 
   view.width = window.innerWidth
   view.height = window.innerHeight
+
+  if (context === null) throw new Error('updateViewSize was called with view context being null')
+
+  // ? Should I disable Image Smoothing?
+  context.imageSmoothingEnabled = false
 }
