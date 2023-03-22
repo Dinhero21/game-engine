@@ -211,4 +211,20 @@ export function euclideanMod (numerator: number, denominator: number): number {
   return result < 0 ? result + denominator : result
 }
 
+export function vec2ToString (vec2: Vec2): string {
+  return `${vec2.x}|${vec2.y}`
+}
+
+export function stringToVec2 (string: string): Vec2 {
+  const [rawX, rawY] = string.split('|')
+
+  if (rawX === undefined) throw new Error('Invalid Vec2 String: No X')
+  if (rawY === undefined) throw new Error('Invalid Vec2 String: No Y')
+
+  const x = parseInt(rawX)
+  const y = parseInt(rawY)
+
+  return new Vec2(x, y)
+}
+
 export default Vec2

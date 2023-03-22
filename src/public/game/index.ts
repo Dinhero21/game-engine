@@ -18,7 +18,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     for (let y = -(cameraSize.y / 2) / 32; y < (cameraSize.y / 2) / 32; y++) {
       const id = x ^ y
 
-      tileMap.setTile(new Vec2(x, y), id)
+      tileMap.setTile({ id }, new Vec2(x, y))
     }
   }
 

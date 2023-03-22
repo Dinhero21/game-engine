@@ -1,10 +1,13 @@
 import { type Tile, Chunk } from '../util/tilemap/chunk.js'
 import type Frame from '../util/frame.js'
-import Vec2 from '../util/vec2.js'
+import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
 import Entity from './base.js'
 
+const TILE_SIZE = 32
+const CHUNK_SIZE = 16
+
 export class TileMapEntity extends Entity {
-  protected chunks: Chunk[] = []
+  protected chunks = new Map<string, Chunk>()
 
   public draw (frame: Frame): void {
     super.draw(frame)
@@ -13,19 +16,25 @@ export class TileMapEntity extends Entity {
 
     // if (screenBoundingBox === undefined) return
 
-    for (const chunk of this.chunks) {
+    for (const [chunkId, chunk] of this.chunks) {
+      const chunkChunkPosition = stringToVec2(chunkId)
+      const chunkTilePosition = this.chunkPositionToTilePosition(chunkChunkPosition)
+
       // if (!chunk.overlapping(screenBoundingBox)) continue
 
-      for (const tile of chunk.tiles) {
-        const position = tile.position
-        const size = tile.size
+      for (const [tileId, tile] of chunk.tiles) {
         const id = tile.id
 
+        const relativeTileTilePosition = stringToVec2(tileId)
+        const tileTilePosition = relativeTileTilePosition.add(chunkTilePosition)
+
+        const tilePosition = this.tilePositionToPosition(tileTilePosition)
+
         frame.drawRectRGBA(
-          position.x,
-          position.y,
-          size.x,
-          size.y,
+          tilePosition.x,
+          tilePosition.y,
+          TILE_SIZE,
+          TILE_SIZE,
           id % 2 === 0 ? 0x10 : 0x20,
           id % 2 === 0 ? 0x10 : 0x20,
           id % 2 === 0 ? 0x10 : 0x20
@@ -34,27 +43,47 @@ export class TileMapEntity extends Entity {
     }
   }
 
-  public setTile (position: Vec2, id: number): void {
-    const size = new Vec2(32, 32)
-
-    position = position
-      .floor()
-      .scaled(size)
-
-    const tile: Tile = { position, size, id }
-
-    const chunkPosition = tile.position
-      .divided(size)
+  protected positionToTilePosition (position: Vec2): Vec2 {
+    return position
+      .divided(TILE_SIZE)
       .floored()
-      .scaled(size)
+  }
 
-    let chunk = this.chunks.find(chunk => chunk.position.equals(chunkPosition))
+  protected tilePositionToPosition (tilePosition: Vec2): Vec2 {
+    return tilePosition.scaled(TILE_SIZE)
+  }
+
+  protected tilePositionToChunkPosition (tilePosition: Vec2): Vec2 {
+    return tilePosition
+      .divided(CHUNK_SIZE)
+      .floored()
+  }
+
+  protected chunkPositionToTilePosition (chunkPosition: Vec2): Vec2 {
+    return chunkPosition.scaled(CHUNK_SIZE)
+  }
+
+  public setTile (tile: Tile, tilePosition: Vec2): void {
+    const chunkChunkPosition = this.tilePositionToChunkPosition(tilePosition)
+    const chunkTilePosition = this.chunkPositionToTilePosition(chunkChunkPosition)
+
+    tilePosition = tilePosition
+      .minus(chunkTilePosition)
+
+    const chunkId = vec2ToString(chunkChunkPosition)
+    let chunk = this.chunks.get(chunkId)
 
     if (chunk === undefined) {
-      chunk = new Chunk(chunkPosition, size)
-      this.chunks.push(chunk)
+      chunk = new Chunk(chunkChunkPosition, new Vec2(16, 16))
+      this.chunks.set(chunkId, chunk)
     }
 
-    chunk.setTile(tile)
+    chunk.setTile(tile, tilePosition)
+  }
+
+  public setChunk (chunk: Chunk, chunkPosition: Vec2): void {
+    const chunkId = vec2ToString(chunkPosition)
+
+    this.chunks.set(chunkId, chunk)
   }
 }
