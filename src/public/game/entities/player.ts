@@ -63,15 +63,15 @@ export class PlayerEntity extends Entity {
 
     super.update(delta)
 
-    if (this.controllable) {
-      const scene = this.getScene()
+    // if (this.controllable) {
+    //   const scene = this.getScene()
 
-      if (scene === undefined) return
+    //   if (scene === undefined) return
 
-      const camera = scene.camera
+    //   const camera = scene.camera
 
-      camera.position = camera.position.plus(this.position.minus(camera.position).scaled(delta))
-    }
+    //   camera.position = camera.position.plus(this.position.minus(camera.position).scaled(delta))
+    // }
   }
 
   protected getUserInputDirection (): Vec2 {
@@ -106,11 +106,13 @@ export class PlayerEntity extends Entity {
   }
 
   protected updatePosition (velocity: Vec2): Vec2 {
-    // const globalContext = this.getGlobalContext()
+    const scene = this.getScene()
 
-    // if (globalContext === undefined) return velocity
+    if (scene === undefined) return velocity
 
-    // const canvas = globalContext.canvas
+    const camera = scene.camera
+    const viewport = camera.getViewport()
+    const viewportBottom = viewport.getSize().y + viewport.getPosition().y
 
     const position = this.position
 
@@ -121,8 +123,9 @@ export class PlayerEntity extends Entity {
     const boundingBox = this.getBoundingBox()
     const size = boundingBox.getSize()
 
-    // if (position.y > canvas.height - size.y) position.y = canvas.height - size.y
-    if (position.y > 100 - size.y) position.y = 100 - size.y
+    // size / 2 because the bounding box is centered
+    const maxY = viewportBottom - (size.y / 2)
+    if (position.y > maxY) position.y = maxY
 
     const newVelocity = position.minus(oldPosition)
 

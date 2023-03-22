@@ -17,8 +17,25 @@ export class Camera {
   public ViewportGenerator: ViewportGenerator = ViewportGenerators.TopLeftCorner
 
   public getViewport (): RectangularCollider {
-    // TODO: Make it so you can chain ViewportGenerators
-    return this.ViewportGenerator(this)
+    const viewport = this.ViewportGenerator(this)
+
+    const viewportSize = viewport.getSize()
+    const viewportPosition = viewport.getPosition()
+
+    const scene = this.scene
+    const context = scene.context
+    const canvas = context.canvas
+
+    const targetSize = new Vec2(canvas.width, canvas.height)
+
+    const scale = Math.min(viewportSize.x / targetSize.x, viewportSize.y / targetSize.y)
+
+    const size = targetSize.scaled(scale)
+
+    // TODO: Make this less ugly
+    const position = viewportPosition.minus(this.position).scaled(targetSize.divided(viewportSize)).scaled(scale).plus(this.position)
+
+    return new RectangularCollider(position, size)
   }
 
   public readonly scene
@@ -35,8 +52,9 @@ export class Camera {
     const canvasSize = new Vec2(canvas.width, canvas.height)
 
     const viewport = this.getViewport()
+    const viewportSize = viewport.getSize()
 
-    // Scene -> Camera Context -> Context
+    // Scene -> Frame -> Camera Context -> Context
 
     const frame = new Frame()
     frame.offset = viewport.getPosition().scaled(-1)
@@ -44,23 +62,18 @@ export class Camera {
     // Scene -> Frame
     scene.draw(frame)
 
-    const cameraSize = viewport.getSize()
+    const viewportCanvas = new OffscreenCanvas(viewportSize.x, viewportSize.y)
+    const viewportContext = viewportCanvas.getContext('2d')
 
-    const cameraCanvas = document.createElement('canvas')
-    cameraCanvas.width = cameraSize.x
-    cameraCanvas.height = cameraSize.y
-
-    const cameraContext = cameraCanvas.getContext('2d')
-
-    if (cameraContext === null) return
+    if (viewportContext === null) return
 
     // Frame -> Camera Context
-    frame.draw(cameraContext)
+    frame.draw(viewportContext)
 
     context.clearRect(0, 0, canvasSize.x, canvasSize.y)
 
     // Camera Context -> Context
-    context.drawImage(cameraCanvas, 0, 0, canvasSize.x, canvasSize.y)
+    context.drawImage(viewportCanvas, 0, 0, canvasSize.x, canvasSize.y)
   }
 }
 

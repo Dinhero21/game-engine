@@ -1,5 +1,5 @@
 // import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
-// import { TileMapEntity } from '../engine/entities/tilemap.js'
+import { TileMapEntity } from '../engine/entities/tilemap.js'
 import Scene from '../engine/scene.js'
 import Vec2 from '../engine/util/vec2.js'
 import PlayerEntity from './entities/player.js'
@@ -8,17 +8,19 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   // const canvas = context.canvas
 
   const scene = new Scene(context)
+  const camera = scene.camera
+  const cameraSize = camera.size
 
-  // const tileMap = new TileMapEntity()
-  // scene.addChild(tileMap)
+  const tileMap = new TileMapEntity()
+  scene.addChild(tileMap)
 
-  // for (let x = 0; x < canvas.width / 32; x++) {
-  //   for (let y = 0; y < canvas.height / 32; y++) {
-  //     const id = x ^ y
+  for (let x = -(cameraSize.x / 2) / 32; x < (cameraSize.x / 2) / 32; x++) {
+    for (let y = -(cameraSize.y / 2) / 32; y < (cameraSize.y / 2) / 32; y++) {
+      const id = x ^ y
 
-  //     tileMap.setTile(new Vec2(x, y), id)
-  //   }
-  // }
+      tileMap.setTile(new Vec2(x, y), id)
+    }
+  }
 
   // const multiplayerContainer = new MultiplayerContainerEntity()
   // scene.addChild(multiplayerContainer)

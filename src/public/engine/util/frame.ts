@@ -1,16 +1,17 @@
 import Vec2 from './vec2.js'
 import { isNone, type None } from '../../none.js'
 
-export type Context = Frame | CanvasRenderingContext2D
+export type HTMLRenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
+export type RenderingContext2D = Frame | HTMLRenderingContext2D
 
 export class Frame {
-  private readonly queue: Array<(context: Context) => void> = []
+  private readonly queue: Array<(context: RenderingContext2D) => void> = []
 
   public offset: Vec2 = new Vec2(0, 0)
 
   // Context properties
 
-  public setFillStyle (fillStyle: CanvasRenderingContext2D['fillStyle']): this {
+  public setFillStyle (fillStyle: HTMLRenderingContext2D['fillStyle']): this {
     const queue = this.queue
 
     queue.push(context => {
@@ -26,7 +27,7 @@ export class Frame {
     return this
   }
 
-  public setStrokeStyle (strokeStyle: CanvasRenderingContext2D['strokeStyle']): this {
+  public setStrokeStyle (strokeStyle: HTMLRenderingContext2D['strokeStyle']): this {
     const queue = this.queue
 
     queue.push(context => {
@@ -42,7 +43,7 @@ export class Frame {
     return this
   }
 
-  public setLineWidth (lineWidth: CanvasRenderingContext2D['lineWidth']): this {
+  public setLineWidth (lineWidth: HTMLRenderingContext2D['lineWidth']): this {
     const queue = this.queue
 
     queue.push(context => {
@@ -199,7 +200,7 @@ export class Frame {
 
   // High level methods
 
-  public drawLine (startX: number, startY: number, endX: number, endY: number, color: CanvasRenderingContext2D['strokeStyle'] | None, width: CanvasRenderingContext2D['lineWidth'] | None = 8): this {
+  public drawLine (startX: number, startY: number, endX: number, endY: number, color: HTMLRenderingContext2D['strokeStyle'] | None, width: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
     if (!isNone(color)) this.setStrokeStyle(color)
     if (!isNone(width)) this.setLineWidth(width)
 
@@ -211,7 +212,7 @@ export class Frame {
     return this
   }
 
-  public drawRect (x: number, y: number, w: number, h: number, color: CanvasRenderingContext2D['fillStyle'] | None): this {
+  public drawRect (x: number, y: number, w: number, h: number, color: HTMLRenderingContext2D['fillStyle'] | None): this {
     if (!isNone(color)) this.setFillStyle(color)
 
     this._fillRect(x, y, w, h)
@@ -225,7 +226,7 @@ export class Frame {
     return this
   }
 
-  public outlineRect (x: number, y: number, w: number, h: number, color: CanvasRenderingContext2D['fillStyle'] | None, outlineWidth: CanvasRenderingContext2D['lineWidth'] | None): this {
+  public outlineRect (x: number, y: number, w: number, h: number, color: HTMLRenderingContext2D['fillStyle'] | None, outlineWidth: HTMLRenderingContext2D['lineWidth'] | None): this {
     if (!isNone(color)) this.setStrokeStyle(color)
     if (!isNone(outlineWidth)) this.setLineWidth(outlineWidth)
 
@@ -234,20 +235,20 @@ export class Frame {
     return this
   }
 
-  public outlineRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: CanvasRenderingContext2D['lineWidth'] | None): this {
+  public outlineRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: HTMLRenderingContext2D['lineWidth'] | None): this {
     this.outlineRect(x, y, w, h, `rgba(${r},${g},${b},${a})`, outlineWidth)
 
     return this
   }
 
-  public drawFancyRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: CanvasRenderingContext2D['lineWidth'] | None = 8): this {
+  public drawFancyRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
     this.outlineRectRGBA(x, y, w, h, r, g, b, a, outlineWidth)
     this.drawRectRGBA(x, y, w, h, r, g, b, a * 0.20)
 
     return this
   }
 
-  public draw (context: Context): this {
+  public draw (context: RenderingContext2D): this {
     for (const f of this.queue) f(context)
 
     return this
