@@ -1,34 +1,26 @@
-// import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
+import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
 import { TileMapEntity } from '../engine/entities/tilemap.js'
 import Scene from '../engine/scene.js'
 import Vec2 from '../engine/util/vec2.js'
-import PlayerEntity from './entities/player.js'
+// import PlayerEntity from './entities/player.js'
+import io from '../socket.io/socket.io.esm.min.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
-  // const canvas = context.canvas
+  const socket = io()
 
   const scene = new Scene(context)
-  const camera = scene.camera
-  const cameraSize = camera.size
 
   const tileMap = new TileMapEntity()
   scene.addChild(tileMap)
 
-  for (let x = -(cameraSize.x / 2) / 32; x < (cameraSize.x / 2) / 32; x++) {
-    for (let y = -(cameraSize.y / 2) / 32; y < (cameraSize.y / 2) / 32; y++) {
-      const id = x ^ y
+  socket.on('tile.set', (tile, rawTilePosition) => {
+    const tilePosition = new Vec2(rawTilePosition[0], rawTilePosition[1])
 
-      tileMap.setTile({ id }, new Vec2(x, y))
-    }
-  }
+    tileMap.setTile(tile, tilePosition)
+  })
 
-  // const multiplayerContainer = new MultiplayerContainerEntity()
-  // scene.addChild(multiplayerContainer)
-
-  const player = new PlayerEntity('amogus', new Vec2(0, 0))
-  player.controllable = true
-
-  scene.addChild(player)
+  const multiplayerContainer = new MultiplayerContainerEntity(socket)
+  scene.addChild(multiplayerContainer)
 
   return scene
 }

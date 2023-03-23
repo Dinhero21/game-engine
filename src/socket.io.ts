@@ -1,4 +1,4 @@
-// import type Vec2 from './public/engine/util/vec2'
+import { type Tile } from './public/engine/util/tilemap/chunk.js'
 
 // Engine.io will strip the function methods from Vec2
 export type Vec2 = [number, number]
@@ -15,6 +15,7 @@ export interface ServerToClientEvents {
   'player.add': (player: Player) => void
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
+  'tile.set': (tile: Tile, tilePosition: Vec2) => void
 }
 
 // Client -> Server

@@ -75,9 +75,12 @@ export class Vec2 {
     return this
   }
 
-  divide (other: Vec2): this {
-    this.x /= other.x
-    this.y /= other.y
+  divide (value: number | Vec2): this {
+    value = this.vectorize(value)
+
+    this.x /= value.x
+    this.y /= value.y
+
     return this
   }
 
