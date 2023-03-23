@@ -1,5 +1,8 @@
-import Vec2 from './vec2.js'
 import { isNone, type None } from '../../none.js'
+import { Frame as FrameGlobals } from '../../globals.js'
+import Vec2 from './vec2.js'
+
+const INTEGER_APPROXIMATION = FrameGlobals.integer_approximation
 
 export type HTMLRenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
 export type RenderingContext2D = Frame | HTMLRenderingContext2D
@@ -64,6 +67,11 @@ export class Frame {
   public _fillRect (x: number, y: number, w: number, h: number): this {
     const queue = this.queue
 
+    if (INTEGER_APPROXIMATION) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
+
     queue.push(context => {
       const offset = this.offset
 
@@ -85,6 +93,11 @@ export class Frame {
   public _strokeRect (x: number, y: number, w: number, h: number): this {
     const queue = this.queue
 
+    if (INTEGER_APPROXIMATION) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
+
     queue.push(context => {
       const offset = this.offset
 
@@ -105,6 +118,11 @@ export class Frame {
 
   public _drawImage (image: CanvasImageSource, x: number, y: number): this {
     const queue = this.queue
+
+    if (INTEGER_APPROXIMATION) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
     queue.push(context => {
       const offset = this.offset
@@ -143,6 +161,11 @@ export class Frame {
   public _moveTo (x: number, y: number): this {
     const queue = this.queue
 
+    if (INTEGER_APPROXIMATION) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
+
     queue.push(context => {
       const offset = this.offset
 
@@ -163,6 +186,11 @@ export class Frame {
 
   public _lineTo (x: number, y: number): this {
     const queue = this.queue
+
+    if (INTEGER_APPROXIMATION) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
     queue.push(context => {
       const offset = this.offset

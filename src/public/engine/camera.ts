@@ -1,7 +1,10 @@
 import type Scene from './scene.js'
+import { Camera as CameraGlobals } from '../globals.js'
 import Frame from './util/frame.js'
 import Vec2 from './util/vec2.js'
 import RectangularCollider from './util/collision/rectangular.js'
+
+const INTEGER_APPROXIMATION = CameraGlobals.integer_approximation
 
 export type ViewportGenerator = (camera: Camera) => RectangularCollider
 
@@ -34,6 +37,11 @@ export class Camera {
 
     // TODO: Make this less ugly
     const position = viewportPosition.minus(this.position).scaled(targetSize.divided(viewportSize)).scaled(scale).plus(this.position)
+
+    if (INTEGER_APPROXIMATION) {
+      size.floor()
+      position.floor()
+    }
 
     return new RectangularCollider(position, size)
   }
