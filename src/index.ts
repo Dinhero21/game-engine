@@ -99,8 +99,6 @@ io.on('connection', socket => {
 
         if (player.chunks.has(chunkId)) continue
 
-        console.log(chunk)
-
         socket.emit('chunk.set', Array.from(chunk), chunkPosition.toArray())
 
         player.chunks.add(chunkId)
