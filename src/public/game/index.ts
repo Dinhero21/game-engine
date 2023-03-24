@@ -1,12 +1,11 @@
 import type { IClientSocket as Socket } from '../../socket.io.js'
+import { CHUNK_SIZE } from '../engine/util/tilemap/position-conversion.js'
 import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
 import { TileMapEntity } from '../engine/entities/tilemap.js'
-import Scene from '../engine/scene.js'
-import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
-// import PlayerEntity from './entities/player.js'
-import io from '../socket.io/socket.io.esm.min.js'
 import { Chunk } from '../engine/util/tilemap/chunk.js'
-import { CHUNK_SIZE } from '../engine/util/tilemap/position-conversion.js'
+import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
+import Scene from '../engine/scene.js'
+import io from '../socket.io/socket.io.esm.min.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
