@@ -48,8 +48,8 @@ export class TileMapEntity extends Entity {
     const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
-    const chunkChunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
-    const chunkTileSize = chunkPositionToTilePosition(chunkChunkSize)
+    const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
+    const chunkPositionSize = chunkPositionToTilePosition(chunkTileSize)
 
     tilePosition = tilePosition
       .minus(chunkTilePosition)
@@ -58,16 +58,16 @@ export class TileMapEntity extends Entity {
     let chunk = this.chunks.get(chunkId)
 
     if (chunk === undefined) {
-      chunk = new Chunk(chunkChunkPosition, chunkTileSize)
+      chunk = new Chunk(chunkChunkPosition, chunkPositionSize)
       this.chunks.set(chunkId, chunk)
     }
 
     chunk.setTile(tile, tilePosition)
   }
 
-  // public setChunk (chunk: Chunk, chunkPosition: Vec2): void {
-  //   const chunkId = vec2ToString(chunkPosition)
+  public setChunk (chunk: Chunk, chunkPosition: Vec2): void {
+    const chunkId = vec2ToString(chunkPosition)
 
-  //   this.chunks.set(chunkId, chunk)
-  // }
+    this.chunks.set(chunkId, chunk)
+  }
 }

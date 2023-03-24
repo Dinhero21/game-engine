@@ -1,5 +1,5 @@
-import type { Player as ClientPlayer, ClientToServerEvents, ServerToClientEvents, InterServerEvents, SocketData, Vec2 as RawVec2 } from './socket.io'
-import { positionToTilePosition } from './public/engine/util/tilemap/position-conversion.js'
+import type { Player as ClientPlayer, Vec2 as RawVec2, IServerServer as IServer } from './socket.io'
+import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import { type Tile } from './public/engine/util/tilemap/chunk.js'
 import http from 'http'
@@ -14,9 +14,19 @@ const __filename = url.fileURLToPath(import.meta.url)
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = path.dirname(__filename)
 
-const SCREEN_SIZE = (new Vec2(1920, 1080))
+const SCREEN_SIZE = new Vec2(1920, 1080)
 
 const HALF_SCREEN_SIZE = SCREEN_SIZE.divided(2)
+
+interface ServerPlayer {
+  id: string
+  position: Vec2
+  velocity: Vec2
+  chunks: Set<string>
+}
+
+// TODO: Separate World Generation into other files
+export type Chunk = Map<string, Tile>
 
 const app = express()
 
@@ -24,30 +34,18 @@ app.use('/', express.static(path.join(__dirname, 'public')))
 
 const server = http.createServer(app)
 
-const io = new Server<
-ClientToServerEvents,
-ServerToClientEvents,
-InterServerEvents,
-SocketData
->(server)
+const io: IServer = new Server(server)
 
 const players = new Set<ServerPlayer>()
 
-const tiles = new Map<string, Tile>()
-
-interface ServerPlayer {
-  id: string
-  position: Vec2
-  velocity: Vec2
-  tiles: Set<string>
-}
+const chunks = new Map<string, Chunk>()
 
 io.on('connection', socket => {
   const player: ServerPlayer = {
     id: socket.id,
     position: new Vec2(0, 0),
     velocity: new Vec2(0, 0),
-    tiles: new Set()
+    chunks: new Set()
   }
 
   io.emit('player.add', getClientPlayer(player))
@@ -71,30 +69,42 @@ io.on('connection', socket => {
     const topLeftScreenTilePosition = positionToTilePosition(topLeftScreenPositionPosition)
     const bottomRightScreenTilePosition = positionToTilePosition(bottomRightScreenPositionPosition)
 
-    const addedTiles = new Map<Vec2, Tile>()
+    const topLeftScreenChunkPosition = tilePositionToChunkPosition(topLeftScreenTilePosition)
+    const bottomRightScreenChunkPosition = tilePositionToChunkPosition(bottomRightScreenTilePosition)
 
-    for (let y = topLeftScreenTilePosition.y; y <= bottomRightScreenTilePosition.y; y++) {
-      for (let x = topLeftScreenTilePosition.x; x <= bottomRightScreenTilePosition.x; x++) {
-        const tilePosition = new Vec2(x, y)
-        const tileId = vec2ToString(tilePosition)
+    for (let chunkY = topLeftScreenChunkPosition.y; chunkY <= bottomRightScreenChunkPosition.y; chunkY++) {
+      for (let chunkX = topLeftScreenChunkPosition.x; chunkX <= bottomRightScreenChunkPosition.x; chunkX++) {
+        const chunkPosition = new Vec2(chunkX, chunkY)
+        const chunkId = vec2ToString(chunkPosition)
 
-        let tile = tiles.get(tileId)
+        let chunk = chunks.get(chunkId)
 
-        if (tile === undefined) {
-          tile = { id: Date.now() / 10 }
+        if (chunk === undefined) {
+          chunk = new Map()
 
-          tiles.set(tileId, tile)
+          // TODO: Make this its own function (probably in its own file)
+          for (let tileY = 0; tileY < 16; tileY++) {
+            for (let tileX = 0; tileX < 16; tileX++) {
+              const tilePosition = new Vec2(tileX, tileY)
+              const tileId = vec2ToString(tilePosition)
+
+              chunk.set(tileId, {
+                id: Date.now() / 10
+              })
+            }
+          }
+
+          chunks.set(chunkId, chunk)
         }
 
-        addedTiles.set(tilePosition, tile)
+        if (player.chunks.has(chunkId)) continue
+
+        console.log(chunk)
+
+        socket.emit('chunk.set', Array.from(chunk), chunkPosition.toArray())
+
+        player.chunks.add(chunkId)
       }
-    }
-
-    for (const [tilePosition, tile] of addedTiles) {
-      const tileId = vec2ToString(tilePosition)
-
-      if (!player.tiles.has(tileId)) socket.emit('tile.set', tile, tilePosition.toArray())
-      player.tiles.add(tileId)
     }
   })
 

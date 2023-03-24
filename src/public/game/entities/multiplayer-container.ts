@@ -1,6 +1,4 @@
-import type { ClientToServerEvents, ServerToClientEvents } from '../../../socket.io.js'
-import { type Socket } from '../../socket.io/socket.io.esm.min.js'
-
+import type { IClientSocket as Socket } from '../../../socket.io.js'
 import Entity from '../../engine/entities/base.js'
 import PlayerEntity from '../entities/player.js'
 import Vec2 from '../../engine/util/vec2.js'
@@ -8,7 +6,7 @@ import Vec2 from '../../engine/util/vec2.js'
 export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
   private readonly socket
 
-  constructor (socket: Socket<ServerToClientEvents, ClientToServerEvents>) {
+  constructor (socket: Socket) {
     super()
 
     this.socket = socket

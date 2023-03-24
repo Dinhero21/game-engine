@@ -12,11 +12,11 @@ export class Chunk {
   public tiles = new Map<string, Tile>()
   public boundingBox: RectangularCollider
 
-  constructor (chunkPosition: Vec2, tileCount: Vec2) {
+  constructor (chunkPosition: Vec2, chunkTileSize: Vec2) {
     const tilePosition = chunkPositionToTilePosition(chunkPosition)
     const position = tilePositionToPosition(tilePosition)
 
-    const size = tilePositionToPosition(tileCount)
+    const size = tilePositionToPosition(chunkTileSize)
 
     this.boundingBox = new RectangularCollider(position, size)
   }
