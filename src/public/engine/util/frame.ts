@@ -62,6 +62,22 @@ export class Frame {
     return this
   }
 
+  public setFont (font: HTMLRenderingContext2D['font']): this {
+    const queue = this.queue
+
+    queue.push(context => {
+      if (context instanceof Frame) {
+        context.setFont(font)
+
+        return
+      }
+
+      context.font = font
+    })
+
+    return this
+  }
+
   // Context methods
 
   public _fillRect (x: number, y: number, w: number, h: number): this {
@@ -221,6 +237,32 @@ export class Frame {
       }
 
       context.stroke()
+    })
+
+    return this
+  }
+
+  public _fillText (text: string, x: number, y: number, maxWidth?: number): this {
+    const queue = this.queue
+
+    if (INTEGER_APPROXIMATION) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
+
+    queue.push(context => {
+      const offset = this.offset
+
+      x += offset.x
+      y += offset.y
+
+      if (context instanceof Frame) {
+        context._fillText(text, x, y, maxWidth)
+
+        return
+      }
+
+      context.fillText(text, x, y, maxWidth)
     })
 
     return this
