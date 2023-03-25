@@ -14,7 +14,25 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const scene = new Scene(context)
 
-  const tileMap = new TileMapEntity()
+  const tileMap = new TileMapEntity((frame, tile) => {
+    const position = tile.position
+    const size = tile.size
+    const id = tile.id
+
+    const tilePosition = position.divided(size)
+
+    frame.drawRectRGBA(
+      position.x,
+      position.y,
+      size.x,
+      size.y,
+      ((id >> 0) % 2) << 8,
+      ((id >> 1) % 2) << 8,
+      ((id >> 2) % 2) << 8,
+      (tilePosition.x ^ tilePosition.y) % 2 === 0 ? 0.45 : 0.55
+    )
+  })
+
   scene.addChild(tileMap)
 
   socket.on('chunk.set', (rawChunk, rawChunkPosition) => {

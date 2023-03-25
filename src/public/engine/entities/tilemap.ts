@@ -4,8 +4,26 @@ import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
 import Entity from './base.js'
 import { TILE_SIZE, CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition } from '../util/tilemap/position-conversion.js'
 
+export interface TileRendererTile {
+  id: number
+  position: Vec2
+  size: Vec2
+}
+
+export type TileRenderer = (frame: Frame, tile: TileRendererTile) => void
+
+const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
+
 export class TileMapEntity extends Entity {
-  protected chunks = new Map<string, Chunk>()
+  private readonly chunks = new Map<string, Chunk>()
+
+  private readonly render
+
+  constructor (render: TileRenderer) {
+    super()
+
+    this.render = render
+  }
 
   public draw (frame: Frame): void {
     super.draw(frame)
@@ -24,22 +42,26 @@ export class TileMapEntity extends Entity {
       if (!chunk.boundingBox.overlapping(viewport)) continue
 
       for (const [tileId, tile] of chunk.tiles) {
-        const id = tile.id
-
         const relativeTileTilePosition = stringToVec2(tileId)
         const tileTilePosition = relativeTileTilePosition.add(chunkTilePosition)
 
         const tilePosition = tilePositionToPosition(tileTilePosition)
 
-        frame.drawRectRGBA(
-          tilePosition.x,
-          tilePosition.y,
-          TILE_SIZE,
-          TILE_SIZE,
-          (id % 1) * 256,
-          (id % 1) * 256,
-          (id % 1) * 256
-        )
+        this.render(frame, {
+          id: tile.id,
+          position: tilePosition,
+          size: tileSize
+        })
+
+        // frame.drawRectRGBA(
+        //   tilePosition.x,
+        //   tilePosition.y,
+        //   TILE_SIZE,
+        //   TILE_SIZE,
+        //   (id % 1) * 256,
+        //   (id % 1) * 256,
+        //   (id % 1) * 256
+        // )
       }
     }
   }

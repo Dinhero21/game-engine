@@ -27,7 +27,7 @@ export class WorldGenerator {
         const tileId = vec2ToString(tilePosition)
 
         chunk.set(tileId, {
-          id: Date.now() / 10
+          id: Date.now()
         })
       }
     }
