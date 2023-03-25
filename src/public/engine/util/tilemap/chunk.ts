@@ -4,7 +4,7 @@ import { chunkPositionToTilePosition, tilePositionToPosition } from './position-
 import RectangularCollider from '../collision/rectangular.js'
 
 export interface Tile {
-  id: number
+  id: string
   collider?: RectangularCollider
 }
 

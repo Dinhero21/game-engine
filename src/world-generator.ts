@@ -1,5 +1,5 @@
 import { type Tile } from './public/engine/util/tilemap/chunk.js'
-import { CHUNK_SIZE } from './public/engine/util/tilemap/position-conversion.js'
+import { chunkPositionToTilePosition, CHUNK_SIZE } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 
 export type Chunk = Map<string, Tile>
@@ -17,18 +17,22 @@ export class WorldGenerator {
     return this.generateChunk(chunkPosition)
   }
 
-  public generateChunk (chunkPosition: Vec2): Chunk {
+  public generateChunk (chunkChunkPosition: Vec2): Chunk {
     const chunk: Chunk = new Map()
 
-    for (let y = 0; y < CHUNK_SIZE; y++) {
-      for (let x = 0; x < CHUNK_SIZE; x++) {
-        const tilePosition = new Vec2(x, y)
+    const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
-        const tileId = vec2ToString(tilePosition)
+    for (let chunkTileTilePositionY = 0; chunkTileTilePositionY < CHUNK_SIZE; chunkTileTilePositionY++) {
+      for (let chunkTileTilePositionX = 0; chunkTileTilePositionX < CHUNK_SIZE; chunkTileTilePositionX++) {
+        const chunkTileTilePosition = new Vec2(chunkTileTilePositionX, chunkTileTilePositionY)
 
-        chunk.set(tileId, {
-          id: Date.now()
-        })
+        const tileTilePosition = chunkTileTilePosition.plus(chunkTilePosition)
+
+        const tileId = vec2ToString(chunkTileTilePosition)
+
+        const id = tileTilePosition.y > 0 ? 'test' : 'air'
+
+        chunk.set(tileId, { id })
       }
     }
 

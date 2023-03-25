@@ -242,7 +242,7 @@ export class Frame {
     return this
   }
 
-  public _drawImage (image: CanvasImageSource | OffscreenCanvas, dx: number, dy: number, dw?: number, dh?: number): this {
+  public _drawImage (image: CanvasImageSource | OffscreenCanvas, dx: number, dy: number, dw?: number, dh?: number, imageSmoothingEnabled: boolean = true): this {
     const queue = this.queue
 
     if (INTEGER_APPROXIMATION) {
@@ -260,18 +260,19 @@ export class Frame {
       dy += offset.y
 
       if (context instanceof Frame) {
-        context._drawImage(image, dx, dy, dw, dh)
+        context._drawImage(image, dx, dy, dw, dh, imageSmoothingEnabled)
 
         return
       }
 
-      if (dw === undefined || dh === undefined) {
-        context.drawImage(image, dx, dy)
+      const smoothing = context.imageSmoothingEnabled
 
-        return
-      }
+      context.imageSmoothingEnabled = imageSmoothingEnabled
 
-      context.drawImage(image, dx, dy, dw, dh)
+      if (dw === undefined || dh === undefined) context.drawImage(image, dx, dy)
+      else context.drawImage(image, dx, dy, dw, dh)
+
+      context.imageSmoothingEnabled = smoothing
     })
 
     return this

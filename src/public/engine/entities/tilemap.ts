@@ -5,7 +5,7 @@ import Entity from './base.js'
 import { TILE_SIZE, CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition } from '../util/tilemap/position-conversion.js'
 
 export interface TileRendererTile {
-  id: number
+  id: string
   position: Vec2
   size: Vec2
 }

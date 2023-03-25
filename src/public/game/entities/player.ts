@@ -106,8 +106,6 @@ export class PlayerEntity extends Entity {
   }
 
   protected updatePosition (velocity: Vec2): Vec2 {
-    const bottom = 500
-
     const position = this.position
 
     const oldPosition = position.clone()
@@ -118,7 +116,7 @@ export class PlayerEntity extends Entity {
     const size = boundingBox.getSize()
 
     // size / 2 because the bounding box is centered
-    const maxY = bottom - (size.y / 2)
+    const maxY = position.x - (size.y / 2)
     if (position.y > maxY) position.y = maxY
 
     const newVelocity = position.minus(oldPosition)
