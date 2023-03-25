@@ -132,32 +132,6 @@ export class Frame {
     return this
   }
 
-  public _drawImage (image: CanvasImageSource, x: number, y: number): this {
-    const queue = this.queue
-
-    if (INTEGER_APPROXIMATION) {
-      x = Math.floor(x)
-      y = Math.floor(y)
-    }
-
-    queue.push(context => {
-      const offset = this.offset
-
-      x += offset.x
-      y += offset.y
-
-      if (context instanceof Frame) {
-        context._drawImage(image, x, y)
-
-        return
-      }
-
-      context.drawImage(image, x, y)
-    })
-
-    return this
-  }
-
   public _beginPath (): this {
     const queue = this.queue
 
@@ -263,6 +237,41 @@ export class Frame {
       }
 
       context.fillText(text, x, y, maxWidth)
+    })
+
+    return this
+  }
+
+  public _drawImage (image: CanvasImageSource | OffscreenCanvas, dx: number, dy: number, dw?: number, dh?: number): this {
+    const queue = this.queue
+
+    if (INTEGER_APPROXIMATION) {
+      dx = Math.floor(dx)
+      dy = Math.floor(dy)
+
+      if (dw !== undefined) dw = Math.floor(dw)
+      if (dh !== undefined) dh = Math.floor(dh)
+    }
+
+    queue.push(context => {
+      const offset = this.offset
+
+      dx += offset.x
+      dy += offset.y
+
+      if (context instanceof Frame) {
+        context._drawImage(image, dx, dy, dw, dh)
+
+        return
+      }
+
+      if (dw === undefined || dh === undefined) {
+        context.drawImage(image, dx, dy)
+
+        return
+      }
+
+      context.drawImage(image, dx, dy, dw, dh)
     })
 
     return this
