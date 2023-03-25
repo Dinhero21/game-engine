@@ -270,6 +270,20 @@ export class Frame {
 
   // High level methods
 
+  public drawText (text: string, x: number, y: number, color: HTMLRenderingContext2D['fillStyle'] | None, maxWidth?: number): this {
+    if (!isNone(color)) this.setFillStyle(color)
+
+    this._fillText(text, x, y, maxWidth)
+
+    return this
+  }
+
+  public drawTextRGBA (text: string, x: number, y: number, r: number, g: number, b: number, a: number = 1, maxWidth?: number): this {
+    this.drawText(text, x, y, `rgba(${r},${g},${b},${a})`, maxWidth)
+
+    return this
+  }
+
   public drawLine (startX: number, startY: number, endX: number, endY: number, color: HTMLRenderingContext2D['strokeStyle'] | None, width: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
     if (!isNone(color)) this.setStrokeStyle(color)
     if (!isNone(width)) this.setLineWidth(width)
