@@ -1,7 +1,7 @@
 import type { Player as ClientPlayer, Vec2 as RawVec2, IServerServer as IServer } from './socket.io'
 import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
-import { type Tile } from './public/engine/util/tilemap/chunk.js'
+import { WorldGenerator } from './world-generator.js'
 import http from 'http'
 import path from 'path'
 import url from 'url'
@@ -25,9 +25,6 @@ interface ServerPlayer {
   chunks: Set<string>
 }
 
-// TODO: Separate World Generation into other files
-export type Chunk = Map<string, Tile>
-
 const app = express()
 
 app.use('/', express.static(path.join(__dirname, 'public')))
@@ -38,7 +35,7 @@ const io: IServer = new Server(server)
 
 const players = new Set<ServerPlayer>()
 
-const chunks = new Map<string, Chunk>()
+const world = new WorldGenerator()
 
 io.on('connection', socket => {
   const player: ServerPlayer = {
@@ -77,27 +74,9 @@ io.on('connection', socket => {
         const chunkPosition = new Vec2(chunkX, chunkY)
         const chunkId = vec2ToString(chunkPosition)
 
-        let chunk = chunks.get(chunkId)
-
-        if (chunk === undefined) {
-          chunk = new Map()
-
-          // TODO: Make this its own function (probably in its own file)
-          for (let tileY = 0; tileY < 16; tileY++) {
-            for (let tileX = 0; tileX < 16; tileX++) {
-              const tilePosition = new Vec2(tileX, tileY)
-              const tileId = vec2ToString(tilePosition)
-
-              chunk.set(tileId, {
-                id: Date.now() / 10
-              })
-            }
-          }
-
-          chunks.set(chunkId, chunk)
-        }
-
         if (player.chunks.has(chunkId)) continue
+
+        const chunk = world.getChunk(chunkPosition)
 
         socket.emit('chunk.set', Array.from(chunk), chunkPosition.toArray())
 
