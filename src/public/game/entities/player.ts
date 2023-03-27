@@ -155,7 +155,7 @@ export class PlayerEntity extends Entity {
     return position.minus(oldPosition)
   }
 
-  // * Iterations is not really as the program will eventually break out of the loop to avoid rounding errors. It might be useful for performance.
+  // * Iterations is not really necessary as the program will eventually break out of the loop to avoid rounding errors. It might be useful for performance.
   private calculateMaximumPositionDelta (delta: Vec2, position: Vec2, size: Vec2, collider: Collider<RectangularCollider>, iterations: number = 100): Vec2 {
     const oldPosition = position.clone()
     position = position.clone()
