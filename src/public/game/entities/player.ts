@@ -145,8 +145,6 @@ export class PlayerEntity extends Entity {
       const maximumPositionDeltaX = this.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), boundingBoxPosition, boundingBoxSize, collider)
       const maximumPositionDeltaY = this.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), boundingBoxPosition, boundingBoxSize, collider)
 
-      console.log(maximumPositionDeltaX, maximumPositionDeltaY)
-
       if (maximumPositionDeltaX.length() > maximumPositionDeltaY.length()) {
         position.add(maximumPositionDeltaX)
       } else {
