@@ -7,6 +7,8 @@ import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import { getTileTexture } from './loader.js'
+import MultiRectangularCollider from '../engine/util/collision/multi-rectangular.js'
+import RectangularCollider from '../engine/util/collision/rectangular.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -43,6 +45,12 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const multiplayerContainer = new MultiplayerContainerEntity(socket)
   scene.addChild(multiplayerContainer)
+
+  const collider = new MultiRectangularCollider([
+    new RectangularCollider(new Vec2(-50, 100), new Vec2(100, 100))
+  ])
+
+  multiplayerContainer.setCollider(collider)
 
   return scene
 }

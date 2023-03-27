@@ -161,12 +161,12 @@ export class Vec2 {
   }
 
   unit (): this | Vec2 {
-    const norm = this.length()
+    const length = this.length()
 
-    if (norm === 0) {
+    if (length === 0) {
       return this.clone()
     } else {
-      return this.scaled(1 / norm)
+      return this.divided(length)
     }
   }
 

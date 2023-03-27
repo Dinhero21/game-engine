@@ -2,16 +2,17 @@ import type { IClientSocket as Socket } from '../../../socket.io.js'
 import Entity from '../../engine/entities/base.js'
 import PlayerEntity from '../entities/player.js'
 import Vec2 from '../../engine/util/vec2.js'
+import type MultiRectangularCollider from '../../engine/util/collision/multi-rectangular.js'
 
 export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
   private readonly socket
+
+  private collider?: MultiRectangularCollider
 
   constructor (socket: Socket) {
     super()
 
     this.socket = socket
-
-    const players = this.children
 
     socket.on('player.add', player => {
       // if (players.has(player.id)) throw new Error(`Player ${player.id} already exists!`)
@@ -21,7 +22,7 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
       const entity = new PlayerEntity(player.id, new Vec2(velocity.x, velocity.y))
       entity.controllable = player.id === socket.id
 
-      players.add(entity)
+      entity.collider = this.collider
 
       this.addChild(entity)
     })
@@ -32,7 +33,7 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
       // ? Should I warn or throw an error?
       if (entity === undefined) return
 
-      players.delete(entity)
+      this.removeChild(entity)
     })
 
     socket.on('player.physics.update', player => {
@@ -49,7 +50,13 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
     })
   }
 
-  update (delta: number): void {
+  public setCollider (collider: MultiRectangularCollider): void {
+    this.collider = collider
+
+    for (const child of this.children) child.collider = collider
+  }
+
+  public update (delta: number): void {
     super.update(delta)
 
     const socket = this.socket
