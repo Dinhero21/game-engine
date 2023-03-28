@@ -12,14 +12,14 @@ export const Loop = {
       setTimeout(() => { this.interval(ms, now)(callback) }, ms)
     }
   },
-  draw (lastTime = Date.now()) {
+  draw (lastTimestamp = 0, timestamp = 0) {
     return (callback: Callback) => {
-      const now = Date.now()
-      const delta = (now - lastTime) / 1000
+      const delta = (timestamp - lastTimestamp) / 1000
 
+      // Avoid divisions by 0
       if (delta !== 0) callback(delta)
 
-      requestAnimationFrame(() => { this.draw(now)(callback) })
+      requestAnimationFrame(newTimestamp => { this.draw(timestamp, newTimestamp)(callback) })
     }
   },
   instant () {
