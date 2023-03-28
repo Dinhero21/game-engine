@@ -1,33 +1,27 @@
-const textureCache = new Map<string, HTMLImageElement>()
+export class TextureLoader extends EventTarget {
+  private readonly cache = new Map<string, HTMLImageElement>()
 
-export function loadTexture (name: string): HTMLImageElement {
-  let image = textureCache.get(name)
+  public loadTexture (name: string): HTMLImageElement {
+    const cache = this.cache
 
-  if (image !== undefined) return image
+    let image = cache.get(name)
 
-  image = new Image()
-  image.src = `assets/textures/${name}.png`
+    if (image !== undefined) return image
 
-  textureCache.set(name, image)
+    image = new Image()
+    image.src = `assets/textures/${name}.png`
 
-  return image
+    cache.set(name, image)
+
+    image.addEventListener('load', event => {
+      this.dispatchEvent(new Event('load'))
+    })
+
+    return image
+  }
 }
 
-export async function loadTextureAsync (name: string): Promise<HTMLImageElement> {
-  const texture = loadTexture(name)
-
-  if (texture.complete) return texture
-
-  return await new Promise((resolve, reject) => {
-    texture.addEventListener('error', event => {
-      reject(new Error(event.error))
-    }, { once: true })
-
-    texture.addEventListener('load', event => {
-      resolve(texture)
-    }, { once: true })
-  })
-}
+export const textureLoader = new TextureLoader()
 
 export interface Tile {
   texture: string

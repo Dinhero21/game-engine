@@ -1,5 +1,6 @@
 export type Callback = (delta: number) => void
 
+// TODO: Add an option to use performance instead of Date
 export const Loop = {
   interval (ms?: number, lastTime = Date.now()) {
     return (callback: Callback) => {
