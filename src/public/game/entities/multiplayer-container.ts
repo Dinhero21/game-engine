@@ -17,9 +17,13 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
     socket.on('player.add', player => {
       // if (players.has(player.id)) throw new Error(`Player ${player.id} already exists!`)
 
+      const position = new Vec2(...player.position)
       const velocity = new Vec2(...player.velocity)
 
-      const entity = new PlayerEntity(player.id, new Vec2(velocity.x, velocity.y))
+      const entity = new PlayerEntity(player.id)
+      entity.position = position
+      entity.velocity = velocity
+
       entity.controllable = player.id === socket.id
 
       entity.collider = this.collider

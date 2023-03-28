@@ -1,5 +1,5 @@
 import type { Player as ClientPlayer, Vec2 as RawVec2, IServerServer as IServer } from './socket.io'
-import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion.js'
+import { positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import { WorldGenerator } from './world-generator.js'
 import http from 'http'
@@ -40,7 +40,7 @@ const world = new WorldGenerator()
 io.on('connection', socket => {
   const player: ServerPlayer = {
     id: socket.id,
-    position: new Vec2(0, 0),
+    position: tilePositionToPosition(new Vec2(0, -10)),
     velocity: new Vec2(0, 0),
     chunks: new Set()
   }

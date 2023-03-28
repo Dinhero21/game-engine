@@ -8,17 +8,17 @@ import { type Collider } from '../../engine/util/collision/collider.js'
 
 export class PlayerEntity extends Entity {
   public id
-  public velocity
+
+  public velocity: Vec2 = new Vec2(0, 0)
 
   public controllable: boolean = false
 
   public collider?: MultiRectangularCollider
 
-  constructor (id: string, velocity: Vec2) {
+  constructor (id: string) {
     super()
 
     this.id = id
-    this.velocity = velocity
   }
 
   public getBoundingBox (): RectangularCollider {

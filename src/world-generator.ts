@@ -1,6 +1,12 @@
 import { type Tile } from './public/engine/util/tilemap/chunk.js'
 import { chunkPositionToTilePosition, CHUNK_SIZE } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
+import { createNoise2D } from 'simplex-noise'
+
+const NOISE_SCALE = 0.05
+const NOISE_STRENGTH = 5
+
+const getNoise2D = createNoise2D()
 
 export type Chunk = Map<string, Tile>
 
@@ -28,9 +34,17 @@ export class WorldGenerator {
 
         const tileTilePosition = chunkTileTilePosition.plus(chunkTilePosition)
 
-        const tileId = vec2ToString(chunkTileTilePosition)
+        const noisePosition = tileTilePosition.scaled(NOISE_SCALE)
 
-        const id = tileTilePosition.y > 0 ? 'test' : 'air'
+        const noise = getNoise2D(noisePosition.x, noisePosition.y)
+
+        const baseTerrain = -tileTilePosition.y + (noise * NOISE_STRENGTH)
+
+        let id = 'air'
+
+        if (baseTerrain < 0) id = 'test'
+
+        const tileId = vec2ToString(chunkTileTilePosition)
 
         chunk.set(tileId, { id })
       }
