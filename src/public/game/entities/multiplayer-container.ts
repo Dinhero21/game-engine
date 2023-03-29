@@ -1,13 +1,12 @@
 import type { IClientSocket as Socket } from '../../../socket.io.js'
 import Entity from '../../engine/entities/base.js'
-import PlayerEntity from '../entities/player.js'
+import PlayerEntity, { type OverlapDetector } from '../entities/player.js'
 import Vec2 from '../../engine/util/vec2.js'
-import type MultiRectangularCollider from '../../engine/util/collision/multi-rectangular.js'
 
 export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
   private readonly socket
 
-  private collider?: MultiRectangularCollider
+  private overlapping?: OverlapDetector
 
   constructor (socket: Socket) {
     super()
@@ -26,7 +25,7 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
 
       entity.controllable = player.id === socket.id
 
-      entity.collider = this.collider
+      entity.overlapping = this.overlapping
 
       this.addChild(entity)
     })
@@ -54,10 +53,10 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
     })
   }
 
-  public setCollider (collider: MultiRectangularCollider): void {
-    this.collider = collider
+  public setOverlapDetector (overlapping: OverlapDetector): void {
+    this.overlapping = overlapping
 
-    for (const child of this.children) child.collider = collider
+    for (const child of this.children) child.overlapping = overlapping
   }
 
   public update (delta: number): void {

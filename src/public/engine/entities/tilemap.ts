@@ -1,8 +1,10 @@
-import { type Tile, Chunk, type TileRenderer } from '../util/tilemap/chunk.js'
+import { type TileData } from '../../assets/loader.js'
+import { Chunk, type TileRenderer } from '../util/tilemap/chunk.js'
 import type Frame from '../util/frame.js'
+import type RectangularCollider from '../util/collision/rectangular.js'
+import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition } from '../util/tilemap/position-conversion.js'
 import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
 import Entity from './base.js'
-import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition } from '../util/tilemap/position-conversion.js'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 const chunkPositionSize = chunkPositionToTilePosition(chunkTileSize)
@@ -48,7 +50,7 @@ export class TileMapEntity extends Entity {
     }
   }
 
-  public setTile (tile: Tile, tilePosition: Vec2): void {
+  public setTile (tile: TileData, tilePosition: Vec2): void {
     const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
@@ -74,5 +76,19 @@ export class TileMapEntity extends Entity {
     const chunkId = vec2ToString(chunkPosition)
 
     this.chunks.set(chunkId, chunk)
+  }
+
+  // Collision Detection
+
+  public touching (other: RectangularCollider): boolean {
+    return Array.from(this.chunks.values()).some(chunk => chunk.overlapping(other))
+  }
+
+  public overlapping (other: RectangularCollider): boolean {
+    return Array.from(this.chunks.values()).some(chunk => chunk.overlapping(other))
+  }
+
+  public colliding (other: RectangularCollider): boolean {
+    return Array.from(this.chunks.values()).some(chunk => chunk.colliding(other))
   }
 }

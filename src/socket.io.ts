@@ -1,4 +1,3 @@
-import { type Tile } from './public/engine/util/tilemap/chunk.js'
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
 
@@ -7,7 +6,7 @@ import { type Socket as ClientSocket } from 'socket.io-client'
 export type Vec2 = [number, number]
 
 // TODO: Make it possible to dynamically generate this using index.js's chunk
-export type Chunk = Array<[string, Tile]>
+export type Chunk = Array<[string, string]>
 
 // ? Should I define Player here?
 export interface Player {

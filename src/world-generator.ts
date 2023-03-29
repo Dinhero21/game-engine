@@ -1,4 +1,3 @@
-import { type Tile } from './public/engine/util/tilemap/chunk.js'
 import { chunkPositionToTilePosition, CHUNK_SIZE } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import { createNoise2D } from 'simplex-noise'
@@ -8,7 +7,7 @@ const NOISE_STRENGTH = 5
 
 const getNoise2D = createNoise2D()
 
-export type Chunk = Map<string, Tile>
+export type Chunk = Map<string, string>
 
 export class WorldGenerator {
   private readonly chunks = new Map<string, Chunk>()
@@ -46,7 +45,7 @@ export class WorldGenerator {
 
         const tileId = vec2ToString(chunkTileTilePosition)
 
-        chunk.set(tileId, { id })
+        chunk.set(tileId, id)
       }
     }
 

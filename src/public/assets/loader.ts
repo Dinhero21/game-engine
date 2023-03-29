@@ -1,8 +1,18 @@
-export class TextureLoader extends EventTarget {
-  private readonly cache = new Map<string, HTMLImageElement>()
+export interface RawTileData {
+  texture: string
+  collidable: boolean
+}
 
-  public loadTexture (name: string): HTMLImageElement {
-    const cache = this.cache
+// TODO: Add texture as HTMLImageElement or OffscreenCanvas (or something else)
+export interface TileData {
+  name: string
+  collidable: boolean
+}
+
+export class AssetLoader extends EventTarget {
+  private readonly textureCache = new Map<string, HTMLImageElement>()
+  public getTexture (name: string): HTMLImageElement {
+    const cache = this.textureCache
 
     let image = cache.get(name)
 
@@ -19,27 +29,34 @@ export class TextureLoader extends EventTarget {
 
     return image
   }
+
+  private readonly rawTileDataCache = new Map<string, Promise<RawTileData>>()
+  public async getRawTileData (name: string): Promise<RawTileData> {
+    const cache = this.rawTileDataCache
+
+    let tile = cache.get(name)
+
+    if (tile !== undefined) return await tile
+
+    tile = (async () => {
+      const response = await fetch(`assets/tiles/${name}.json`)
+
+      return await response.json()
+    })()
+
+    cache.set(name, tile)
+
+    return await tile
+  }
+
+  public async getTileData (name: string): Promise<TileData> {
+    const rawTileData = await this.getRawTileData(name)
+
+    return {
+      name,
+      collidable: rawTileData.collidable
+    }
+  }
 }
 
-export const textureLoader = new TextureLoader()
-
-export interface Tile {
-  texture: string
-  collidable: boolean
-}
-
-const tileCache = new Map<string, Tile>()
-
-export async function loadTile (name: string): Promise<Tile> {
-  let tile = tileCache.get(name)
-
-  if (tile !== undefined) return tile
-
-  const response = await fetch(`assets/tiles/${name}.json`)
-
-  tile = await response.json() as Tile
-
-  tileCache.set(name, tile)
-
-  return tile
-}
+export const loader = new AssetLoader()

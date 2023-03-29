@@ -3,8 +3,8 @@ import Entity from '../../engine/entities/base.js'
 import Vec2 from '../../engine/util/vec2.js'
 import keyboard from '../../engine/util/input/keyboard.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
-import type MultiRectangularCollider from '../../engine/util/collision/multi-rectangular.js'
-import { type Collider } from '../../engine/util/collision/collider.js'
+
+export type OverlapDetector = (collider: RectangularCollider) => boolean
 
 export class PlayerEntity extends Entity {
   public id
@@ -13,7 +13,7 @@ export class PlayerEntity extends Entity {
 
   public controllable: boolean = false
 
-  public collider?: MultiRectangularCollider
+  public overlapping?: OverlapDetector
 
   constructor (id: string) {
     super()
@@ -113,9 +113,9 @@ export class PlayerEntity extends Entity {
   protected updatePosition (positionDelta: Vec2): Vec2 {
     const position = this.position
 
-    const collider = this.collider
+    const overlapping = this.overlapping
 
-    if (collider === undefined) {
+    if (overlapping === undefined) {
       position.add(positionDelta)
 
       return positionDelta
@@ -129,7 +129,7 @@ export class PlayerEntity extends Entity {
       const boundingBoxPosition = boundingBox.getPosition()
       const boundingBoxSize = boundingBox.getSize()
 
-      const maximumPositionDelta = this.calculateMaximumPositionDelta(positionDelta, boundingBoxPosition, boundingBoxSize, collider)
+      const maximumPositionDelta = this.calculateMaximumPositionDelta(positionDelta, boundingBoxPosition, boundingBoxSize, overlapping)
 
       position.add(maximumPositionDelta)
 
@@ -142,8 +142,8 @@ export class PlayerEntity extends Entity {
       const boundingBoxPosition = boundingBox.getPosition()
       const boundingBoxSize = boundingBox.getSize()
 
-      const maximumPositionDeltaX = this.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), boundingBoxPosition, boundingBoxSize, collider)
-      const maximumPositionDeltaY = this.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), boundingBoxPosition, boundingBoxSize, collider)
+      const maximumPositionDeltaX = this.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), boundingBoxPosition, boundingBoxSize, overlapping)
+      const maximumPositionDeltaY = this.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), boundingBoxPosition, boundingBoxSize, overlapping)
 
       if (maximumPositionDeltaX.length() > maximumPositionDeltaY.length()) {
         position.add(maximumPositionDeltaX)
@@ -156,7 +156,9 @@ export class PlayerEntity extends Entity {
   }
 
   // * Iterations is not really necessary as the program will eventually break out of the loop to avoid rounding errors. It might be useful for performance.
-  private calculateMaximumPositionDelta (delta: Vec2, position: Vec2, size: Vec2, collider: Collider<RectangularCollider>, iterations: number = 100): Vec2 {
+  private calculateMaximumPositionDelta (delta: Vec2, position: Vec2, size: Vec2, collider: OverlapDetector, iterations: number = 100): Vec2 {
+    const _overlapping = this.overlapping
+
     const oldPosition = position.clone()
     position = position.clone()
 
@@ -187,7 +189,11 @@ export class PlayerEntity extends Entity {
     return position.minus(oldPosition)
 
     function overlapping (): boolean {
-      return collider.overlapping(new RectangularCollider(position, size))
+      const overlapping = _overlapping
+
+      if (overlapping === undefined) return false
+
+      return overlapping(new RectangularCollider(position, size))
     }
 
     function positionUnchanged (oldPosition: Vec2, newPosition: Vec2): boolean {

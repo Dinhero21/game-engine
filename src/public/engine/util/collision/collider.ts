@@ -1,3 +1,4 @@
+// TODO: Offsetting
 // ? Should I use any?
 export abstract class Collider<ValidCollidable extends Collider<any>> {
   public abstract _distanceLeft (other: ValidCollidable): number
