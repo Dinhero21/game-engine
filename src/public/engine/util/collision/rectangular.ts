@@ -32,6 +32,13 @@ export class RectangularCollider extends RectangularlyApproximatableCollider {
     return this
   }
 
+  public offset (offset: Vec2): RectangularCollider {
+    const position = this.position
+    const size = this.size
+
+    return new (this.constructor as typeof RectangularCollider)(position.plus(offset), size)
+  }
+
   constructor (position: Vec2, size: Vec2) {
     super()
 

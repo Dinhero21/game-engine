@@ -101,6 +101,8 @@ export class PlayerEntity extends Entity {
     // velocity.y += gravity
     velocity.y += 15
 
+    if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) velocity.y = -500
+
     // Friction
     // velocity /= friction + 1
     velocity.x /= 1.2
@@ -164,7 +166,7 @@ export class PlayerEntity extends Entity {
 
     const direction = delta.unit()
 
-    const distance = delta.clone()
+    let distance = delta.clone()
     for (let i = 0; i < iterations; i++) {
       distance.divide(2)
 
@@ -177,13 +179,22 @@ export class PlayerEntity extends Entity {
     }
 
     // Ensure I am outside of the collider
-    // * Hope that distance is not (0, 0) because if it is than this is never going to end
-    while (overlapping()) {
+    // * Hope that distance is not (0, 0) as if it is than this is never going to end
+    for (let i = 0; true; i++) {
+      if (!overlapping()) break
+
       const oldPosition = position.clone()
 
       position.subtract(distance)
 
-      if (positionUnchanged(oldPosition, position)) distance.scale(2)
+      if (positionUnchanged(oldPosition, position)) distance = scaleDistancePreservingDirection(distance, 2)
+
+      // ? Is 32 too small?
+      if (i >= 32) {
+        i = 0
+
+        distance = scaleDistancePreservingDirection(distance, -2)
+      }
     }
 
     return position.minus(oldPosition)
@@ -203,6 +214,12 @@ export class PlayerEntity extends Entity {
       const y = oldPosition.y + direction.y !== oldPosition.y && oldPosition.y === newPosition.y
 
       return x || y
+    }
+
+    function scaleDistancePreservingDirection (distance: Vec2, scale: number): Vec2 {
+      const length = distance.length()
+
+      return direction.scaled(length * scale)
     }
   }
 }

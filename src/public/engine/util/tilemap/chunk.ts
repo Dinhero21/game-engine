@@ -94,8 +94,15 @@ export class Chunk {
   // Collision Detection
 
   public touching (other: RectangularCollider): boolean {
-    return this.boundingBox.touching(other) &&
-    Array.from(this.tiles)
+    const boundingBox = this.boundingBox
+
+    if (!boundingBox.overlapping(other)) return false
+
+    const position = boundingBox.getPosition()
+
+    other = other.offset(position.scaled(-1))
+
+    return Array.from(this.tiles)
       .filter(([tileId, tile]) => tile.collidable)
       .map(([tileId, tile]) => stringToVec2(tileId))
       .map(tilePositionToPosition)
@@ -103,8 +110,15 @@ export class Chunk {
   }
 
   public overlapping (other: RectangularCollider): boolean {
-    return this.boundingBox.overlapping(other) &&
-    Array.from(this.tiles)
+    const boundingBox = this.boundingBox
+
+    if (!boundingBox.overlapping(other)) return false
+
+    const position = boundingBox.getPosition()
+
+    other = other.offset(position.scaled(-1))
+
+    return Array.from(this.tiles)
       .filter(([tileId, tile]) => tile.collidable)
       .map(([tileId, tile]) => stringToVec2(tileId))
       .map(tilePositionToPosition)
@@ -112,8 +126,15 @@ export class Chunk {
   }
 
   public colliding (other: RectangularCollider): boolean {
-    return this.boundingBox.colliding(other) &&
-    Array.from(this.tiles)
+    const boundingBox = this.boundingBox
+
+    if (!boundingBox.overlapping(other)) return false
+
+    const position = boundingBox.getPosition()
+
+    other = other.offset(position.scaled(-1))
+
+    return Array.from(this.tiles)
       .filter(([tileId, tile]) => tile.collidable)
       .map(([tileId, tile]) => stringToVec2(tileId))
       .map(tilePositionToPosition)
