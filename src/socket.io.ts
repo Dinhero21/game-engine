@@ -26,6 +26,8 @@ export interface ServerToClientEvents {
 // Client -> Server
 export interface ClientToServerEvents {
   'physics.update': (position: Vec2, velocity: Vec2) => void
+  // ? Should I make Chunk Removal the client's responsibility?
+  'chunk.remove': (position: Vec2) => void
 }
 
 // Server -> Server

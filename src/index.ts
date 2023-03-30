@@ -1,4 +1,4 @@
-import type { Player as ClientPlayer, Vec2 as RawVec2, IServerServer as IServer } from './socket.io'
+import type { Player as ClientPlayer, IServerServer as IServer } from './socket.io'
 import { positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import { WorldGenerator } from './world-generator.js'
@@ -51,17 +51,17 @@ io.on('connection', socket => {
 
   players.add(player)
 
-  socket.on('physics.update', (position: RawVec2, velocity: RawVec2) => {
-    const positionVec2 = new Vec2(position[0], position[1])
-    const velocityVec2 = new Vec2(velocity[0], velocity[1])
+  socket.on('physics.update', (rawPosition, rawVelocity) => {
+    const position = new Vec2(rawPosition[0], rawPosition[1])
+    const velocity = new Vec2(rawVelocity[0], rawVelocity[1])
 
-    player.position = positionVec2
-    player.velocity = velocityVec2
+    player.position = position
+    player.velocity = velocity
 
     socket.broadcast.emit('player.physics.update', getClientPlayer(player))
 
-    const topLeftScreenPositionPosition = positionVec2.minus(HALF_SCREEN_SIZE)
-    const bottomRightScreenPositionPosition = positionVec2.plus(HALF_SCREEN_SIZE)
+    const topLeftScreenPositionPosition = position.minus(HALF_SCREEN_SIZE)
+    const bottomRightScreenPositionPosition = position.plus(HALF_SCREEN_SIZE)
 
     const topLeftScreenTilePosition = positionToTilePosition(topLeftScreenPositionPosition)
     const bottomRightScreenTilePosition = positionToTilePosition(bottomRightScreenPositionPosition)
@@ -83,6 +83,13 @@ io.on('connection', socket => {
         player.chunks.add(chunkId)
       }
     }
+  })
+
+  socket.on('chunk.remove', rawPosition => {
+    const position = new Vec2(...rawPosition)
+    const chunkId = vec2ToString(position)
+
+    player.chunks.delete(chunkId)
   })
 
   socket.on('disconnect', () => {

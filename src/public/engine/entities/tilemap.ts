@@ -2,7 +2,7 @@ import { type TileData } from '../../assets/loader.js'
 import { Chunk, type TileRenderer } from '../util/tilemap/chunk.js'
 import type Frame from '../util/frame.js'
 import type RectangularCollider from '../util/collision/rectangular.js'
-import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition } from '../util/tilemap/position-conversion.js'
+import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion.js'
 import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
 import Entity from './base.js'
 
@@ -72,10 +72,34 @@ export class TileMapEntity extends Entity {
     chunk.clearCache()
   }
 
+  public getChunk (chunkPosition: Vec2): Chunk | undefined {
+    const chunkId = vec2ToString(chunkPosition)
+
+    return this.chunks.get(chunkId)
+  }
+
+  public getChunks (): Set<Chunk> {
+    return new Set(this.chunks.values())
+  }
+
   public setChunk (chunk: Chunk, chunkPosition: Vec2): void {
     const chunkId = vec2ToString(chunkPosition)
 
     this.chunks.set(chunkId, chunk)
+  }
+
+  public removeChunk (chunk: Chunk | Vec2 | string): void {
+    if (chunk instanceof Chunk) {
+      const chunkPosition = chunk.boundingBox.getPosition()
+      const chunkTilePosition = positionToTilePosition(chunkPosition)
+      const chunkChunkPosition = tilePositionToChunkPosition(chunkTilePosition)
+
+      chunk = chunkChunkPosition
+    }
+
+    if (chunk instanceof Vec2) chunk = vec2ToString(chunk)
+
+    this.chunks.delete(chunk)
   }
 
   // Collision Detection

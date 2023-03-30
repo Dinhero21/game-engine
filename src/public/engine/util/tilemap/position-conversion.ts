@@ -1,7 +1,7 @@
 import type Vec2 from '../../util/vec2.js'
 
 export const TILE_SIZE = 32
-export const CHUNK_SIZE = 16
+export const CHUNK_SIZE = 8
 
 export function positionToTilePosition (position: Vec2): Vec2 {
   return position
