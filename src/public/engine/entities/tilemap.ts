@@ -1,27 +1,19 @@
-import { type TileData } from '../../assets/loader.js'
-import { Chunk, type TileRenderer } from '../util/tilemap/chunk.js'
 import type Frame from '../util/frame.js'
 import type RectangularCollider from '../util/collision/rectangular.js'
 import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion.js'
+import { Chunk } from '../util/tilemap/chunk.js'
 import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
+import type Tile from '../util/tilemap/tile.js'
 import Entity from './base.js'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 const chunkPositionSize = chunkPositionToTilePosition(chunkTileSize)
 
-export class TileMapEntity extends Entity {
-  private readonly chunks = new Map<string, Chunk>()
-
-  private readonly renderer
+export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity {
+  private readonly chunks = new Map<string, Chunk<ValidTile>>()
 
   public clearCache (): void {
     for (const chunk of this.chunks.values()) chunk.clearCache()
-  }
-
-  constructor (render: TileRenderer) {
-    super()
-
-    this.renderer = render
   }
 
   public draw (frame: Frame): void {
@@ -50,7 +42,7 @@ export class TileMapEntity extends Entity {
     }
   }
 
-  public setTile (tile: TileData, tilePosition: Vec2): void {
+  public setTile (tile: ValidTile, tilePosition: Vec2): void {
     const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
@@ -61,9 +53,7 @@ export class TileMapEntity extends Entity {
     let chunk = this.chunks.get(chunkId)
 
     if (chunk === undefined) {
-      const renderer = this.renderer
-
-      chunk = new Chunk(chunkChunkPosition, chunkPositionSize, renderer)
+      chunk = new Chunk(chunkChunkPosition, chunkPositionSize)
       this.chunks.set(chunkId, chunk)
     }
 
@@ -82,7 +72,7 @@ export class TileMapEntity extends Entity {
     return new Set(this.chunks.values())
   }
 
-  public setChunk (chunk: Chunk, chunkPosition: Vec2): void {
+  public setChunk (chunk: Chunk<ValidTile>, chunkPosition: Vec2): void {
     const chunkId = vec2ToString(chunkPosition)
 
     this.chunks.set(chunkId, chunk)

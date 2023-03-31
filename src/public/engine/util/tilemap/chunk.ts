@@ -1,33 +1,19 @@
-import Vec2, { vec2ToString, stringToVec2 } from '../vec2.js'
+import type Tile from './tile.js'
 import { TILE_SIZE, chunkPositionToTilePosition, tilePositionToPosition } from './position-conversion.js'
+import Vec2, { vec2ToString, stringToVec2 } from '../vec2.js'
 import RectangularCollider from '../collision/rectangular.js'
-import { loader, type TileData } from '../../../assets/loader.js'
 
 const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
 
 export interface TileRendererTile {
-  id: string
   position: Vec2
   size: Vec2
 }
 
-export type TileRenderer = (context: OffscreenCanvasRenderingContext2D, tile: TileRendererTile) => void
-
-export function defaultTileRenderer (context: OffscreenCanvasRenderingContext2D, tile: TileRendererTile): void {
-  const id = tile.id
-  const position = tile.position
-  const size = tile.size
-
-  const texture = loader.getTexture(id)
-
-  // TODO: Make it not specify size if texture.size === size to maybe increase performance
-  context.drawImage(texture, position.x, position.y, size.x, size.y)
-}
-
 // TODO: "Global" Chunk Cache
 
-export class Chunk {
-  public tiles = new Map<string, TileData>()
+export class Chunk<ValidTile extends Tile = Tile> {
+  public tiles = new Map<string, ValidTile>()
   public boundingBox: RectangularCollider
 
   // TODO: Multiple Cache Versions
@@ -58,8 +44,8 @@ export class Chunk {
 
       const tilePosition = tilePositionToPosition(tileTilePosition)
 
-      this.render(context, {
-        id: tile.name,
+      // ? Should I make translating and resizing the tile's responsibility?
+      tile.render(context, {
         position: tilePosition,
         size: tileSize
       })
@@ -72,20 +58,16 @@ export class Chunk {
     return image
   }
 
-  private readonly render
-
-  constructor (chunkPosition: Vec2, chunkTileSize: Vec2, renderer: TileRenderer = defaultTileRenderer) {
+  constructor (chunkPosition: Vec2, chunkTileSize: Vec2) {
     const tilePosition = chunkPositionToTilePosition(chunkPosition)
     const position = tilePositionToPosition(tilePosition)
 
     const size = tilePositionToPosition(chunkTileSize)
 
     this.boundingBox = new RectangularCollider(position, size)
-
-    this.render = renderer
   }
 
-  public setTile (tile: TileData, tilePosition: Vec2): void {
+  public setTile (tile: ValidTile, tilePosition: Vec2): void {
     const id = vec2ToString(tilePosition)
 
     this.tiles.set(id, tile)
