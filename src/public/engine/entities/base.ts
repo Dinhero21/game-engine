@@ -75,7 +75,7 @@ export class Entity<Children extends Entity = Entity<any>> {
     return this.getScene()?.getMousePosition()
   }
 
-  protected getGlobalMousePosition (): Vec2 | undefined {
+  public getGlobalMousePosition (): Vec2 | undefined {
     return this.getMousePosition()?.minus(this.getGlobalPosition())
   }
 }

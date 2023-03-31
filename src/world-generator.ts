@@ -1,4 +1,4 @@
-import { chunkPositionToTilePosition, CHUNK_SIZE } from './public/engine/util/tilemap/position-conversion.js'
+import { chunkPositionToTilePosition, tilePositionToChunkPosition, CHUNK_SIZE } from './public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import { createNoise2D } from 'simplex-noise'
 
@@ -12,14 +12,33 @@ export type Chunk = Map<string, string>
 export class WorldGenerator {
   private readonly chunks = new Map<string, Chunk>()
 
+  public setTile (name: string, tilePosition: Vec2): void {
+    const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
+    const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
+
+    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
+
+    const chunk = this.getChunk(chunkChunkPosition)
+
+    const relativeTileId = vec2ToString(relativeTilePosition)
+
+    chunk.set(relativeTileId, name)
+  }
+
   public getChunk (chunkPosition: Vec2): Chunk {
+    const chunks = this.chunks
+
     const chunkId = vec2ToString(chunkPosition)
 
-    const chunk = this.chunks.get(chunkId)
+    let chunk = chunks.get(chunkId)
 
     if (chunk !== undefined) return chunk
 
-    return this.generateChunk(chunkPosition)
+    chunk = this.generateChunk(chunkPosition)
+
+    chunks.set(chunkId, chunk)
+
+    return chunk
   }
 
   public generateChunk (chunkChunkPosition: Vec2): Chunk {

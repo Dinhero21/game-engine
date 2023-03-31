@@ -42,33 +42,13 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity {
     }
   }
 
-  public setTile (tile: ValidTile, tilePosition: Vec2): void {
-    const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
-    const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
-
-    tilePosition = tilePosition
-      .minus(chunkTilePosition)
-
-    const chunkId = vec2ToString(chunkChunkPosition)
-    let chunk = this.chunks.get(chunkId)
-
-    if (chunk === undefined) {
-      chunk = new Chunk(chunkChunkPosition, chunkPositionSize)
-      this.chunks.set(chunkId, chunk)
-    }
-
-    chunk.setTile(tile, tilePosition)
-
-    chunk.clearCache()
-  }
-
-  public getChunk (chunkPosition: Vec2): Chunk | undefined {
+  public getChunk (chunkPosition: Vec2): Chunk<ValidTile> | undefined {
     const chunkId = vec2ToString(chunkPosition)
 
     return this.chunks.get(chunkId)
   }
 
-  public getChunks (): Set<Chunk> {
+  public getChunks (): Set<Chunk<ValidTile>> {
     return new Set(this.chunks.values())
   }
 
@@ -78,7 +58,7 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity {
     this.chunks.set(chunkId, chunk)
   }
 
-  public removeChunk (chunk: Chunk | Vec2 | string): void {
+  public removeChunk (chunk: Chunk<ValidTile> | Vec2 | string): void {
     if (chunk instanceof Chunk) {
       const chunkPosition = chunk.boundingBox.getPosition()
       const chunkTilePosition = positionToTilePosition(chunkPosition)
@@ -90,6 +70,36 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity {
     if (chunk instanceof Vec2) chunk = vec2ToString(chunk)
 
     this.chunks.delete(chunk)
+  }
+
+  public setTile (tile: ValidTile, tilePosition: Vec2): void {
+    const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
+    const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
+
+    tilePosition = tilePosition
+      .minus(chunkTilePosition)
+
+    let chunk = this.getChunk(chunkChunkPosition)
+
+    if (chunk === undefined) {
+      chunk = new Chunk(chunkChunkPosition, chunkPositionSize)
+      this.setChunk(chunk, chunkChunkPosition)
+    }
+
+    chunk.setTile(tile, tilePosition)
+
+    chunk.clearCache()
+  }
+
+  public getTile (tilePosition: Vec2): ValidTile | undefined {
+    const chunkPosition = tilePositionToChunkPosition(tilePosition)
+    const chunk = this.getChunk(chunkPosition)
+
+    if (chunk === undefined) return
+
+    const relativeTilePosition = tilePosition.mod(CHUNK_SIZE)
+
+    return chunk.getTile(relativeTilePosition)
   }
 
   // Collision Detection

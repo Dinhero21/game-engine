@@ -92,6 +92,14 @@ io.on('connection', socket => {
     player.chunks.delete(chunkId)
   })
 
+  socket.on('tile.remove', rawTilePosition => {
+    const tilePosition = new Vec2(...rawTilePosition)
+
+    world.setTile('air', tilePosition)
+
+    socket.broadcast.emit('tile.set', 'air', tilePosition.toArray())
+  })
+
   socket.on('disconnect', () => {
     players.delete(player)
 

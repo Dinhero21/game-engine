@@ -4,11 +4,13 @@ import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
 import { TileMapEntity } from '../engine/entities/tilemap.js'
 import { Chunk } from '../engine/util/tilemap/chunk.js'
 import { loader } from '../assets/loader.js'
+import { createTile } from './tile.js'
 import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
-import Tile from '../engine/util/tilemap/tile.js'
+import type Tile from '../engine/util/tilemap/tile.js'
+import mouse from '../engine/util/input/mouse.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -32,22 +34,20 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     for (const [tileId, tileName] of rawChunk) {
       const tilePosition = stringToVec2(tileId)
 
-      const tileData = await loader.getTileData(tileName)
-
-      const tile = new Tile(tileName, tileData.collidable, (context, data) => {
-        const name = tile.name
-        const position = data.position
-        const size = data.size
-
-        const texture = loader.getTexture(name)
-
-        context.drawImage(texture, position.x, position.y, size.x, size.y)
-      })
+      const tile = await createTile(tileName)
 
       chunk.setTile(tile, tilePosition)
     }
 
     tileMap.setChunk(chunk, chunkPosition)
+  })
+
+  socket.on('tile.set', async (name, rawTilePosition) => {
+    const tilePosition = new Vec2(...rawTilePosition)
+
+    const tile = await createTile(name)
+
+    tileMap.setTile(tile, tilePosition)
   })
 
   Loop.interval(1000 / 12)(() => {
@@ -68,6 +68,22 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
       tileMap.removeChunk(chunkPosition)
     }
+  })
+
+  mouse.addEventListener('left.down', () => {
+    void (async () => {
+      const globalMousePosition = tileMap.getGlobalMousePosition()
+
+      if (globalMousePosition === undefined) return
+
+      const globalMouseTilePosition = positionToTilePosition(globalMousePosition)
+
+      const tile = await createTile('air')
+
+      tileMap.setTile(tile, globalMouseTilePosition)
+
+      socket.emit('tile.remove', globalMouseTilePosition.toArray())
+    })()
   })
 
   scene.addChild(tileMap)

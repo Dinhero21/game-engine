@@ -67,6 +67,12 @@ export class Chunk<ValidTile extends Tile = Tile> {
     this.boundingBox = new RectangularCollider(position, size)
   }
 
+  public getTile (tilePosition: Vec2): ValidTile | undefined {
+    const id = vec2ToString(tilePosition)
+
+    return this.tiles.get(id)
+  }
+
   public setTile (tile: ValidTile, tilePosition: Vec2): void {
     const id = vec2ToString(tilePosition)
 

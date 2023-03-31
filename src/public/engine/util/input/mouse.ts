@@ -18,8 +18,40 @@ export const MouseButtonMap = {
 type MouseButtonName = keyof typeof MouseButtonMap
 type MouseButtonId = typeof MouseButtonMap[MouseButtonName]
 
-export class Mouse {
+export class MouseMoveEvent extends Event {
+  public position: Vec2
+
+  constructor (position: Vec2) {
+    super('move')
+
+    this.position = position
+  }
+}
+
+export class MouseDownEvent extends Event {
+  public button: MouseButtonId
+
+  constructor (button: MouseButtonId) {
+    super('down')
+
+    this.button = button
+  }
+}
+
+export class MouseUpEvent extends Event {
+  public button: MouseButtonId
+
+  constructor (button: MouseButtonId) {
+    super('up')
+
+    this.button = button
+  }
+}
+
+export class Mouse extends EventTarget {
   constructor () {
+    super()
+
     window.addEventListener('mousemove', event => { this.onMouseMove(event) })
 
     window.addEventListener('mousedown', event => { this.onMouseDown(event) })
@@ -32,7 +64,14 @@ export class Mouse {
   }
 
   private onMouseMove (event: MouseEvent): void {
-    this.position.set(event.clientX, event.clientY)
+    const x = event.clientX
+    const y = event.clientY
+
+    const position = new Vec2(x, y)
+
+    this.dispatchEvent(new MouseMoveEvent(position))
+
+    this.position.update(position)
   }
 
   private readonly buttons = new Map<MouseButtonId, boolean>()
@@ -43,11 +82,27 @@ export class Mouse {
   }
 
   private onMouseDown (event: MouseEvent): void {
-    this.buttons.set(event.button as MouseButtonId, true)
+    const button = event.button as MouseButtonId
+
+    for (const [name, id] of Object.entries(MouseButtonMap)) {
+      if (id === button) this.dispatchEvent(new Event(`${name}.down`))
+    }
+
+    this.dispatchEvent(new MouseDownEvent(button))
+
+    this.buttons.set(button, true)
   }
 
   private onMouseUp (event: MouseEvent): void {
-    this.buttons.set(event.button as MouseButtonId, false)
+    const button = event.button as MouseButtonId
+
+    for (const [name, id] of Object.entries(MouseButtonMap)) {
+      if (id === button) this.dispatchEvent(new Event(`${name}.up`))
+    }
+
+    this.dispatchEvent(new MouseUpEvent(button))
+
+    this.buttons.set(button, false)
   }
 }
 

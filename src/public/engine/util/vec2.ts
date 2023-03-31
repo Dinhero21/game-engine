@@ -112,7 +112,9 @@ export class Vec2 {
     return this.x * this.y
   }
 
-  modulus (other: Vec2): Vec2 {
+  mod (other: Vec2 | number): Vec2 {
+    other = this.vectorize(other)
+
     return new Vec2(
       euclideanMod(this.x, other.x),
       euclideanMod(this.y, other.y)
