@@ -172,6 +172,20 @@ export class Vec2 {
     }
   }
 
+  capped (maximumLength: number): Vec2 {
+    const length = this.length()
+
+    if (length < maximumLength) return this.clone()
+
+    return this.unit().scaled(maximumLength)
+  }
+
+  cap (maximumLength: number): this {
+    this.update(this.capped(maximumLength))
+
+    return this
+  }
+
   normalize (): this {
     const norm = this.length()
 

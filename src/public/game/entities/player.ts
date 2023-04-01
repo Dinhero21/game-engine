@@ -109,10 +109,10 @@ export class PlayerEntity extends Entity {
     velocity.y /= 1.02
 
     // TODO: Make this less convoluted
-    velocity.update(this.updatePosition(velocity.scaled(delta)).scaled(1 / delta))
+    velocity.update(this.updatePosition(velocity.scaled(delta), delta).divided(delta))
   }
 
-  protected updatePosition (positionDelta: Vec2): Vec2 {
+  protected updatePosition (positionDelta: Vec2, delta: number): Vec2 {
     const position = this.position
 
     const overlapping = this.overlapping
@@ -147,27 +147,28 @@ export class PlayerEntity extends Entity {
       const maximumPositionDeltaX = this.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), boundingBoxPosition, boundingBoxSize, overlapping)
       const maximumPositionDeltaY = this.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), boundingBoxPosition, boundingBoxSize, overlapping)
 
-      if (maximumPositionDeltaX.length() > maximumPositionDeltaY.length()) {
-        position.add(maximumPositionDeltaX)
-      } else {
-        position.add(maximumPositionDeltaY)
-      }
+      const maximumPositionDelta = maximumPositionDeltaX.length() > maximumPositionDeltaY.length() ? maximumPositionDeltaX : maximumPositionDeltaY
+
+      position.add(maximumPositionDelta)
     }
 
     return position.minus(oldPosition)
   }
 
   // * Iterations is not really necessary as the program will eventually break out of the loop to avoid rounding errors. It might be useful for performance.
-  private calculateMaximumPositionDelta (delta: Vec2, position: Vec2, size: Vec2, collider: OverlapDetector, iterations: number = 100): Vec2 {
-    const _overlapping = this.overlapping
-
+  private calculateMaximumPositionDelta (delta: Vec2, position: Vec2, size: Vec2, _overlapping: OverlapDetector, maxIterations: number = 100): Vec2 {
     const oldPosition = position.clone()
     position = position.clone()
 
     const direction = delta.unit()
 
     let distance = delta.clone()
-    for (let i = 0; i < iterations; i++) {
+
+    distance.divide(2)
+
+    position.add(distance)
+
+    while (true) {
       distance.divide(2)
 
       const oldPosition = position.clone()
@@ -179,7 +180,6 @@ export class PlayerEntity extends Entity {
     }
 
     // Ensure I am outside of the collider
-    // * Hope that distance is not (0, 0) as if it is than this is never going to end
     for (let i = 0; true; i++) {
       if (!overlapping()) break
 
@@ -189,12 +189,7 @@ export class PlayerEntity extends Entity {
 
       if (positionUnchanged(oldPosition, position)) distance = scaleDistancePreservingDirection(distance, 2)
 
-      // ? Is 32 too small?
-      if (i >= 32) {
-        i = 0
-
-        distance = scaleDistancePreservingDirection(distance, -2)
-      }
+      if (i > maxIterations) return new Vec2(0, 0)
     }
 
     return position.minus(oldPosition)
@@ -208,8 +203,10 @@ export class PlayerEntity extends Entity {
     }
 
     function positionUnchanged (oldPosition: Vec2, newPosition: Vec2): boolean {
+      if (direction.length() === 0) return true
+
       // TODO: Find a more elegant way to do this
-      // * I have to check if oldPosition + direction !== oldPosition because if direction is 0 then it would always return true
+      // I have to check if oldPosition + direction !== oldPosition because if direction is 0 then it would always return true
       const x = oldPosition.x + direction.x !== oldPosition.x && oldPosition.x === newPosition.x
       const y = oldPosition.y + direction.y !== oldPosition.y && oldPosition.y === newPosition.y
 
