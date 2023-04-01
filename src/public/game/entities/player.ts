@@ -125,27 +125,23 @@ export class PlayerEntity extends Entity {
 
     const oldPosition = position.clone()
 
+    // Bidirectional Position Delta Calculation
     {
       const boundingBox = this.getBoundingBox()
 
-      const boundingBoxPosition = boundingBox.getPosition()
-      const boundingBoxSize = boundingBox.getSize()
-
-      const maximumPositionDelta = this.calculateMaximumPositionDelta(positionDelta, boundingBoxPosition, boundingBoxSize, overlapping)
+      const maximumPositionDelta = boundingBox.calculateMaximumPositionDelta(positionDelta, overlapping)
 
       position.add(maximumPositionDelta)
 
       positionDelta.subtract(maximumPositionDelta)
     }
 
+    // Unidirectional Position Delta Calculation
     {
       const boundingBox = this.getBoundingBox()
 
-      const boundingBoxPosition = boundingBox.getPosition()
-      const boundingBoxSize = boundingBox.getSize()
-
-      const maximumPositionDeltaX = this.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), boundingBoxPosition, boundingBoxSize, overlapping)
-      const maximumPositionDeltaY = this.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), boundingBoxPosition, boundingBoxSize, overlapping)
+      const maximumPositionDeltaX = boundingBox.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), overlapping)
+      const maximumPositionDeltaY = boundingBox.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), overlapping)
 
       const maximumPositionDelta = maximumPositionDeltaX.length() > maximumPositionDeltaY.length() ? maximumPositionDeltaX : maximumPositionDeltaY
 
@@ -153,71 +149,6 @@ export class PlayerEntity extends Entity {
     }
 
     return position.minus(oldPosition)
-  }
-
-  // * Iterations is not really necessary as the program will eventually break out of the loop to avoid rounding errors. It might be useful for performance.
-  private calculateMaximumPositionDelta (delta: Vec2, position: Vec2, size: Vec2, _overlapping: OverlapDetector, maxIterations: number = 100): Vec2 {
-    const oldPosition = position.clone()
-    position = position.clone()
-
-    const direction = delta.unit()
-
-    let distance = delta.clone()
-
-    distance.divide(2)
-
-    position.add(distance)
-
-    while (true) {
-      distance.divide(2)
-
-      const oldPosition = position.clone()
-
-      if (overlapping()) position.subtract(distance)
-      else position.add(distance)
-
-      if (positionUnchanged(oldPosition, position)) break
-    }
-
-    // Ensure I am outside of the collider
-    for (let i = 0; true; i++) {
-      if (!overlapping()) break
-
-      const oldPosition = position.clone()
-
-      position.subtract(distance)
-
-      if (positionUnchanged(oldPosition, position)) distance = scaleDistancePreservingDirection(distance, 2)
-
-      if (i > maxIterations) return new Vec2(0, 0)
-    }
-
-    return position.minus(oldPosition)
-
-    function overlapping (): boolean {
-      const overlapping = _overlapping
-
-      if (overlapping === undefined) return false
-
-      return overlapping(new RectangularCollider(position, size))
-    }
-
-    function positionUnchanged (oldPosition: Vec2, newPosition: Vec2): boolean {
-      if (direction.length() === 0) return true
-
-      // TODO: Find a more elegant way to do this
-      // I have to check if oldPosition + direction !== oldPosition because if direction is 0 then it would always return true
-      const x = oldPosition.x + direction.x !== oldPosition.x && oldPosition.x === newPosition.x
-      const y = oldPosition.y + direction.y !== oldPosition.y && oldPosition.y === newPosition.y
-
-      return x || y
-    }
-
-    function scaleDistancePreservingDirection (distance: Vec2, scale: number): Vec2 {
-      const length = distance.length()
-
-      return direction.scaled(length * scale)
-    }
   }
 }
 
