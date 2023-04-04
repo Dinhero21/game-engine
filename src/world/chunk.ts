@@ -1,16 +1,26 @@
 import { type World, type TileUpdateCondition } from './world.js'
+import { type TileType, type Tile } from './tiles/index.js'
 import type Vec2 from '../public/engine/util/vec2.js'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion.js'
 import { vec2ToString } from '../public/engine/util/vec2.js'
-import Tile, { type TileData } from './tile.js'
-import EventEmitter from 'events'
+import { getTile } from './tile.js'
+import { TypedEmitter } from 'tiny-typed-emitter'
 
 export interface ChunkData {
   position: Vec2
 }
 
+export interface TileData {
+  position: Vec2
+  type: TileType
+}
+
+export interface ChunkEvents {
+  'tile.set': (tile: Tile) => void
+}
+
 // TODO: Use typed events
-export class Chunk extends EventEmitter {
+export class Chunk extends TypedEmitter<ChunkEvents> {
   private readonly world: World
 
   public getWorld (): World {
@@ -73,9 +83,11 @@ export class Chunk extends EventEmitter {
   private readonly tiles = new Map<string, Tile>()
 
   public setTile (data: TileData, emit: TileUpdateCondition = 'change'): void {
-    const tile = new Tile(this, data)
-
     const relativeTilePosition = data.position
+    const type = data.type
+
+    const Tile = getTile(type)
+    const tile = new Tile(this, relativeTilePosition)
 
     const tileId = vec2ToString(relativeTilePosition)
 
@@ -85,7 +97,7 @@ export class Chunk extends EventEmitter {
 
     if (oldTile === undefined) return
 
-    const oldTileType = oldTile.getType()
+    const oldTileType = oldTile.type
 
     const shouldEmit = emit === true || (emit === 'change' && oldTileType !== data.type)
 

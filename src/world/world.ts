@@ -1,9 +1,10 @@
-import type Tile from './tile.js'
+import { type TileType } from './tiles/index.js'
+import type Tile from './tiles/base.js'
 import { chunkPositionToTilePosition, tilePositionToChunkPosition, CHUNK_SIZE } from '../public/engine/util/tilemap/position-conversion.js'
 import Vec2, { vec2ToString } from '../public/engine/util/vec2.js'
 import Chunk from './chunk.js'
-import { EventEmitter } from 'events'
 import { createNoise2D } from 'simplex-noise'
+import { TypedEmitter } from 'tiny-typed-emitter'
 
 const NOISE_SCALE = 0.05
 const NOISE_STRENGTH = 5
@@ -14,14 +15,18 @@ export type Tick = () => void
 
 export type TileUpdateCondition = boolean | 'change'
 
+export interface WorldEvents {
+  'tile.set': (tile: Tile) => void
+}
+
 // TODO: Separate Tick and Chunk logic
 // TODO: Use typed events
-export class World extends EventEmitter {
+export class World extends TypedEmitter<WorldEvents> {
   // Chunk
 
   private readonly chunks = new Map<string, Chunk>()
 
-  public setTile (type: string, tilePosition: Vec2, emit: TileUpdateCondition = 'change', update: TileUpdateCondition = false): void {
+  public setTile (type: TileType, tilePosition: Vec2, emit: TileUpdateCondition = 'change', update: TileUpdateCondition = false): void {
     const chunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunk = this.getChunk(chunkPosition)
 
@@ -37,7 +42,7 @@ export class World extends EventEmitter {
 
     if (oldTile === undefined) return
 
-    const oldTileType = oldTile.getType()
+    const oldTileType = oldTile.type
 
     const shouldUpdate = update === true || (update === 'change' && oldTileType !== type)
 
@@ -117,7 +122,7 @@ export class World extends EventEmitter {
 
         const baseTerrain = -absoluteTileTilePosition.y + (noise * NOISE_STRENGTH)
 
-        let type = 'air'
+        let type: TileType = 'air'
 
         if (baseTerrain < 0) type = 'test'
 

@@ -86,7 +86,7 @@ io.on('connection', socket => {
         const rawTiles = new Map<string, string>()
 
         for (const [tileId, tile] of tiles) {
-          rawTiles.set(tileId, tile.getType())
+          rawTiles.set(tileId, tile.type)
         }
 
         socket.emit('chunk.set', Array.from(rawTiles), chunkPosition.toArray())
@@ -120,7 +120,7 @@ io.on('connection', socket => {
 })
 
 world.on('tile.set', tile => {
-  const type = tile.getType()
+  const type = tile.type
   const tilePosition = tile.getTilePosition()
 
   io.emit('tile.set', type, tilePosition.toArray())
