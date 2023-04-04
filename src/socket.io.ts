@@ -21,7 +21,7 @@ export interface ServerToClientEvents {
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
   'chunk.set': (chunk: Chunk, chunkPosition: Vec2) => void
-  'tile.set': (name: string, tilePosition: Vec2) => void
+  'tile.set': (type: string, tilePosition: Vec2) => void
 }
 
 // Client -> Server
@@ -29,7 +29,7 @@ export interface ClientToServerEvents {
   'physics.update': (position: Vec2, velocity: Vec2) => void
   // ? Should I make Chunk Removal the client's responsibility?
   'chunk.remove': (chunkPosition: Vec2) => void
-  'tile.remove': (tilePosition: Vec2) => void
+  'tile.click': (tilePosition: Vec2) => void
 }
 
 // Server -> Server

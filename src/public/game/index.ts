@@ -27,7 +27,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   })
 
   socket.on('chunk.set', async (rawChunk, rawChunkPosition) => {
-    const chunkPosition = new Vec2(rawChunkPosition[0], rawChunkPosition[1])
+    const chunkPosition = new Vec2(...rawChunkPosition)
 
     const chunk = new Chunk<Tile>(chunkPosition, chunkSize)
 
@@ -78,11 +78,11 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
       const globalMouseTilePosition = positionToTilePosition(globalMousePosition)
 
-      const tile = await createTile('air')
+      // const tile = await createTile('air')
 
-      tileMap.setTile(tile, globalMouseTilePosition)
+      // tileMap.setTile(tile, globalMouseTilePosition)
 
-      socket.emit('tile.remove', globalMouseTilePosition.toArray())
+      socket.emit('tile.click', globalMouseTilePosition.toArray())
     })()
   })
 

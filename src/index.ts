@@ -1,7 +1,8 @@
 import type { Player as ClientPlayer, IServerServer as IServer } from './socket.io'
 import { positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from './public/engine/util/tilemap/position-conversion.js'
+import { World } from './world/world.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
-import { WorldGenerator } from './world-generator.js'
+import Loop from './public/engine/util/loop.js'
 import http from 'http'
 import path from 'path'
 import url from 'url'
@@ -35,7 +36,9 @@ const io: IServer = new Server(server)
 
 const players = new Set<ServerPlayer>()
 
-const world = new WorldGenerator()
+const world = new World()
+
+Loop.interval(1000 / 12)(() => { world.tick() })
 
 io.on('connection', socket => {
   const player: ServerPlayer = {
@@ -52,8 +55,8 @@ io.on('connection', socket => {
   players.add(player)
 
   socket.on('physics.update', (rawPosition, rawVelocity) => {
-    const position = new Vec2(rawPosition[0], rawPosition[1])
-    const velocity = new Vec2(rawVelocity[0], rawVelocity[1])
+    const position = new Vec2(...rawPosition)
+    const velocity = new Vec2(...rawVelocity)
 
     player.position = position
     player.velocity = velocity
@@ -78,7 +81,15 @@ io.on('connection', socket => {
 
         const chunk = world.getChunk(chunkPosition)
 
-        socket.emit('chunk.set', Array.from(chunk), chunkPosition.toArray())
+        const tiles = chunk.getTiles()
+
+        const rawTiles = new Map<string, string>()
+
+        for (const [tileId, tile] of tiles) {
+          rawTiles.set(tileId, tile.getType())
+        }
+
+        socket.emit('chunk.set', Array.from(rawTiles), chunkPosition.toArray())
 
         player.chunks.add(chunkId)
       }
@@ -92,12 +103,13 @@ io.on('connection', socket => {
     player.chunks.delete(chunkId)
   })
 
-  socket.on('tile.remove', rawTilePosition => {
+  socket.on('tile.click', rawTilePosition => {
     const tilePosition = new Vec2(...rawTilePosition)
+    const tile = world.getTile(tilePosition)
 
-    world.setTile('air', tilePosition)
+    if (tile === undefined) return
 
-    socket.broadcast.emit('tile.set', 'air', tilePosition.toArray())
+    tile.update()
   })
 
   socket.on('disconnect', () => {
@@ -105,6 +117,13 @@ io.on('connection', socket => {
 
     io.emit('player.remove', getClientPlayer(player))
   })
+})
+
+world.on('tile.set', tile => {
+  const type = tile.getType()
+  const tilePosition = tile.getTilePosition()
+
+  io.emit('tile.set', type, tilePosition.toArray())
 })
 
 server.listen(80, () => {
