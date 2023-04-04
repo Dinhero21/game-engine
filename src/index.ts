@@ -1,4 +1,5 @@
 import type { Player as ClientPlayer, IServerServer as IServer } from './socket.io'
+import { type TileType } from './world/tiles/index.js'
 import { positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from './public/engine/util/tilemap/position-conversion.js'
 import { World } from './world/world.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
@@ -105,11 +106,8 @@ io.on('connection', socket => {
 
   socket.on('tile.click', rawTilePosition => {
     const tilePosition = new Vec2(...rawTilePosition)
-    const tile = world.getTile(tilePosition)
 
-    if (tile === undefined) return
-
-    tile.update()
+    world.setTile('sus', tilePosition, 'change', 'change')
   })
 
   socket.on('disconnect', () => {
@@ -120,7 +118,7 @@ io.on('connection', socket => {
 })
 
 world.on('tile.set', tile => {
-  const type = tile.type
+  const type = tile.type as TileType
   const tilePosition = tile.getTilePosition()
 
   io.emit('tile.set', type, tilePosition.toArray())

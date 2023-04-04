@@ -47,22 +47,17 @@ export class World extends TypedEmitter<WorldEvents> {
     const shouldUpdate = update === true || (update === 'change' && oldTileType !== type)
 
     if (shouldUpdate) {
-      const updateDirections = new Set<Vec2>([
-        new Vec2(-1, 0),
-        new Vec2(1, 0),
-        new Vec2(0, -1),
-        new Vec2(0, 1)
-      ])
+      for (let y = -1; y <= 1; y++) {
+        for (let x = -1; x <= 1; x++) {
+          this.queueTick(() => {
+            const newTilePosition = tilePosition.offset(x, y)
+            const newTile = this.getTile(newTilePosition)
 
-      for (const updateDirection of updateDirections) {
-        this.queueTick(() => {
-          const newTilePosition = tilePosition.plus(updateDirection)
-          const newTile = this.getTile(newTilePosition)
+            if (newTile === undefined) return
 
-          if (newTile === undefined) return
-
-          newTile.update()
-        })
+            newTile.update()
+          })
+        }
       }
     }
   }
