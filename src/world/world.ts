@@ -6,10 +6,14 @@ import Chunk from './chunk.js'
 import { createNoise2D } from 'simplex-noise'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
-const NOISE_SCALE = 0.05
-const NOISE_STRENGTH = 5
+const DISTORTION_SCALE = 0.0001
+const DISTORTION_STRENGTH = 100
+const NOISE_SCALE = 0.03
+const NOISE_STRENGTH = 30
 
-const getNoise2D = createNoise2D()
+const getDistortionX = createNoise2D()
+const getDistortionY = createNoise2D()
+const getNoise = createNoise2D()
 
 export type Tick = () => void
 
@@ -111,9 +115,20 @@ export class World extends TypedEmitter<WorldEvents> {
 
         const absoluteTileTilePosition = tileTilePosition.plus(chunkTilePosition)
 
+        const distortionNoisePosition = absoluteTileTilePosition.scaled(DISTORTION_SCALE)
+
+        const distortionX = getDistortionX(distortionNoisePosition.x, distortionNoisePosition.y)
+        const distortionY = getDistortionY(distortionNoisePosition.x, distortionNoisePosition.y)
+
+        const distortion = new Vec2(distortionX, distortionY)
+
+        distortion.scale(DISTORTION_STRENGTH)
+
         const noisePosition = absoluteTileTilePosition.scaled(NOISE_SCALE)
 
-        const noise = getNoise2D(noisePosition.x, noisePosition.y)
+        noisePosition.add(distortion)
+
+        const noise = getNoise(noisePosition.x, noisePosition.y)
 
         const baseTerrain = -absoluteTileTilePosition.y + (noise * NOISE_STRENGTH)
 
