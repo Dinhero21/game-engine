@@ -134,7 +134,7 @@ export class World extends TypedEmitter<WorldEvents> {
 
         let type: TileType = 'air'
 
-        if (baseTerrain < 0) type = Math.random() > 0.5 ? 'debug' : 'stone'
+        if (baseTerrain < 0) type = 'stone'
 
         chunk.setTile({
           position: tileTilePosition,
