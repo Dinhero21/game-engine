@@ -44,7 +44,7 @@ Loop.interval(1000 / 12)(() => { world.tick() })
 io.on('connection', socket => {
   const player: ServerPlayer = {
     id: socket.id,
-    position: tilePositionToPosition(new Vec2(0, -100)),
+    position: tilePositionToPosition(new Vec2(0, -10)),
     velocity: new Vec2(0, 1000),
     chunks: new Set()
   }

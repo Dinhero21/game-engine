@@ -6,10 +6,10 @@ import Chunk from './chunk.js'
 import { createNoise2D } from 'simplex-noise'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
-const DISTORTION_SCALE = 0.0001
-const DISTORTION_STRENGTH = 100
+const DISTORTION_SCALE = 0.001
+const DISTORTION_STRENGTH = 10
 const NOISE_SCALE = 0.03
-const NOISE_STRENGTH = 30
+const NOISE_STRENGTH = 10
 
 const getDistortionX = createNoise2D()
 const getDistortionY = createNoise2D()
@@ -134,7 +134,7 @@ export class World extends TypedEmitter<WorldEvents> {
 
         let type: TileType = 'air'
 
-        if (baseTerrain < 0) type = 'test'
+        if (baseTerrain < 0) type = Math.random() > 0.5 ? 'debug' : 'stone'
 
         chunk.setTile({
           position: tileTilePosition,

@@ -1,10 +1,12 @@
 import AirTile from './air.js'
-import TestTile from './test.js'
+import DebugTile from './debug.js'
+import StoneTile from './stone.js'
 import SusTile from './sus.js'
 
 export const tiles = {
   air: AirTile,
-  test: TestTile,
+  debug: DebugTile,
+  stone: StoneTile,
   sus: SusTile
 } as const
 
