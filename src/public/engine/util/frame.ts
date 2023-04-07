@@ -289,8 +289,8 @@ export class Frame {
     return this
   }
 
-  public drawTextRGBA (text: string, x: number, y: number, r: number, g: number, b: number, a: number = 1, maxWidth?: number): this {
-    this.drawText(text, x, y, `rgba(${r},${g},${b},${a})`, maxWidth)
+  public drawTextRGBA (text: string, x: number, y: number, r: number, g: number, b: number, a: number = 1, font: HTMLRenderingContext2D['font'] | None, maxWidth?: number): this {
+    this.drawText(text, x, y, `rgba(${r},${g},${b},${a})`, font, maxWidth)
 
     return this
   }
