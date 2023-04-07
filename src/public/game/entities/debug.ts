@@ -34,6 +34,10 @@ export class DebugEntity extends Entity {
     return new RectangularCollider(globalPosition, size)
   }
 
+  public update (delta: number): void {
+    super.update(delta)
+  }
+
   public draw (frame: Frame): void {
     const position = this.position
     const globalPosition = this.getGlobalPosition()
@@ -53,9 +57,9 @@ export class DebugEntity extends Entity {
 
     const lines = [
       this.title,
-      `Position: ${position.x}, ${position.y}`,
-      `Global Position: ${globalPosition.x}, ${globalPosition.y}`,
-      `Viewport Position: ${viewportPosition.x}, ${viewportPosition.y}`
+      `Position: ${Math.floor(position.x)}, ${Math.floor(position.y)}`,
+      `Global Position: ${Math.floor(globalPosition.x)}, ${Math.floor(globalPosition.y)}`,
+      `Viewport Position: ${Math.floor(viewportPosition.x)}, ${Math.floor(viewportPosition.y)}`
     ]
 
     for (let i = 0; i < lines.length; i++) {

@@ -13,8 +13,8 @@ import Loop from '../engine/util/loop.js'
 import mouse from '../engine/util/input/mouse.js'
 import DebugEntity from './entities/debug.js'
 import ViewportRelativeEntity from '../engine/entities/viewport.js'
-import VerticalContainerEntity from '../engine/entities/vertical-container.js'
 import HorizontalContainerEntity from '../engine/entities/horizontal-container.js'
+import VerticalContainerEntity from '../engine/entities/vertical-container.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -98,35 +98,43 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
 
   {
-    const verticalContainer = new VerticalContainerEntity()
-    verticalContainer.position = new Vec2(256, -256)
+    const container = new VerticalContainerEntity(64, new Vec2(64, 64))
+    container.position = new Vec2(-512, -256)
 
-    verticalContainer.addChild(new DebugEntity('Item (1)', new Vec2(256, 256)))
-    verticalContainer.addChild(new DebugEntity('Item (2)', new Vec2(128, 256)))
-    verticalContainer.addChild(new DebugEntity('Item (3)', new Vec2(256, 128)))
+    container.addChild(new DebugEntity('Item (1)', new Vec2(256, 256)))
+    container.addChild(new DebugEntity('Item (2)', new Vec2(128, 256)))
+    container.addChild(new DebugEntity('Item (3)', new Vec2(256, 128)))
 
-    scene.addChild(verticalContainer)
+    scene.addChild(container)
 
-    const verticalContainerDebug = new DebugEntity('Vertical Container', verticalContainer.getBoundingBox()?.getSize())
-    verticalContainerDebug.position = verticalContainer.position
+    const boundingBox = container.getBoundingBox()
+    const position = boundingBox.getPosition()
+    const size = boundingBox.getSize()
 
-    scene.addChild(verticalContainerDebug)
+    const debug = new DebugEntity('Vertical Container', size)
+    debug.setGlobalPosition(position)
+
+    scene.addChild(debug)
   }
 
   {
-    const horizontalContainer = new HorizontalContainerEntity()
-    horizontalContainer.position = new Vec2(-512, -256)
+    const container = new HorizontalContainerEntity(64, new Vec2(64, 64))
+    container.position = new Vec2(256, -256)
 
-    horizontalContainer.addChild(new DebugEntity('Item (1)', new Vec2(256, 256)))
-    horizontalContainer.addChild(new DebugEntity('Item (2)', new Vec2(128, 256)))
-    horizontalContainer.addChild(new DebugEntity('Item (3)', new Vec2(256, 128)))
+    container.addChild(new DebugEntity('Item (1)', new Vec2(256, 256)))
+    container.addChild(new DebugEntity('Item (2)', new Vec2(128, 256)))
+    container.addChild(new DebugEntity('Item (3)', new Vec2(256, 128)))
 
-    scene.addChild(horizontalContainer)
+    scene.addChild(container)
 
-    const horizontalContainerDebug = new DebugEntity('Horizontal Container', horizontalContainer.getBoundingBox()?.getSize())
-    horizontalContainerDebug.position = horizontalContainer.position
+    const boundingBox = container.getBoundingBox()
+    const position = boundingBox.getPosition()
+    const size = boundingBox.getSize()
 
-    scene.addChild(horizontalContainerDebug)
+    const debug = new DebugEntity('Horizontal Container', size)
+    debug.setGlobalPosition(position)
+
+    scene.addChild(debug)
   }
 
   const topLeft = new ViewportRelativeEntity(new Vec2(0, 0))

@@ -1,14 +1,19 @@
 import RectangularCollider from '../util/collision/rectangular.js'
 import Vec2 from '../util/vec2.js'
-import Entity from './index.js'
+import ContainerEntity from './container.js'
 
-export class VerticalContainerEntity extends Entity {
+export class VerticalContainerEntity extends ContainerEntity {
   public getBoundingBox (): RectangularCollider {
+    const children = Array.from(this.children)
+
+    const spacing = this.spacing
+    const padding = this.padding
+
     const globalPosition = this.getGlobalPosition()
 
     let width = 0
 
-    for (const child of this.children) {
+    for (const child of children) {
       const childBoundingBox = child.getBoundingBox()
 
       if (childBoundingBox === null) continue
@@ -16,12 +21,12 @@ export class VerticalContainerEntity extends Entity {
       const childSize = childBoundingBox.getSize()
       const childWidth = childSize.x
 
-      width += childWidth
+      width = Math.max(width, childWidth)
     }
 
     let height = 0
 
-    for (const child of this.children) {
+    for (const child of children) {
       const childBoundingBox = child.getBoundingBox()
 
       if (childBoundingBox === null) continue
@@ -29,10 +34,14 @@ export class VerticalContainerEntity extends Entity {
       const childSize = childBoundingBox.getSize()
       const childHeight = childSize.y
 
-      height = Math.max(height, childHeight)
+      height += childHeight
     }
 
     const size = new Vec2(width, height)
+
+    size.y += spacing * (children.length - 1)
+
+    size.add(padding.scaled(2))
 
     return new RectangularCollider(globalPosition, size)
   }
@@ -41,19 +50,22 @@ export class VerticalContainerEntity extends Entity {
   public update (delta: number): void {
     super.update(delta)
 
-    let x = 0
+    const spacing = this.spacing
+    const padding = this.padding
+
+    const position = padding.clone()
 
     for (const child of this.children) {
-      child.position.x = x
+      child.position.update(position)
 
       const childBoundingBox = child.getBoundingBox()
 
       if (childBoundingBox === null) continue
 
       const childSize = childBoundingBox.getSize()
-      const childWidth = childSize.x
+      const childWidth = childSize.y
 
-      x += childWidth
+      position.y += childWidth + spacing
     }
   }
 }
