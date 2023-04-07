@@ -109,15 +109,22 @@ export class PlayerEntity extends Entity {
     velocity.y /= 1.02
 
     // TODO: Make this less convoluted
-    velocity.update(this.updatePosition(velocity.scaled(delta), delta).divided(delta))
+    velocity.update(this.updatePosition(velocity.scaled(delta)).divided(delta))
   }
 
-  protected updatePosition (positionDelta: Vec2, delta: number): Vec2 {
+  protected updatePosition (positionDelta: Vec2): Vec2 {
     const position = this.position
 
     const overlapping = this.overlapping
 
     if (overlapping === undefined) {
+      position.add(positionDelta)
+
+      return positionDelta
+    }
+
+    // ? Should I ignore collisions or freeze the player?
+    if (overlapping(this.getBoundingBox())) {
       position.add(positionDelta)
 
       return positionDelta
