@@ -12,7 +12,7 @@ import Loop from '../engine/util/loop.js'
 import type Tile from '../engine/util/tilemap/tile.js'
 import mouse from '../engine/util/input/mouse.js'
 import DebugEntity from './entities/debug.js'
-import UIEntity from '../engine/entities/ui/index.js'
+import ViewportRelativeEntity from '../engine/entities/viewport.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -95,11 +95,15 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
 
-  const ui = new UIEntity()
-  scene.addChild(ui)
+  const topLeft = new ViewportRelativeEntity(new Vec2(0, 0))
+  scene.addChild(topLeft)
 
-  ui.addChild(new DebugEntity('UI'))
-  scene.addChild(new DebugEntity('Root'))
+  const topCentered = new ViewportRelativeEntity(new Vec2(0.5, 0))
+  scene.addChild(topCentered)
+
+  topLeft.addChild(new DebugEntity('Viewport (Top Left)'))
+  topCentered.addChild(new DebugEntity('Viewport (Top Centered)'))
+  scene.addChild(new DebugEntity('Scene'))
 
   return scene
 }
