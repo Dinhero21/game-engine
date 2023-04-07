@@ -11,6 +11,8 @@ import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import type Tile from '../engine/util/tilemap/tile.js'
 import mouse from '../engine/util/input/mouse.js'
+import DebugEntity from './entities/debug.js'
+import UIEntity from '../engine/entities/ui/index.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -92,6 +94,12 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   scene.addChild(multiplayerContainer)
 
   multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
+
+  const ui = new UIEntity()
+  scene.addChild(ui)
+
+  ui.addChild(new DebugEntity('UI'))
+  scene.addChild(new DebugEntity('Root'))
 
   return scene
 }

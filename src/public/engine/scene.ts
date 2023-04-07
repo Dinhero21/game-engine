@@ -1,4 +1,4 @@
-import type Entity from './entities/base.js'
+import type Entity from './entities/index.js'
 import Camera from './camera.js'
 import Frame from './util/frame.js'
 import Vec2 from './util/vec2.js'

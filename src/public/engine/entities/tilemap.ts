@@ -4,7 +4,7 @@ import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkP
 import { Chunk } from '../util/tilemap/chunk.js'
 import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
 import type Tile from '../util/tilemap/tile.js'
-import Entity from './base.js'
+import Entity from './index.js'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 const chunkPositionSize = chunkPositionToTilePosition(chunkTileSize)

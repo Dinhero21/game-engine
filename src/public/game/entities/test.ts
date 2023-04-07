@@ -1,7 +1,7 @@
 import type Frame from '../../engine/util/frame.js'
 import MultiRectangularCollider from '../../engine/util/collision/multi-rectangular.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
-import Entity from '../../engine/entities/base.js'
+import Entity from '../../engine/entities/index.js'
 import Vec2 from '../../engine/util/vec2.js'
 
 export class TestEntity extends Entity {

@@ -1,5 +1,5 @@
 import type Frame from '../../engine/util/frame.js'
-import Entity from '../../engine/entities/base.js'
+import Entity from '../../engine/entities/index.js'
 import Vec2 from '../../engine/util/vec2.js'
 import keyboard from '../../engine/util/input/keyboard.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
@@ -45,8 +45,8 @@ export class PlayerEntity extends Entity {
     const delta = velocity.scaled(0.1)
 
     frame
-      .drawLine(0, 0, 0, delta.y, '#e06c75', 3)
-      .drawLine(0, 0, delta.x, 0, '#98c379', 3)
+      .drawLine(0, 0, delta.x, 0, '#e06c75', 3)
+      .drawLine(0, 0, 0, delta.y, '#98c379', 3)
       .drawLine(0, 0, delta.x, delta.y, '#e5c07b', 3)
 
     const globalMousePosition = this.getGlobalMousePosition()

@@ -280,8 +280,9 @@ export class Frame {
 
   // High level methods
 
-  public drawText (text: string, x: number, y: number, color: HTMLRenderingContext2D['fillStyle'] | None, maxWidth?: number): this {
+  public drawText (text: string, x: number, y: number, color: HTMLRenderingContext2D['fillStyle'] | None, font: HTMLRenderingContext2D['font'] | None, maxWidth?: number): this {
     if (!isNone(color)) this.setFillStyle(color)
+    if (!isNone(font)) this.setFont(font)
 
     this._fillText(text, x, y, maxWidth)
 

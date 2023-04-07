@@ -63,6 +63,40 @@ export class Entity<Children extends Entity = Entity<any>> {
     return this.position.plus(this.getParentGlobalPosition())
   }
 
+  public setGlobalPosition (position: Vec2): this {
+    this.position = position.minus(this.getParentGlobalPosition())
+
+    return this
+  }
+
+  public getViewportPosition (): Vec2 {
+    const scene = this.getScene()
+
+    if (scene === undefined) return new Vec2(0, 0)
+
+    const camera = scene.camera
+    const viewport = camera.getViewport()
+    const viewportPosition = viewport.getPosition()
+
+    const globalPosition = this.getGlobalPosition()
+
+    return globalPosition.minus(viewportPosition)
+  }
+
+  public setViewportPosition (position: Vec2): this {
+    const scene = this.getScene()
+
+    if (scene === undefined) return this
+
+    const camera = scene.camera
+    const viewport = camera.getViewport()
+    const viewportPosition = viewport.getPosition()
+
+    this.setGlobalPosition(position.plus(viewportPosition))
+
+    return this
+  }
+
   // Collision Detection
 
   public getBoundingBox (): RectangularCollider | null {
