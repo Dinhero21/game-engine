@@ -107,7 +107,17 @@ io.on('connection', socket => {
   socket.on('tile.click', rawTilePosition => {
     const tilePosition = new Vec2(...rawTilePosition)
 
-    world.setTile('sus', tilePosition, 'change', 'change')
+    const tile = world.getTile(tilePosition)
+
+    if (tile === undefined) return
+
+    if (tile.type === 'air') {
+      world.setTile('sus', tilePosition, 'change', 'change')
+
+      return
+    }
+
+    world.setTile('air', tilePosition, 'change', 'change')
   })
 
   socket.on('disconnect', () => {
