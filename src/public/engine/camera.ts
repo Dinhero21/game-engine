@@ -8,10 +8,11 @@ const INTEGER_APPROXIMATION = CameraGlobals.integer_approximation
 
 export type ViewportGenerator = (camera: Camera) => RectangularCollider
 
-export const ViewportGenerators = {
-  TopLeftCorner: (camera: Camera) => new RectangularCollider(camera.position, camera.size),
-  Center: (camera: Camera) => new RectangularCollider(camera.position.minus(camera.size.divided(2)), camera.size)
-}
+const Align = (anchor: Vec2) => (camera: Camera) => new RectangularCollider(camera.position.minus(camera.size.scaled(anchor)), camera.size)
+const TopLeftCorner = Align(new Vec2(0, 0))
+const Center = Align(new Vec2(0.5, 0.5))
+
+export const ViewportGenerators = { Align, TopLeftCorner, Center }
 
 export class Camera {
   public position = new Vec2(0, 0)
