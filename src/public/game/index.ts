@@ -97,46 +97,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
 
-  {
-    const container = new VerticalContainerEntity(64, new Vec2(64, 64))
-    container.position = new Vec2(-512, -256)
-
-    container.addChild(new DebugEntity('Item (1)', new Vec2(256, 256)))
-    container.addChild(new DebugEntity('Item (2)', new Vec2(128, 256)))
-    container.addChild(new DebugEntity('Item (3)', new Vec2(256, 128)))
-
-    scene.addChild(container)
-
-    const boundingBox = container.getBoundingBox()
-    const position = boundingBox.getPosition()
-    const size = boundingBox.getSize()
-
-    const debug = new DebugEntity('Vertical Container', size)
-    debug.setGlobalPosition(position)
-
-    scene.addChild(debug)
-  }
-
-  {
-    const container = new HorizontalContainerEntity(64, new Vec2(64, 64))
-    container.position = new Vec2(256, -256)
-
-    container.addChild(new DebugEntity('Item (1)', new Vec2(256, 256)))
-    container.addChild(new DebugEntity('Item (2)', new Vec2(128, 256)))
-    container.addChild(new DebugEntity('Item (3)', new Vec2(256, 128)))
-
-    scene.addChild(container)
-
-    const boundingBox = container.getBoundingBox()
-    const position = boundingBox.getPosition()
-    const size = boundingBox.getSize()
-
-    const debug = new DebugEntity('Horizontal Container', size)
-    debug.setGlobalPosition(position)
-
-    scene.addChild(debug)
-  }
-
   const topLeft = new ViewportRelativeEntity(new Vec2(0, 0))
   topLeft.addChild(new DebugEntity('Viewport (Top Left)'))
   scene.addChild(topLeft)
