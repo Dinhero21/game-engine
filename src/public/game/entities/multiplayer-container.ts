@@ -71,3 +71,5 @@ export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
     socket.emit('physics.update', entity.position.toArray(), entity.velocity.toArray())
   }
 }
+
+export default MultiplayerContainerEntity

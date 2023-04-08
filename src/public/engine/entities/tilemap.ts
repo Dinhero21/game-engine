@@ -116,3 +116,5 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity {
     return Array.from(this.chunks.values()).some(chunk => chunk.colliding(other))
   }
 }
+
+export default TileMapEntity

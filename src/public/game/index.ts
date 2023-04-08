@@ -1,8 +1,6 @@
 import type { IClientSocket as Socket } from '../../socket.io.js'
 import type Tile from '../engine/util/tilemap/tile.js'
 import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition, TILE_SIZE } from '../engine/util/tilemap/position-conversion.js'
-import { MultiplayerContainerEntity } from './entities/multiplayer-container.js'
-import { TileMapEntity } from '../engine/entities/tilemap.js'
 import { Chunk } from '../engine/util/tilemap/chunk.js'
 import { loader } from '../assets/loader.js'
 import { createTile } from './tile.js'
@@ -11,10 +9,11 @@ import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import mouse from '../engine/util/input/mouse.js'
+import MultiplayerContainerEntity from './entities/multiplayer-container.js'
+import TileMapEntity from '../engine/entities/tilemap.js'
+import GridContainerEntity from './entities/grid-container.js'
 import DebugEntity from './entities/debug.js'
-import ViewportRelativeEntity from '../engine/entities/viewport.js'
-import HorizontalContainerEntity from '../engine/entities/horizontal-container.js'
-import VerticalContainerEntity from '../engine/entities/vertical-container.js'
+import { Center } from '../engine/mixins/center.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -97,15 +96,8 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
 
-  const topLeft = new ViewportRelativeEntity(new Vec2(0, 0))
-  topLeft.addChild(new DebugEntity('Viewport (Top Left)'))
-  scene.addChild(topLeft)
-
-  const topCentered = new ViewportRelativeEntity(new Vec2(0.5, 0))
-  topCentered.addChild(new DebugEntity('Viewport (Top Centered)'))
-  scene.addChild(topCentered)
-
-  scene.addChild(new DebugEntity('Scene'))
+  const inventory = new (Center(GridContainerEntity))(new Vec2(64, 64), new Vec2(32, 32), (x, y) => new DebugEntity(`${x} ${y}`, new Vec2(128, 128)))
+  scene.addChild(inventory)
 
   return scene
 }
