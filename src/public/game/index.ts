@@ -1,19 +1,20 @@
 import type { IClientSocket as Socket } from '../../socket.io.js'
 import type Tile from '../engine/util/tilemap/tile.js'
 import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition, TILE_SIZE } from '../engine/util/tilemap/position-conversion.js'
+import { ViewportGenerators } from '../engine/camera.js'
 import { Chunk } from '../engine/util/tilemap/chunk.js'
+import { Center } from '../engine/mixins/center.js'
 import { loader } from '../assets/loader.js'
 import { createTile } from './tile.js'
 import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
+import mouse from '../engine/util/input/mouse.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
-import mouse from '../engine/util/input/mouse.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 import TileMapEntity from '../engine/entities/tilemap.js'
 import GridContainerEntity from './entities/grid-container.js'
 import DebugEntity from './entities/debug.js'
-import { Center } from '../engine/mixins/center.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -22,6 +23,22 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const scene = new Scene(context)
   const camera = scene.camera
+
+  camera.ViewportGenerator = ViewportGenerators.Center
+
+  // Instant = Fastest Javascript Allows
+  Loop.instant()(delta => {
+    const position = mouse.getPosition()
+
+    mouseDebug.setViewportPosition(position)
+
+    scene.update(delta)
+  })
+
+  // Draw = Animation Frames
+  Loop.draw()(delta => {
+    camera.render()
+  })
 
   const tileMap = new TileMapEntity()
 
@@ -98,6 +115,9 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const inventory = new (Center(GridContainerEntity))(new Vec2(64, 64), new Vec2(32, 32), (x, y) => new DebugEntity(`${x} ${y}`, new Vec2(128, 128)))
   scene.addChild(inventory)
+
+  const mouseDebug = new DebugEntity('Mouse', new Vec2(0, 0))
+  scene.addChild(mouseDebug)
 
   return scene
 }

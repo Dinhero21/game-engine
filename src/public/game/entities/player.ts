@@ -48,19 +48,6 @@ export class PlayerEntity extends Entity {
       .drawLine(0, 0, delta.x, 0, '#e06c75', 3)
       .drawLine(0, 0, 0, delta.y, '#98c379', 3)
       .drawLine(0, 0, delta.x, delta.y, '#e5c07b', 3)
-
-    const globalMousePosition = this.getGlobalMousePosition()
-
-    if (globalMousePosition === undefined) return
-
-    // const screenBoundingBox = this.getScreenBoundingBox()
-
-    // if (screenBoundingBox === undefined) return
-
-    // const isInScreen = this.getBoundingBox().colliding(screenBoundingBox)
-    const isInScreen = true
-
-    frame.drawLine(0, 0, globalMousePosition.x, globalMousePosition.y, isInScreen ? '#98c379' : '#e06c75', 3)
   }
 
   public update (delta: number): void {

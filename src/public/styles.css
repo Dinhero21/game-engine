@@ -3,3 +3,7 @@ body {
   overflow: hidden;
   background-color: #282C34;
 }
+
+#view {
+  cursor: crosshair;
+}
