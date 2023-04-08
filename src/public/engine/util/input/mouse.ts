@@ -1,3 +1,4 @@
+import { TypedEventTarget } from '../typed-event-target.js'
 import Vec2 from '../vec2.js'
 
 export const MouseButtonMap = {
@@ -31,8 +32,12 @@ export class MouseMoveEvent extends Event {
 export class MouseDownEvent extends Event {
   public button: MouseButtonId
 
-  constructor (button: MouseButtonId) {
-    super('down')
+  constructor (button: MouseButtonId | MouseButtonName) {
+    if (typeof button === 'string') {
+      super(`${button}.down`)
+
+      button = MouseButtonMap[button]
+    } else super('down')
 
     this.button = button
   }
@@ -41,14 +46,28 @@ export class MouseDownEvent extends Event {
 export class MouseUpEvent extends Event {
   public button: MouseButtonId
 
-  constructor (button: MouseButtonId) {
-    super('up')
+  constructor (button: MouseButtonId | MouseButtonName) {
+    if (typeof button === 'string') {
+      super(`${button}.up`)
+
+      button = MouseButtonMap[button]
+    } else super('up')
 
     this.button = button
   }
 }
 
-export class Mouse extends EventTarget {
+type DownButtonEventMap<ButtonName extends MouseButtonName = MouseButtonName> = Record<`${ButtonName}.down`, MouseDownEvent>
+type UpButtonEventMap<ButtonName extends MouseButtonName = MouseButtonName> = Record<`${ButtonName}.up`, MouseUpEvent>
+type ButtonEventMap = DownButtonEventMap & UpButtonEventMap
+
+interface EventMap extends ButtonEventMap {
+  'move': MouseMoveEvent
+  'down': MouseDownEvent
+  'up': MouseUpEvent
+}
+
+export class Mouse extends TypedEventTarget<EventMap> {
   constructor () {
     super()
 
@@ -69,7 +88,7 @@ export class Mouse extends EventTarget {
 
     const position = new Vec2(x, y)
 
-    this.dispatchEvent(new MouseMoveEvent(position))
+    this.dispatchTypedEvent('move', new MouseMoveEvent(position))
 
     this.position.update(position)
   }
@@ -84,11 +103,11 @@ export class Mouse extends EventTarget {
   private onMouseDown (event: MouseEvent): void {
     const button = event.button as MouseButtonId
 
-    for (const [name, id] of Object.entries(MouseButtonMap)) {
-      if (id === button) this.dispatchEvent(new Event(`${name}.down`))
+    for (const [name, id] of Object.entries(MouseButtonMap) as Array<[MouseButtonName, MouseButtonId]>) {
+      if (id === button) this.dispatchTypedEvent<`${typeof name}.down`>(`${name}.down`, new MouseDownEvent(name))
     }
 
-    this.dispatchEvent(new MouseDownEvent(button))
+    this.dispatchTypedEvent('down', new MouseDownEvent(button))
 
     this.buttons.set(button, true)
   }
@@ -96,11 +115,11 @@ export class Mouse extends EventTarget {
   private onMouseUp (event: MouseEvent): void {
     const button = event.button as MouseButtonId
 
-    for (const [name, id] of Object.entries(MouseButtonMap)) {
-      if (id === button) this.dispatchEvent(new Event(`${name}.up`))
+    for (const [name, id] of Object.entries(MouseButtonMap) as Array<[MouseButtonName, MouseButtonId]>) {
+      if (id === button) this.dispatchTypedEvent<`${typeof name}.up`>(`${name}.up`, new MouseUpEvent(name))
     }
 
-    this.dispatchEvent(new MouseUpEvent(button))
+    this.dispatchTypedEvent('up', new MouseUpEvent(button))
 
     this.buttons.set(button, false)
   }
