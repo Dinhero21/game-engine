@@ -28,11 +28,11 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
+    scene.update(delta)
+
     const position = mouse.getPosition()
 
     mouseDebug.setViewportPosition(position)
-
-    scene.update(delta)
   })
 
   // Draw = Animation Frames
