@@ -21,22 +21,18 @@ export class PlayerEntity extends Entity {
     this.id = id
   }
 
-  public getBoundingBox (): RectangularCollider {
+  public getConstantCollider (): RectangularCollider {
     const size = new Vec2(64, 64)
 
-    const globalPosition = this.getGlobalPosition()
-
-    return new RectangularCollider(globalPosition.minus(size.divided(2)), size)
+    return new RectangularCollider(size.divided(2).scaled(-1), size)
   }
 
   public draw (frame: Frame): void {
     super.draw(frame)
 
-    const globalPosition = this.getGlobalPosition()
-
-    const boundingBox = this.getBoundingBox()
-    const size = boundingBox.getSize()
-    const position = boundingBox.getPosition().minus(globalPosition)
+    const collider = this.getConstantCollider()
+    const size = collider.getSize()
+    const position = collider.getPosition()
 
     frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, 0x61, 0xAF, 0xEF)
 
@@ -111,7 +107,7 @@ export class PlayerEntity extends Entity {
     }
 
     // ? Should I ignore collisions or freeze the player?
-    if (overlapping(this.getBoundingBox())) {
+    if (overlapping(this.getGlobalCollider())) {
       position.add(positionDelta)
 
       return positionDelta
@@ -121,9 +117,9 @@ export class PlayerEntity extends Entity {
 
     // Bidirectional Position Delta Calculation
     {
-      const boundingBox = this.getBoundingBox()
+      const collider = this.getGlobalCollider()
 
-      const maximumPositionDelta = boundingBox.calculateMaximumPositionDelta(positionDelta, overlapping)
+      const maximumPositionDelta = collider.calculateMaximumPositionDelta(positionDelta, overlapping)
 
       position.add(maximumPositionDelta)
 
@@ -132,10 +128,10 @@ export class PlayerEntity extends Entity {
 
     // Unidirectional Position Delta Calculation
     {
-      const boundingBox = this.getBoundingBox()
+      const collider = this.getGlobalCollider()
 
-      const maximumPositionDeltaX = boundingBox.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), overlapping)
-      const maximumPositionDeltaY = boundingBox.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), overlapping)
+      const maximumPositionDeltaX = collider.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), overlapping)
+      const maximumPositionDeltaY = collider.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), overlapping)
 
       const maximumPositionDelta = maximumPositionDeltaX.length() > maximumPositionDeltaY.length() ? maximumPositionDeltaX : maximumPositionDeltaY
 

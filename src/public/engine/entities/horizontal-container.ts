@@ -3,22 +3,20 @@ import Vec2 from '../util/vec2.js'
 import ContainerEntity from './container.js'
 
 export class HorizontalContainerEntity extends ContainerEntity {
-  public getBoundingBox (): RectangularCollider {
+  public getConstantCollider (): RectangularCollider {
     const children = Array.from(this.children)
 
     const spacing = this.spacing
     const padding = this.padding
 
-    const globalPosition = this.getGlobalPosition()
-
     let width = 0
 
     for (const child of children) {
-      const childBoundingBox = child.getBoundingBox()
+      const childCollider = child.getConstantCollider()
 
-      if (childBoundingBox === null) continue
+      if (childCollider === null) continue
 
-      const childSize = childBoundingBox.getSize()
+      const childSize = childCollider.getSize()
       const childWidth = childSize.x
 
       width += childWidth
@@ -27,11 +25,11 @@ export class HorizontalContainerEntity extends ContainerEntity {
     let height = 0
 
     for (const child of children) {
-      const childBoundingBox = child.getBoundingBox()
+      const childCollider = child.getConstantCollider()
 
-      if (childBoundingBox === null) continue
+      if (childCollider === null) continue
 
-      const childSize = childBoundingBox.getSize()
+      const childSize = childCollider.getSize()
       const childHeight = childSize.y
 
       height = Math.max(height, childHeight)
@@ -43,7 +41,7 @@ export class HorizontalContainerEntity extends ContainerEntity {
 
     size.add(padding.scaled(2))
 
-    return new RectangularCollider(globalPosition, size)
+    return new RectangularCollider(new Vec2(0, 0), size)
   }
 
   // ? Should I move the children during the draw or update phase?
@@ -58,11 +56,11 @@ export class HorizontalContainerEntity extends ContainerEntity {
     for (const child of this.children) {
       child.position.update(position)
 
-      const childBoundingBox = child.getBoundingBox()
+      const childCollider = child.getConstantCollider()
 
-      if (childBoundingBox === null) continue
+      if (childCollider === null) continue
 
-      const childSize = childBoundingBox.getSize()
+      const childSize = childCollider.getSize()
       const childWidth = childSize.x
 
       position.x += childWidth + spacing

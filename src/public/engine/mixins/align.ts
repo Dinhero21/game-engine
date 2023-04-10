@@ -19,15 +19,15 @@ export function Align<T extends Constructor<Entity>> (BaseEntity: T, anchor: Vec
       this._position.add(positionDelta)
 
       {
-        const boundingBox = this.getBoundingBox()
+        const collider = this.getConstantCollider()
 
-        if (boundingBox === null) {
+        if (collider === null) {
           super.update(delta)
 
           return
         }
 
-        const size = boundingBox.getSize()
+        const size = collider.getSize()
         const offset = size.scaled(anchor)
 
         this.position.subtract(offset)

@@ -1,5 +1,5 @@
 import type Frame from '../../engine/util/frame.js'
-import type Vec2 from '../../engine/util/vec2.js'
+import Vec2 from '../../engine/util/vec2.js'
 import Entity from '../../engine/entities/index.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
 
@@ -8,7 +8,7 @@ export class DebugEntity extends Entity {
   protected size
   protected color: [number, number, number]
 
-  constructor (title: string = 'Debug', size?: Vec2) {
+  constructor (title: string = 'Debug', size: Vec2 = new Vec2(0, 0)) {
     super()
 
     this.title = title
@@ -24,15 +24,15 @@ export class DebugEntity extends Entity {
     ][Math.floor(Math.random() * 6)] as [number, number, number]
   }
 
-  public getBoundingBox (): RectangularCollider | null {
+  // Collision
+
+  public getConstantCollider (): RectangularCollider {
     const size = this.size
 
-    if (size === undefined) return null
-
-    const globalPosition = this.getGlobalPosition()
-
-    return new RectangularCollider(globalPosition, size)
+    return new RectangularCollider(new Vec2(0, 0), size)
   }
+
+  // Game Loop
 
   public update (delta: number): void {
     super.update(delta)
@@ -43,12 +43,16 @@ export class DebugEntity extends Entity {
     const globalPosition = this.getGlobalPosition()
     const viewportPosition = this.getViewportPosition()
 
-    const boundingBox = this.getBoundingBox()
+    {
+      const collider = this.getConstantCollider()
 
-    if (boundingBox !== null) {
-      const size = boundingBox.getSize()
+      const position = collider.getPosition()
 
-      frame.drawFancyRectRGBA(0, 0, size.x, size.y, this.color[0], this.color[1], this.color[2], 0.5)
+      const size = collider.getSize()
+
+      const color = this.color
+
+      frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, ...color, 0.5)
     }
 
     frame

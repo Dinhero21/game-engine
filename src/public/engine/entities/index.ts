@@ -1,14 +1,10 @@
 import type Scene from '../scene.js'
-import type RectangularCollider from '../util/collision/rectangular.js'
+import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
-export class Entity<Children extends Entity = Entity<any>> {
-  public getScene (): Scene | undefined {
-    return this.parent?.getScene()
-  }
-
-  // Game Loop
+export class Entity<ValidChild extends Entity = Entity<any>> {
+  // Game LoopZ
 
   public update (delta: number): void {
     for (const child of this.children) child.update(delta)
@@ -27,9 +23,9 @@ export class Entity<Children extends Entity = Entity<any>> {
 
   // Entity Relationship
 
-  protected readonly children = new Set<Children>()
+  protected readonly children = new Set<ValidChild>()
 
-  public addChild (child: Children): this {
+  public addChild (child: ValidChild): this {
     this.children.add(child)
 
     child.setParent(this)
@@ -37,7 +33,7 @@ export class Entity<Children extends Entity = Entity<any>> {
     return this
   }
 
-  public removeChild (child: Children): this {
+  public removeChild (child: ValidChild): this {
     this.children.delete(child)
 
     return this
@@ -49,6 +45,10 @@ export class Entity<Children extends Entity = Entity<any>> {
     this.parent = parent
 
     return this
+  }
+
+  public getScene (): Scene | undefined {
+    return this.parent?.getScene()
   }
 
   // Position
@@ -99,8 +99,33 @@ export class Entity<Children extends Entity = Entity<any>> {
 
   // Collision Detection
 
-  public getBoundingBox (): RectangularCollider | null {
-    return null
+  // TODO: Find a better name
+  public getConstantCollider (): RectangularCollider {
+    return new RectangularCollider(new Vec2(0, 0), new Vec2(0, 0))
+  }
+
+  public getParentRelativeCollider (): RectangularCollider {
+    const collider = this.getConstantCollider()
+
+    const position = this.position
+
+    return collider.offset(position)
+  }
+
+  public getGlobalCollider (): RectangularCollider {
+    const collider = this.getConstantCollider()
+
+    const globalPosition = this.getGlobalPosition()
+
+    return collider.offset(globalPosition)
+  }
+
+  public getViewportCollider (): RectangularCollider {
+    const collider = this.getConstantCollider()
+
+    const viewportPosition = this.getViewportPosition()
+
+    return collider.offset(viewportPosition)
   }
 
   // IO

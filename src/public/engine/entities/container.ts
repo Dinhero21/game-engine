@@ -13,7 +13,7 @@ export abstract class ContainerEntity extends Entity {
     this.padding = padding
   }
 
-  public abstract getBoundingBox (): RectangularCollider
+  public abstract getConstantCollider (): RectangularCollider
 }
 
 export default ContainerEntity
