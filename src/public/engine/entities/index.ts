@@ -4,7 +4,7 @@ import Frame from '../util/frame.js'
 import Vec2 from '../util/vec2.js'
 
 export class Entity<ValidChild extends Entity = Entity<any>> {
-  // Game LoopZ
+  // Game Loop
 
   public update (delta: number): void {
     for (const child of this.children) child.update(delta)
@@ -130,12 +130,12 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
   // IO
 
-  protected getMousePosition (): Vec2 | undefined {
-    return this.getScene()?.getMousePosition()
+  protected getMouseViewportPosition (): Vec2 | undefined {
+    return this.getScene()?.getMouseViewportPosition()
   }
 
   public getGlobalMousePosition (): Vec2 | undefined {
-    return this.getMousePosition()?.minus(this.getGlobalPosition())
+    return this.getMouseViewportPosition()?.minus(this.getGlobalPosition())
   }
 }
 

@@ -2,26 +2,18 @@ import type Frame from '../../engine/util/frame.js'
 import Vec2 from '../../engine/util/vec2.js'
 import Entity from '../../engine/entities/index.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
+import PointCollider from '../../engine/util/collision/point.js'
+import mouse from '../../engine/util/input/mouse.js'
 
 export class DebugEntity extends Entity {
   protected title
   protected size
-  protected color: [number, number, number]
 
   constructor (title: string = 'Debug', size: Vec2 = new Vec2(0, 0)) {
     super()
 
     this.title = title
     this.size = size
-
-    this.color = [
-      [255, 0, 0],
-      [0, 255, 0],
-      [255, 255, 0],
-      [0, 0, 255],
-      [255, 0, 255],
-      [0, 255, 255]
-    ][Math.floor(Math.random() * 6)] as [number, number, number]
   }
 
   // Collision
@@ -41,19 +33,46 @@ export class DebugEntity extends Entity {
   public draw (frame: Frame): void {
     const position = this.position
     const globalPosition = this.getGlobalPosition()
-    const viewportPosition = this.getViewportPosition()
+    const viewportPosition = this.getViewportPosition();
 
-    {
+    (() => {
       const collider = this.getConstantCollider()
 
       const position = collider.getPosition()
 
       const size = collider.getSize()
 
-      const color = this.color
+      const mousePosition = mouse.getPosition()
 
-      frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, ...color, 0.5)
-    }
+      if (mousePosition === undefined) return
+
+      const viewportCollider = this.getViewportCollider()
+
+      const mouseCollider = new PointCollider(mousePosition)
+
+      // ? Should I make this its own function? (probably something like isMouseColliding)
+      if (viewportCollider.overlapping(mouseCollider)) {
+        frame.drawFancyRectRGBA(
+          position.x,
+          position.y,
+          size.x,
+          size.y,
+          0x98,
+          0xC3,
+          0x78
+        )
+      } else {
+        frame.drawFancyRectRGBA(
+          position.x,
+          position.y,
+          size.x,
+          size.y,
+          0xE0,
+          0x6C,
+          0x75
+        )
+      }
+    })()
 
     frame
       .drawLine(-16, 0, 16, 0, '#e06c75', 4)

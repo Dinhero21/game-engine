@@ -4,7 +4,7 @@ import { Collider } from './collider.js'
 export type OverlapDetector = (collider: RectangularCollider) => boolean
 
 export abstract class RectangularlyApproximatableCollider extends Collider<RectangularlyApproximatableCollider> {
-  abstract getRectangularApproximation (): RectangularCollider
+  public abstract getRectangularApproximation (): RectangularCollider
 }
 
 export class RectangularCollider extends RectangularlyApproximatableCollider {
