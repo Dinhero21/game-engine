@@ -8,4 +8,4 @@ export function Center<T extends Constructor<Entity>> (BaseEntity: T) {
   return Align<T>(BaseEntity, new Vec2(0.5, 0.5))
 }
 
-export default Align
+export default Center
