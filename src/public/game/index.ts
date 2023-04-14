@@ -1,12 +1,13 @@
 import type { IClientSocket as Socket } from '../../socket.io.js'
 import type Tile from '../engine/util/tilemap/tile.js'
+import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
 import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition, TILE_SIZE } from '../engine/util/tilemap/position-conversion.js'
+import { animatePosition, TRANSFORMATIONS } from '../engine/patchers/animate.js'
 import { ViewportGenerators } from '../engine/camera.js'
 import { Chunk } from '../engine/util/tilemap/chunk.js'
 import { Center } from '../engine/mixins/center.js'
 import { loader } from '../assets/loader.js'
 import { createTile } from './tile.js'
-import Vec2, { stringToVec2 } from '../engine/util/vec2.js'
 import mouse from '../engine/util/input/mouse.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
@@ -25,6 +26,8 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   const camera = scene.camera
 
   camera.ViewportGenerator = ViewportGenerators.Center
+
+  const mouseDebug = new DebugEntity('Mouse', new Vec2(0, 0))
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
@@ -116,7 +119,33 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   const inventory = new (Center(GridContainerEntity))(new Vec2(64, 64), new Vec2(32, 32), (x, y) => new DebugEntity(`${x} ${y}`, new Vec2(128, 128)))
   scene.addChild(inventory)
 
-  const mouseDebug = new DebugEntity('Mouse', new Vec2(0, 0))
+  const linearAnimationDebug = new DebugEntity('Animation (Linear)')
+  scene.addChild(linearAnimationDebug)
+
+  const quadraticAnimationDebug = new DebugEntity('Animation (Quadratic)')
+  scene.addChild(quadraticAnimationDebug)
+
+  const cubicAnimationDebug = new DebugEntity('Animation (Cubic)')
+  scene.addChild(cubicAnimationDebug)
+
+  const quarticAnimationDebug = new DebugEntity('Animation (Quartic)')
+  scene.addChild(quarticAnimationDebug)
+
+  const quinticAnimationDebug = new DebugEntity('Animation (Quintic)')
+  scene.addChild(quinticAnimationDebug)
+
+  void (async () => {
+    while (true) {
+      await Promise.all([
+        animatePosition(linearAnimationDebug, new Vec2(512, 0), new Vec2(512 + 64, 0), 1, TRANSFORMATIONS.Linear),
+        animatePosition(quadraticAnimationDebug, new Vec2(512, -128), new Vec2(512 + 64, -128), 1, TRANSFORMATIONS.EaseQuadratic),
+        animatePosition(cubicAnimationDebug, new Vec2(512, -256), new Vec2(512 + 64, -256), 1, TRANSFORMATIONS.EaseCubic),
+        animatePosition(quarticAnimationDebug, new Vec2(512, -384), new Vec2(512 + 64, -384), 1, TRANSFORMATIONS.EaseQuartic),
+        animatePosition(quinticAnimationDebug, new Vec2(512, -512), new Vec2(512 + 64, -512), 1, TRANSFORMATIONS.EaseQuintic)
+      ])
+    }
+  })()
+
   scene.addChild(mouseDebug)
 
   return scene
