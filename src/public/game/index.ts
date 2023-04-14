@@ -33,9 +33,9 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   Loop.instant()(delta => {
     scene.update(delta)
 
-    const position = mouse.getPosition()
+    const mouseViewportPosition = scene.getMouseViewportPosition()
 
-    mouseDebug.setViewportPosition(position)
+    mouseDebug.setGlobalPosition(mouseViewportPosition)
   })
 
   // Draw = Animation Frames
