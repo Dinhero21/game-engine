@@ -5,16 +5,16 @@ import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition, TILE_S
 import { animatePosition, TRANSFORMATIONS } from '../engine/patchers/animate.js'
 import { ViewportGenerators } from '../engine/camera.js'
 import { Chunk } from '../engine/util/tilemap/chunk.js'
-import { Center } from '../engine/mixins/center.js'
 import { loader } from '../assets/loader.js'
 import { createTile } from './tile.js'
+import { InventoryEntity } from './entities/inventory.js'
+import { sleep } from '../engine/util/sleep.js'
 import mouse from '../engine/util/input/mouse.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 import TileMapEntity from '../engine/entities/tilemap.js'
-import GridContainerEntity from './entities/grid-container.js'
 import DebugEntity from './entities/debug.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
@@ -116,35 +116,57 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
 
-  const inventory = new (Center(GridContainerEntity))(new Vec2(64, 64), new Vec2(32, 32), (x, y) => new DebugEntity(`${x} ${y}`, new Vec2(128, 128)))
+  const inventory = new InventoryEntity(new Vec2(3, 3), new Vec2(64, 64), new Vec2(0, 0))
   scene.addChild(inventory)
 
-  const linearAnimationDebug = new DebugEntity('Animation (Linear)')
-  scene.addChild(linearAnimationDebug)
-
-  const quadraticAnimationDebug = new DebugEntity('Animation (Quadratic)')
-  scene.addChild(quadraticAnimationDebug)
-
-  const cubicAnimationDebug = new DebugEntity('Animation (Cubic)')
-  scene.addChild(cubicAnimationDebug)
-
-  const quarticAnimationDebug = new DebugEntity('Animation (Quartic)')
-  scene.addChild(quarticAnimationDebug)
-
-  const quinticAnimationDebug = new DebugEntity('Animation (Quintic)')
-  scene.addChild(quinticAnimationDebug)
-
   void (async () => {
+    let type: string | null = 'sus'
+
     while (true) {
-      await Promise.all([
-        animatePosition(linearAnimationDebug, new Vec2(512, 0), new Vec2(512 + 64, 0), 1, TRANSFORMATIONS.Linear),
-        animatePosition(quadraticAnimationDebug, new Vec2(512, -128), new Vec2(512 + 64, -128), 1, TRANSFORMATIONS.EaseQuadratic),
-        animatePosition(cubicAnimationDebug, new Vec2(512, -256), new Vec2(512 + 64, -256), 1, TRANSFORMATIONS.EaseCubic),
-        animatePosition(quarticAnimationDebug, new Vec2(512, -384), new Vec2(512 + 64, -384), 1, TRANSFORMATIONS.EaseQuartic),
-        animatePosition(quinticAnimationDebug, new Vec2(512, -512), new Vec2(512 + 64, -512), 1, TRANSFORMATIONS.EaseQuintic)
-      ])
+      while (true) {
+        const slotTest = inventory.findSlot(slot => slot.type !== type)
+
+        if (slotTest === undefined) break
+
+        slotTest.type = type
+
+        await sleep(100)
+      }
+
+      type = type === 'sus' ? null : 'sus'
+
+      await sleep(1000)
     }
   })()
+
+  {
+    const linearAnimationDebug = new DebugEntity('Animation (Linear)')
+    scene.addChild(linearAnimationDebug)
+
+    const quadraticAnimationDebug = new DebugEntity('Animation (Quadratic)')
+    scene.addChild(quadraticAnimationDebug)
+
+    const cubicAnimationDebug = new DebugEntity('Animation (Cubic)')
+    scene.addChild(cubicAnimationDebug)
+
+    const quarticAnimationDebug = new DebugEntity('Animation (Quartic)')
+    scene.addChild(quarticAnimationDebug)
+
+    const quinticAnimationDebug = new DebugEntity('Animation (Quintic)')
+    scene.addChild(quinticAnimationDebug)
+
+    void (async () => {
+      while (true) {
+        await Promise.all([
+          animatePosition(linearAnimationDebug, new Vec2(512, 0), new Vec2(512 + 64, 0), 1, TRANSFORMATIONS.Linear),
+          animatePosition(quadraticAnimationDebug, new Vec2(512, -128), new Vec2(512 + 64, -128), 1, TRANSFORMATIONS.EaseQuadratic),
+          animatePosition(cubicAnimationDebug, new Vec2(512, -256), new Vec2(512 + 64, -256), 1, TRANSFORMATIONS.EaseCubic),
+          animatePosition(quarticAnimationDebug, new Vec2(512, -384), new Vec2(512 + 64, -384), 1, TRANSFORMATIONS.EaseQuartic),
+          animatePosition(quinticAnimationDebug, new Vec2(512, -512), new Vec2(512 + 64, -512), 1, TRANSFORMATIONS.EaseQuintic)
+        ])
+      }
+    })()
+  }
 
   scene.addChild(mouseDebug)
 

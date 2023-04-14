@@ -5,7 +5,7 @@ import RectangularCollider from '../../engine/util/collision/rectangular.js'
 import PointCollider from '../../engine/util/collision/point.js'
 import mouse from '../../engine/util/input/mouse.js'
 
-export class DebugEntity extends Entity {
+export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   protected title
   protected size
 

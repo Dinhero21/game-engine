@@ -1,7 +1,7 @@
 import Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 
-export class ViewportRelativeEntity extends Entity {
+export class ViewportRelativeEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   protected anchor
 
   constructor (anchor: Vec2 = new Vec2(0, 0)) {

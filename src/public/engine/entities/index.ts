@@ -39,6 +39,10 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     return this
   }
 
+  public getChildren (): ValidChild[] {
+    return Array.from(this.children)
+  }
+
   protected parent?: Entity | Scene
 
   public setParent (parent: Entity | Scene): this {

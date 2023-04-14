@@ -6,7 +6,7 @@ import RectangularCollider from '../../engine/util/collision/rectangular.js'
 
 export type OverlapDetector = (collider: RectangularCollider) => boolean
 
-export class PlayerEntity extends Entity {
+export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public id
 
   public velocity: Vec2 = new Vec2(0, 0)

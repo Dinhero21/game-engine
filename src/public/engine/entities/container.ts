@@ -2,7 +2,7 @@ import type RectangularCollider from '../util/collision/rectangular.js'
 import type Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 
-export abstract class ContainerEntity extends Entity {
+export abstract class ContainerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   protected spacing
   protected padding
 

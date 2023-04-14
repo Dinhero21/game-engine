@@ -1,8 +1,9 @@
+import type Entity from './index.js'
 import RectangularCollider from '../util/collision/rectangular.js'
 import Vec2 from '../util/vec2.js'
 import ContainerEntity from './container.js'
 
-export class VerticalContainerEntity extends ContainerEntity {
+export class VerticalContainerEntity<ValidChild extends Entity = Entity> extends ContainerEntity<ValidChild> {
   public getConstantCollider (): RectangularCollider {
     const children = Array.from(this.children)
 
