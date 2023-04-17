@@ -1,34 +1,32 @@
 import type Entity from '../entities/index.js'
-import { patch } from './index.js'
+import { patchEntity } from './index.js'
 import type Vec2 from '../util/vec2.js'
 import { lerp2D } from '../util/math.js'
 
-export async function animate<T extends Entity> (entity: T, callback: (t: number) => void, duration: number): Promise<void> {
+export async function animate (entity: Entity, callback: (t: number) => void, duration: number): Promise<void> {
   let t = 0
 
   await new Promise<void>(resolve => {
-    patch(entity)('update', update => {
-      callback(t)
+    callback(t)
 
-      return function (delta: number) {
-        update(delta)
+    patchEntity(entity)('update', (helper, delta) => {
+      helper.original(delta)
 
-        t += delta
+      t += delta
 
-        if (t >= duration) {
-          t = duration
-
-          callback(t)
-
-          entity.update = update
-
-          resolve()
-
-          return
-        }
+      if (t >= duration) {
+        t = duration
 
         callback(t)
+
+        helper.restore()
+
+        resolve()
+
+        return
       }
+
+      callback(t)
     })
   })
 }

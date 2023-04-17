@@ -1,14 +1,40 @@
 import type Entity from '../entities/index.js'
+import { type ExtractKeys } from '../util/types.js'
 
-function isFunction (value: any): value is (...args: any[]) => any {
+export type AnyFunction = (...args: any[]) => any
+
+export type MaybeReturnType<T> = T extends (...args: any[]) => infer R ? R : any
+export type MaybeParameters<T> = T extends AnyFunction ? Parameters<T> : any
+export type MaybeFunction<T> = (...args: MaybeParameters<T>) => MaybeReturnType<T>
+
+export type FunctionKeys<T> = ExtractKeys<T, AnyFunction>
+
+export function isFunction (value: any): value is AnyFunction {
   return typeof value === 'function'
 }
 
-export function patch<T extends Entity> (entity: T): <PropertyName extends keyof T = keyof T>(property: PropertyName, callback: (this: T, original: T[PropertyName]) => T[PropertyName] & ((this: T, ...args: any[]) => any)) => void {
-  type TKey = keyof T
+/*
+Example:
 
-  // TODO: Make it so Property can only be TKeys when T[TKey] extends ((...args: any[]) => any)
-  return <PropertyName extends TKey = TKey>(property: PropertyName, callback: (this: T, original: T[PropertyName]) => T[PropertyName] & ((this: T, ...args: any[]) => any)) => {
+patch(entity)('update', (helper, delta) => {
+  // Call the original entity.update
+  helper.original(delta)
+
+  // Restore entity to its original state
+  helper.restore()
+})
+*/
+
+// TODO: Make a generic patch function that can patch methods not present on Entity (FunctionKeys<T extends Entity> does not work for some reason)
+// TODO: Make this function return explicit return types (too bored ngl)
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export function patchEntity (entity: Entity) {
+  interface PatchHelper<Original> {
+    original: Original
+    restore: () => void
+  }
+
+  return <PropertyName extends FunctionKeys<Entity> = FunctionKeys<Entity>>(property: PropertyName, callback: (this: Entity, test: PatchHelper<Entity[PropertyName]>, ...args: MaybeParameters<Entity[PropertyName]>) => MaybeReturnType<Entity[PropertyName]>): void => {
     let original = entity[property]
 
     // ? Should I return or throw an error?
@@ -18,12 +44,16 @@ export function patch<T extends Entity> (entity: T): <PropertyName extends keyof
 
     original = original.bind(entity) as Original
 
-    let newFunction = callback.apply(entity, [original])
-
-    if (!isFunction(newFunction)) throw new Error('Callback returned a non-function')
-
-    newFunction = newFunction.bind(entity) as Original
-
-    entity[property] = newFunction as Original
+    (entity[property] as MaybeFunction<Entity[PropertyName]>) = (...args) => {
+      return callback.apply(entity, [
+        {
+          original,
+          restore () {
+            entity[property] = original
+          }
+        },
+        ...args
+      ])
+    }
   }
 }
