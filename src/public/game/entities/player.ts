@@ -3,6 +3,7 @@ import Entity from '../../engine/entities/index.js'
 import Vec2 from '../../engine/util/vec2.js'
 import keyboard from '../../engine/util/input/keyboard.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
+import { TILE_SIZE } from '../../engine/util/tilemap/position-conversion.js'
 
 export type OverlapDetector = (collider: RectangularCollider) => boolean
 
@@ -108,7 +109,7 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
     // ? Should I ignore collisions or freeze the player?
     if (overlapping(this.getGlobalCollider())) {
-      position.add(positionDelta)
+      position.y -= TILE_SIZE
 
       return positionDelta
     }
