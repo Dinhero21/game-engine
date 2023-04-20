@@ -2,8 +2,6 @@ import { isNone, type None } from '../../none.js'
 import { Frame as FrameGlobals } from '../../globals.js'
 import Vec2 from './vec2.js'
 
-const INTEGER_APPROXIMATION = FrameGlobals.integer_approximation
-
 export type HTMLRenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
 export type RenderingContext2D = Frame | HTMLRenderingContext2D
 
@@ -83,13 +81,20 @@ export class Frame {
   public _fillRect (x: number, y: number, w: number, h: number): this {
     const queue = this.queue
 
-    if (INTEGER_APPROXIMATION) {
-      x = Math.floor(x)
-      y = Math.floor(y)
-    }
-
     queue.push(context => {
       const offset = this.offset
+
+      if (context instanceof Frame) {
+        if (FrameGlobals.integer_approximation.frame) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      } else {
+        if (FrameGlobals.integer_approximation.canvas) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      }
 
       x += offset.x
       y += offset.y
@@ -109,13 +114,20 @@ export class Frame {
   public _strokeRect (x: number, y: number, w: number, h: number): this {
     const queue = this.queue
 
-    if (INTEGER_APPROXIMATION) {
-      x = Math.floor(x)
-      y = Math.floor(y)
-    }
-
     queue.push(context => {
       const offset = this.offset
+
+      if (context instanceof Frame) {
+        if (FrameGlobals.integer_approximation.frame) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      } else {
+        if (FrameGlobals.integer_approximation.canvas) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      }
 
       x += offset.x
       y += offset.y
@@ -151,13 +163,20 @@ export class Frame {
   public _moveTo (x: number, y: number): this {
     const queue = this.queue
 
-    if (INTEGER_APPROXIMATION) {
-      x = Math.floor(x)
-      y = Math.floor(y)
-    }
-
     queue.push(context => {
       const offset = this.offset
+
+      if (context instanceof Frame) {
+        if (FrameGlobals.integer_approximation.frame) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      } else {
+        if (FrameGlobals.integer_approximation.canvas) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      }
 
       x += offset.x
       y += offset.y
@@ -177,13 +196,20 @@ export class Frame {
   public _lineTo (x: number, y: number): this {
     const queue = this.queue
 
-    if (INTEGER_APPROXIMATION) {
-      x = Math.floor(x)
-      y = Math.floor(y)
-    }
-
     queue.push(context => {
       const offset = this.offset
+
+      if (context instanceof Frame) {
+        if (FrameGlobals.integer_approximation.frame) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      } else {
+        if (FrameGlobals.integer_approximation.canvas) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      }
 
       x += offset.x
       y += offset.y
@@ -219,13 +245,20 @@ export class Frame {
   public _fillText (text: string, x: number, y: number, maxWidth?: number): this {
     const queue = this.queue
 
-    if (INTEGER_APPROXIMATION) {
-      x = Math.floor(x)
-      y = Math.floor(y)
-    }
-
     queue.push(context => {
       const offset = this.offset
+
+      if (context instanceof Frame) {
+        if (FrameGlobals.integer_approximation.frame) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      } else {
+        if (FrameGlobals.integer_approximation.canvas) {
+          x = Math.floor(x)
+          y = Math.floor(y)
+        }
+      }
 
       x += offset.x
       y += offset.y
@@ -245,16 +278,24 @@ export class Frame {
   public _drawImage (image: CanvasImageSource | OffscreenCanvas, dx: number, dy: number, dw?: number, dh?: number, imageSmoothingEnabled: boolean = true): this {
     const queue = this.queue
 
-    if (INTEGER_APPROXIMATION) {
-      dx = Math.floor(dx)
-      dy = Math.floor(dy)
-
-      if (dw !== undefined) dw = Math.floor(dw)
-      if (dh !== undefined) dh = Math.floor(dh)
-    }
-
     queue.push(context => {
       const offset = this.offset
+
+      if (context instanceof Frame) {
+        if (FrameGlobals.integer_approximation.frame) {
+          dx = Math.floor(dx)
+          dy = Math.floor(dy)
+          if (dw !== undefined) dw = Math.floor(dw)
+          if (dh !== undefined) dh = Math.floor(dh)
+        }
+      } else {
+        if (FrameGlobals.integer_approximation.canvas) {
+          dx = Math.floor(dx)
+          dy = Math.floor(dy)
+          if (dw !== undefined) dw = Math.floor(dw)
+          if (dh !== undefined) dh = Math.floor(dh)
+        }
+      }
 
       dx += offset.x
       dy += offset.y

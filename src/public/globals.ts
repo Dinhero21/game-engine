@@ -1,15 +1,15 @@
-export const INTEGER_APPROXIMATION = true
-
 export const Camera = {
-  integer_approximation: INTEGER_APPROXIMATION
+  integer_approximation: true
 }
 
 export const Frame = {
-  integer_approximation: INTEGER_APPROXIMATION
+  integer_approximation: {
+    frame: false,
+    canvas: true
+  }
 }
 
 export const globals = {
-  integer_approximation: INTEGER_APPROXIMATION,
   camera: Camera,
   frame: Frame
 }
