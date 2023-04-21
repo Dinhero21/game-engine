@@ -111,7 +111,7 @@ io.on('connection', socket => {
 
     if (tile === undefined) return
 
-    if (tile.type === 'stone') {
+    if (tile.type === 'air') {
       world.setTile('sus', tilePosition, 'change', 'change')
 
       return
