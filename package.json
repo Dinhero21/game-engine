@@ -12,12 +12,12 @@
     "start": "node dist/index.js",
     "test": "jest --forceExit --coverage --verbose",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node-debug\"",
-    "watch-node": "nodemon --watch dist dist/index.js",
-    "watch-node-debug": "nodemon --watch dist --inspect dist/index.js",
+    "watch-node": "nodemon --watch dist --ext js --ignore dist/public/ dist/index.js",
+    "watch-node-debug": "nodemon --watch dist --ext js --ignore dist/public/ --inspect dist/index.js",
     "watch-test": "npm run test -- --watchAll",
-    "watch-ts": "concurrently -k -p \"[{name}]\" -n \"TSC,Nodemon\" -c \"yellow.bold,cyan.bold,green.bold\" \"tsc -w\" \"nodemon --watch src/public --exec \\\"npm run copy-public-files\\\"\"",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "copy-public-files": "cp -r src/public/* dist/public"
+    "watch-ts": "concurrently -k -p \"[{name}]\" -n \"TSC,Nodemon\" -c \"cyan.bold,green.bold,yellow.bold\" \"tsc -w\" \"nodemon --watch src/public --ext * --exec \\\"npm run copy-public-files\\\"\"",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold,yellow.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
+    "copy-public-files": "robocopy \"src/public\" \"dist/public\" /e /z /xf *.js *.ts"
   },
   "repository": {
     "type": "git",
