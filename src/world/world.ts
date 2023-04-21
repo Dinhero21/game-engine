@@ -24,7 +24,6 @@ export interface WorldEvents {
 }
 
 // TODO: Separate Tick and Chunk logic
-// TODO: Use typed events
 export class World extends TypedEmitter<WorldEvents> {
   // Chunk
 

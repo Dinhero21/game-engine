@@ -19,7 +19,6 @@ export interface ChunkEvents {
   'tile.set': (tile: Tile) => void
 }
 
-// TODO: Use typed events
 export class Chunk extends TypedEmitter<ChunkEvents> {
   private readonly world: World
 
