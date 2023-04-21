@@ -8,7 +8,6 @@ import { Chunk } from '../engine/util/tilemap/chunk.js'
 import { loader } from '../assets/loader.js'
 import { createTile } from './tile.js'
 import { InventoryEntity } from './entities/inventory.js'
-import { sleep } from '../engine/util/sleep.js'
 import mouse from '../engine/util/input/mouse.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
@@ -131,25 +130,9 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   const inventory = new InventoryEntity(new Vec2(3, 3), new Vec2(64, 64), new Vec2(0, 0))
   scene.addChild(inventory)
 
-  void (async () => {
-    let type: string | null = 'sus'
-
-    while (true) {
-      while (true) {
-        const slotTest = inventory.findSlot(slot => slot.type !== type)
-
-        if (slotTest === undefined) break
-
-        slotTest.type = type
-
-        await sleep(100)
-      }
-
-      type = type === 'sus' ? null : 'sus'
-
-      await sleep(1000)
-    }
-  })()
+  socket.on('slot.set', (slot, type) => {
+    inventory.setSlot(slot, type)
+  })
 
   {
     const linearAnimationDebug = new DebugEntity('Animation (Linear)')

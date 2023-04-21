@@ -1,6 +1,7 @@
-import { type TileType } from './world/tiles/index.js'
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
+import { type TileType } from './world/tiles/index.js'
+import { type SlotType } from './public/game/slot.js'
 
 // Engine.ioified methods
 
@@ -23,6 +24,7 @@ export interface ServerToClientEvents {
   'player.physics.update': (player: Player) => void
   'chunk.set': (chunk: Chunk, chunkPosition: Vec2) => void
   'tile.set': (type: TileType, tilePosition: Vec2) => void
+  'slot.set': (id: number, type: SlotType) => void
 }
 
 // Client -> Server

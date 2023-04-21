@@ -1,14 +1,15 @@
+import { type SlotType, type ISlot } from '../slot.js'
+import type Frame from '../../engine/util/frame.js'
+import { loader } from '../../assets/loader.js'
 import Vec2 from '../../engine/util/vec2.js'
 import Entity from '../../engine/entities/index.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
-import type Frame from '../../engine/util/frame.js'
-import { loader } from '../../assets/loader.js'
 
-export class SlotEntity extends Entity<never> {
+export class SlotEntity extends Entity<never> implements ISlot {
   protected size
   protected padding
 
-  public type: string | null = null
+  public type: SlotType = null
 
   constructor (size: Vec2, padding: Vec2) {
     super()

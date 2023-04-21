@@ -1,8 +1,9 @@
-import type { Player as ClientPlayer, IServerServer as IServer } from './socket.io'
+import type { IServerServer as IServer } from './socket.io'
 import { type TileType } from './world/tiles/index.js'
-import { positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from './public/engine/util/tilemap/position-conversion.js'
+import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion.js'
 import { World } from './world/world.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
+import Player from './player.js'
 import Loop from './public/engine/util/loop.js'
 import http from 'http'
 import path from 'path'
@@ -20,13 +21,6 @@ const SCREEN_SIZE = new Vec2(1920, 1080)
 
 const HALF_SCREEN_SIZE = SCREEN_SIZE.divided(2)
 
-interface ServerPlayer {
-  id: string
-  position: Vec2
-  velocity: Vec2
-  chunks: Set<string>
-}
-
 const app = express()
 
 app.use('/', express.static(path.join(__dirname, 'public')))
@@ -35,25 +29,26 @@ const server = http.createServer(app)
 
 const io: IServer = new Server(server)
 
-const players = new Set<ServerPlayer>()
+const players = new Set<Player>()
 
 const world = new World()
 
 Loop.interval(1000 / 12)(() => { world.tick() })
 
 io.on('connection', socket => {
-  const player: ServerPlayer = {
-    id: socket.id,
-    position: tilePositionToPosition(new Vec2(0, -10)),
-    velocity: new Vec2(0, 1000),
-    chunks: new Set()
-  }
+  const player: Player = new Player(socket.id)
 
-  io.emit('player.add', getClientPlayer(player))
+  io.emit('player.add', player.getClientPlayer())
 
-  for (const player of players) socket.emit('player.add', getClientPlayer(player))
+  for (const player of players) socket.emit('player.add', player.getClientPlayer())
 
   players.add(player)
+
+  player.on('inventory.update', (slot, oldType, newType) => {
+    const id = player.inventory.getSlotId(slot)
+
+    socket.emit('slot.set', id, newType)
+  })
 
   socket.on('physics.update', (rawPosition, rawVelocity) => {
     const position = new Vec2(...rawPosition)
@@ -62,7 +57,7 @@ io.on('connection', socket => {
     player.position = position
     player.velocity = velocity
 
-    socket.broadcast.emit('player.physics.update', getClientPlayer(player))
+    socket.broadcast.emit('player.physics.update', player.getClientPlayer())
 
     const topLeftScreenPositionPosition = position.minus(HALF_SCREEN_SIZE)
     const bottomRightScreenPositionPosition = position.plus(HALF_SCREEN_SIZE)
@@ -117,13 +112,15 @@ io.on('connection', socket => {
       return
     }
 
-    world.setTile('air', tilePosition, 'change', 'change')
+    if (player.inventory.addItem(tile.type)) world.setTile('air', tilePosition, 'change', 'change')
   })
 
   socket.on('disconnect', () => {
     players.delete(player)
 
-    io.emit('player.remove', getClientPlayer(player))
+    io.emit('player.remove', player.getClientPlayer())
+
+    player.removeAllListeners()
   })
 })
 
@@ -137,11 +134,3 @@ world.on('tile.set', tile => {
 server.listen(80, () => {
   console.info('Server listening on port 80')
 })
-
-function getClientPlayer (serverPlayer: ServerPlayer): ClientPlayer {
-  return {
-    id: serverPlayer.id,
-    position: serverPlayer.position.toArray(),
-    velocity: serverPlayer.velocity.toArray()
-  }
-}
