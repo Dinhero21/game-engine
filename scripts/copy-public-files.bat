@@ -1,0 +1,1 @@
+robocopy "src/public" "dist/public" /e /z /xf *.js *.ts || exit 0

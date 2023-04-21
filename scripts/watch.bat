@@ -1,0 +1,1 @@
+concurrently -k -p "[{name}]" -n "TypeScript,Node" -c "cyan.bold,green.bold,yellow.bold" "call scripts/watch-ts" "call scripts/watch-node"

@@ -1,0 +1,1 @@
+tsc && scripts/copy-public-files

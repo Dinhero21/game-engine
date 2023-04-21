@@ -1,0 +1,1 @@
+tsc --noEmit && eslint --quiet --fix

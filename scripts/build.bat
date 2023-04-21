@@ -1,0 +1,1 @@
+scripts/build-ts && scripts/lint
