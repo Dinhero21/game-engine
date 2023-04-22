@@ -15,6 +15,7 @@ import Loop from '../engine/util/loop.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 import TileMapEntity from '../engine/entities/tilemap.js'
 import DebugEntity from './entities/debug.js'
+import ButtonEntity from '../engine/entities/button.js'
 
 const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -40,6 +41,12 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const mouseDebug = new DebugEntity('Mouse', new Vec2(0, 0))
 
+  const button = new ButtonEntity(new Vec2(256, 256))
+  const buttonDebug = new DebugEntity('Button', new Vec2(256, 256))
+
+  button.position.x = -512
+  buttonDebug.position.x = -512
+
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
     scene.update(delta)
@@ -51,6 +58,13 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
+    buttonDebug.title = [
+      'Button',
+      `Left: ${(button as any).clickStates.left as string}`,
+      `Right: ${(button as any).clickStates.right as string}`,
+      `Middle: ${(button as any).clickStates.middle as string}`
+    ]
+
     camera.render()
   })
 
@@ -164,6 +178,10 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   }
 
   scene.addChild(mouseDebug)
+
+  scene.addChild(button)
+
+  scene.addChild(buttonDebug)
 
   return scene
 }

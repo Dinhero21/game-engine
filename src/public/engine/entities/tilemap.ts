@@ -9,7 +9,7 @@ import Entity from './index.js'
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 const chunkPositionSize = chunkPositionToTilePosition(chunkTileSize)
 
-export class TileMapEntity<ValidTile extends Tile = Tile, ValidChild extends Entity = Entity> extends Entity<ValidChild> {
+export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> {
   private readonly chunks = new Map<string, Chunk<ValidTile>>()
 
   public clearCache (): void {

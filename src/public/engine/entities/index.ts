@@ -124,6 +124,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     return collider.offset(globalPosition)
   }
 
+  // TODO: Make this accurate (does not work when screen resizes)
   public getViewportCollider (): RectangularCollider {
     const collider = this.getConstantCollider()
 

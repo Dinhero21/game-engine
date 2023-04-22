@@ -6,14 +6,23 @@ import PointCollider from '../../engine/util/collision/point.js'
 import mouse from '../../engine/util/input/mouse.js'
 
 export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
-  protected title
+  public title
+
   protected size
 
-  constructor (title: string = 'Debug', size: Vec2 = new Vec2(0, 0)) {
+  constructor (title: string | string[] = 'Debug', size: Vec2 = new Vec2(0, 0)) {
     super()
 
     this.title = title
     this.size = size
+  }
+
+  protected getTitle (): string[] {
+    const title = this.title
+
+    if (Array.isArray(title)) return title
+
+    return [title]
   }
 
   // Collision
@@ -36,22 +45,22 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
     const viewportPosition = this.getViewportPosition();
 
     (() => {
-      const collider = this.getConstantCollider()
-
-      const position = collider.getPosition()
-
-      const size = collider.getSize()
-
-      const mousePosition = mouse.getPosition()
+      const mousePosition = this.getMouseViewportPosition()
 
       if (mousePosition === undefined) return
 
-      const viewportCollider = this.getViewportCollider()
+      const constantCollider = this.getConstantCollider()
+
+      const position = constantCollider.getPosition()
+
+      const size = constantCollider.getSize()
+
+      const parentRelativeCollider = this.getParentRelativeCollider()
 
       const mouseCollider = new PointCollider(mousePosition)
 
       // ? Should I make this its own function? (probably something like isMouseColliding)
-      if (viewportCollider.overlapping(mouseCollider)) {
+      if (parentRelativeCollider.overlapping(mouseCollider)) {
         frame.drawFancyRectRGBA(
           position.x,
           position.y,
@@ -79,7 +88,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
       .drawLine(0, -16, 0, 16, '#98c379', 4)
 
     const lines = [
-      this.title,
+      ...this.getTitle(),
       `Position: ${Math.floor(position.x)}, ${Math.floor(position.y)}`,
       `Global Position: ${Math.floor(globalPosition.x)}, ${Math.floor(globalPosition.y)}`,
       `Viewport Position: ${Math.floor(viewportPosition.x)}, ${Math.floor(viewportPosition.y)}`
