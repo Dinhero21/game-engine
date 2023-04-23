@@ -125,12 +125,18 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
   }
 
   // TODO: Make this accurate (does not work when screen resizes)
-  public getViewportCollider (): RectangularCollider {
-    const collider = this.getConstantCollider()
+  public getViewportCollider (): RectangularCollider | undefined {
+    const scene = this.getScene()
 
-    const viewportPosition = this.getViewportPosition()
+    if (scene === undefined) return
 
-    return collider.offset(viewportPosition)
+    const collider = this.getParentRelativeCollider()
+
+    const camera = scene.camera
+    const viewport = camera.getViewport()
+    const viewportPosition = viewport.getPosition()
+
+    return collider.offset(viewportPosition.scaled(-1))
   }
 
   // IO
@@ -139,9 +145,9 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     return this.getScene()?.getMouseViewportPosition()
   }
 
-  public getGlobalMousePosition (): Vec2 | undefined {
-    return this.getMouseViewportPosition()?.minus(this.getGlobalPosition())
-  }
+  // public getGlobalMousePosition (): Vec2 | undefined {
+  //   return this.getMouseViewportPosition() // ?.minus(this.getGlobalPosition())
+  // }
 }
 
 export default Entity

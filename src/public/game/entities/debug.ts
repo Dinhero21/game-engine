@@ -49,18 +49,18 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
 
       if (mousePosition === undefined) return
 
+      const viewportCollider = this.getViewportCollider()
+
+      if (viewportCollider === undefined) return
+
       const constantCollider = this.getConstantCollider()
-
       const position = constantCollider.getPosition()
-
       const size = constantCollider.getSize()
-
-      const parentRelativeCollider = this.getParentRelativeCollider()
 
       const mouseCollider = new PointCollider(mousePosition)
 
       // ? Should I make this its own function? (probably something like isMouseColliding)
-      if (parentRelativeCollider.overlapping(mouseCollider)) {
+      if (viewportCollider.overlapping(mouseCollider)) {
         frame.drawFancyRectRGBA(
           position.x,
           position.y,
@@ -92,7 +92,21 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
       `Position: ${Math.floor(position.x)}, ${Math.floor(position.y)}`,
       `Global Position: ${Math.floor(globalPosition.x)}, ${Math.floor(globalPosition.y)}`,
       `Viewport Position: ${Math.floor(viewportPosition.x)}, ${Math.floor(viewportPosition.y)}`
-    ]
+    ];
+
+    (() => {
+      const mousePosition = this.getMouseViewportPosition()
+
+      if (mousePosition === undefined) return
+
+      const viewportCollider = this.getViewportCollider()
+
+      if (viewportCollider === undefined) return
+
+      const mouseCollider = new PointCollider(mousePosition)
+
+      lines.push(`Mouse Distance: ${Math.floor(viewportCollider.distance(mouseCollider))}`)
+    })()
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]

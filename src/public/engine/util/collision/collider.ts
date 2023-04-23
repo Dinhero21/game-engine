@@ -60,3 +60,5 @@ export abstract class Collider<ValidCollidable extends Collider<any>> {
     return this.distance(other) <= 0
   }
 }
+
+export default Collider

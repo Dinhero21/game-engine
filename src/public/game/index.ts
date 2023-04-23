@@ -17,8 +17,6 @@ import TileMapEntity from '../engine/entities/tilemap.js'
 import DebugEntity from './entities/debug.js'
 import ButtonEntity from '../engine/entities/button.js'
 
-const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
-
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   const socket: Socket = io()
 
@@ -39,7 +37,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   camera.ViewportGenerator = ViewportGenerators.Center
 
-  const mouseDebug = new DebugEntity('Mouse', new Vec2(0, 0))
+  const mouseDebug = new DebugEntity('Mouse')
 
   const button = new ButtonEntity(new Vec2(256, 256))
   const buttonDebug = new DebugEntity('Button', new Vec2(256, 256))
@@ -51,131 +49,22 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   Loop.instant()(delta => {
     scene.update(delta)
 
-    const mouseViewportPosition = scene.getMouseViewportPosition()
+    const mousePosition = scene.getMouseViewportPosition()
 
-    mouseDebug.setGlobalPosition(mouseViewportPosition)
+    mouseDebug.setViewportPosition(mousePosition)
   })
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
     buttonDebug.title = [
-      'Button',
-      `Left: ${(button as any).clickStates.left as string}`,
-      `Right: ${(button as any).clickStates.right as string}`,
-      `Middle: ${(button as any).clickStates.middle as string}`
+      'Button'
+      // `Left: ${(button as any).clickStates.left as string}`,
+      // `Right: ${(button as any).clickStates.right as string}`,
+      // `Middle: ${(button as any).clickStates.middle as string}`
     ]
 
     camera.render()
   })
-
-  const tileMap = new TileMapEntity()
-
-  loader.addEventListener('load', event => {
-    tileMap.clearCache()
-  })
-
-  socket.on('chunk.set', async (rawChunk, rawChunkPosition) => {
-    const chunkPosition = new Vec2(...rawChunkPosition)
-
-    const chunk = new Chunk<Tile>(chunkPosition, chunkSize)
-
-    for (const [tileId, tileName] of rawChunk) {
-      const tilePosition = stringToVec2(tileId)
-
-      const tile = await createTile(tileName)
-
-      chunk.setTile(tile, tilePosition)
-    }
-
-    tileMap.setChunk(chunk, chunkPosition)
-  })
-
-  socket.on('tile.set', async (name, rawTilePosition) => {
-    const tilePosition = new Vec2(...rawTilePosition)
-
-    const tile = await createTile(name)
-
-    tileMap.setTile(tile, tilePosition)
-  })
-
-  Loop.interval(1000 / 12)(() => {
-    const chunks = tileMap.getChunks()
-
-    const viewport = camera.getViewport()
-
-    for (const chunk of chunks) {
-      const boundingBox = chunk.boundingBox
-
-      if (boundingBox.distance(viewport) < TILE_SIZE * CHUNK_SIZE) continue
-
-      const position = boundingBox.getPosition()
-      const tilePosition = positionToTilePosition(position)
-      const chunkPosition = tilePositionToChunkPosition(tilePosition)
-
-      socket.emit('chunk.remove', chunkPosition.toArray())
-
-      tileMap.removeChunk(chunkPosition)
-    }
-  })
-
-  mouse.addEventListener('left.down', () => {
-    void (async () => {
-      const globalMousePosition = tileMap.getGlobalMousePosition()
-
-      if (globalMousePosition === undefined) return
-
-      const globalMouseTilePosition = positionToTilePosition(globalMousePosition)
-
-      // const tile = await createTile('air')
-
-      // tileMap.setTile(tile, globalMouseTilePosition)
-
-      socket.emit('tile.click', globalMouseTilePosition.toArray())
-    })()
-  })
-
-  scene.addChild(tileMap)
-
-  const multiplayerContainer = new MultiplayerContainerEntity(socket)
-  scene.addChild(multiplayerContainer)
-
-  multiplayerContainer.setOverlapDetector(other => tileMap.overlapping(other))
-
-  const inventory = new InventoryEntity(new Vec2(3, 3), new Vec2(64, 64), new Vec2(0, 0))
-  scene.addChild(inventory)
-
-  socket.on('slot.set', (slot, type) => {
-    inventory.setSlot(slot, type)
-  })
-
-  {
-    const linearAnimationDebug = new DebugEntity('Animation (Linear)')
-    scene.addChild(linearAnimationDebug)
-
-    const quadraticAnimationDebug = new DebugEntity('Animation (Quadratic)')
-    scene.addChild(quadraticAnimationDebug)
-
-    const cubicAnimationDebug = new DebugEntity('Animation (Cubic)')
-    scene.addChild(cubicAnimationDebug)
-
-    const quarticAnimationDebug = new DebugEntity('Animation (Quartic)')
-    scene.addChild(quarticAnimationDebug)
-
-    const quinticAnimationDebug = new DebugEntity('Animation (Quintic)')
-    scene.addChild(quinticAnimationDebug)
-
-    void (async () => {
-      while (true) {
-        await Promise.all([
-          animatePosition(linearAnimationDebug, new Vec2(512, 0), new Vec2(512 + 64, 0), 1, TRANSFORMATIONS.Linear),
-          animatePosition(quadraticAnimationDebug, new Vec2(512, -128), new Vec2(512 + 64, -128), 1, TRANSFORMATIONS.EaseQuadratic),
-          animatePosition(cubicAnimationDebug, new Vec2(512, -256), new Vec2(512 + 64, -256), 1, TRANSFORMATIONS.EaseCubic),
-          animatePosition(quarticAnimationDebug, new Vec2(512, -384), new Vec2(512 + 64, -384), 1, TRANSFORMATIONS.EaseQuartic),
-          animatePosition(quinticAnimationDebug, new Vec2(512, -512), new Vec2(512 + 64, -512), 1, TRANSFORMATIONS.EaseQuintic)
-        ])
-      }
-    })()
-  }
 
   scene.addChild(mouseDebug)
 

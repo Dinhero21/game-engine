@@ -16,8 +16,8 @@ export const MouseButtonMap = {
   forward: 4
 } as const
 
-type MouseButtonName = keyof typeof MouseButtonMap
-type MouseButtonId = typeof MouseButtonMap[MouseButtonName]
+export type MouseButtonName = keyof typeof MouseButtonMap
+export type MouseButtonId = typeof MouseButtonMap[MouseButtonName]
 
 export class MouseMoveEvent extends Event {
   public position: Vec2
