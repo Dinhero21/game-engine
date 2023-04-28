@@ -22,22 +22,43 @@ export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
   public draw (frame: Frame): void {
     super.draw(frame)
 
+    this.drawBackground(frame)
+    this.drawItem(frame)
+    this.drawGlow(frame)
+  }
+
+  protected drawBackground (frame: Frame): void {
     const collider = this.getConstantCollider()
     const colliderPosition = collider.getPosition()
     const colliderSize = collider.getSize()
 
-    const itemSize = this.size
-    const itemPadding = this.padding
-    const itemType = this.type
-
     const slot = loader.getTexture('slot')
 
     frame._drawImage(slot, colliderPosition.x, colliderPosition.y, colliderSize.x, colliderSize.y, false)
+  }
+
+  protected drawItem (frame: Frame): void {
+    const itemSize = this.size
+    const itemPadding = this.padding
+    const itemType = this.type
 
     if (itemType !== null) {
       const image = loader.getTexture(itemType)
 
       frame._drawImage(image, itemPadding.x, itemPadding.y, itemSize.x, itemSize.y, false)
+    }
+  }
+
+  protected drawGlow (frame: Frame): void {
+    const manager = this.manager
+    const isHovering = manager.isMouseInside()
+
+    if (isHovering) {
+      const collider = this.getConstantCollider()
+      const colliderPosition = collider.getPosition()
+      const colliderSize = collider.getSize()
+
+      frame.drawRectRGBA(colliderPosition.x, colliderPosition.y, colliderSize.x, colliderSize.y, 0xFF, 0xFF, 0xFF, 0.2)
     }
   }
 
