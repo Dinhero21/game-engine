@@ -27,15 +27,15 @@ export class GridContainerEntity<ValidChild extends Entity = Entity> extends Ver
       return items[id]
     }
 
-    const rows = this.getChildren()
+    const columns = this.getChildren()
 
-    const row = rows[Math.floor(id.x)]
+    const column = columns[Math.floor(id.y)]
 
-    if (row === undefined) return
+    if (column === undefined) return
 
-    const children = row.getChildren()
+    const children = column.getChildren()
 
-    const child = children[Math.floor(id.y)]
+    const child = children[Math.floor(id.x)]
 
     if (child === undefined) return
 

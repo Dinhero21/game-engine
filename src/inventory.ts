@@ -25,7 +25,7 @@ export class Inventory extends TypedEmitter<InventoryEvents> {
 
   public getSlotId (slot: Slot): number {
     const size = this.size
-    if (slot instanceof Vec2) { slot = slot.x + slot.y * size.x }
+    if (slot instanceof Vec2) slot = slot.x + slot.y * size.x
 
     return slot
   }
@@ -63,7 +63,7 @@ export class Inventory extends TypedEmitter<InventoryEvents> {
   }
 
   public findSlot (filter: SlotFilter): SlotType | undefined {
-    if (typeof filter === 'string' || filter === null) { filter = (type: SlotType) => type === filter }
+    if (typeof filter === 'string' || filter === null) filter = (type: SlotType) => type === filter
 
     const slots = this.getSlotArray()
 
@@ -71,7 +71,7 @@ export class Inventory extends TypedEmitter<InventoryEvents> {
   }
 
   public findSlotId (filter: SlotFilter): number | undefined {
-    if (typeof filter === 'string' || filter === null) { filter = (type: SlotType) => type === filter }
+    if (typeof filter === 'string' || filter === null) filter = (type: SlotType) => type === filter
 
     const slots = this.getSlotArray()
 
@@ -98,7 +98,7 @@ export class Inventory extends TypedEmitter<InventoryEvents> {
         const position = new Vec2(x, y)
         const slot = this.getSlot(position)
 
-        if (slot !== null) { continue }
+        if (slot !== null) continue
 
         this.setSlot(position, item)
 

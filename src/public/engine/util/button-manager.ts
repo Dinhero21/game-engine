@@ -25,7 +25,7 @@ export class ButtonManager extends TypedEventTarget<ButtonManagerEventMap> {
     this._isMouseInside = isMouseInside
 
     mouse.addEventListener('down', event => {
-      if (!this._isMouseInside()) { return }
+      if (!this._isMouseInside()) return
 
       const id = event.button
 
@@ -33,11 +33,11 @@ export class ButtonManager extends TypedEventTarget<ButtonManagerEventMap> {
     })
 
     mouse.addEventListener('up', event => {
-      if (!this._isMouseInside()) { return }
+      if (!this._isMouseInside()) return
 
       const id = event.button
 
-      if (this.getClickState(id) === 'down') { this.setClickState(id, 'up') }
+      if (this.getClickState(id) === 'down') this.setClickState(id, 'up')
     })
 
     mouse.addEventListener('move', event => {
@@ -45,7 +45,7 @@ export class ButtonManager extends TypedEventTarget<ButtonManagerEventMap> {
 
       const oldInside = this.inside
 
-      if (oldInside === inside) { return }
+      if (oldInside === inside) return
 
       this.setInside(inside)
     })
@@ -75,7 +75,7 @@ export class ButtonManager extends TypedEventTarget<ButtonManagerEventMap> {
 
   private setClickState (button: MouseButtonId, state: ClickState): void {
     for (const [name, id] of Object.entries(MouseButtonMap) as Array<[MouseButtonName, MouseButtonId]>) {
-      if (id === button) { this.dispatchTypedEvent<`${typeof name}.${typeof state}`>(`${name}.${state}`, new Event(`${name}.${state}`)) }
+      if (id === button) this.dispatchTypedEvent<`${typeof name}.${typeof state}`>(`${name}.${state}`, new Event(`${name}.${state}`))
     }
 
     const clicks = this.clickStates
@@ -85,3 +85,7 @@ export class ButtonManager extends TypedEventTarget<ButtonManagerEventMap> {
 }
 
 export default ButtonManager
+
+export interface IButton {
+  manager: ButtonManager
+}

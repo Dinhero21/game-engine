@@ -2,10 +2,13 @@ import Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 import RectangularCollider from '../util/collision/rectangular.js'
 import PointCollider from '../util/collision/point.js'
-import ButtonManager from '../util/button-manager.js'
+import ButtonManager, { type IButton } from '../util/button-manager.js'
+
+// ? Should I make this a Generic?
+export type IButtonEntity = IButton & Entity
 
 export class ButtonEntity extends Entity<never> {
-  public size
+  protected size
 
   public readonly manager = new ButtonManager(() => {
     const collider = this.getViewportCollider()

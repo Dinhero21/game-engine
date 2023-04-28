@@ -130,7 +130,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
     if (scene === undefined) return
 
-    const collider = this.getParentRelativeCollider()
+    const collider = this.getGlobalCollider()
 
     const camera = scene.camera
     const viewport = camera.getViewport()
@@ -145,9 +145,15 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     return this.getScene()?.getMouseViewportPosition()
   }
 
-  // public getGlobalMousePosition (): Vec2 | undefined {
-  //   return this.getMouseViewportPosition() // ?.minus(this.getGlobalPosition())
-  // }
+  protected getMouseParentRelativePosition (): Vec2 | undefined {
+    const mouseViewportPosition = this.getMouseViewportPosition()
+
+    if (mouseViewportPosition === undefined) return
+
+    const viewportPosition = this.getViewportPosition()
+
+    return mouseViewportPosition.minus(viewportPosition)
+  }
 }
 
 export default Entity

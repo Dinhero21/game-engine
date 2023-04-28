@@ -1,18 +1,19 @@
 import { type SlotType, type ISlot } from '../slot.js'
+import ButtonEntity, { type IButtonEntity } from '../../engine/entities/button.js'
 import type Frame from '../../engine/util/frame.js'
 import { loader } from '../../assets/loader.js'
 import Vec2 from '../../engine/util/vec2.js'
-import Entity from '../../engine/entities/index.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
 
-export class SlotEntity extends Entity<never> implements ISlot {
+// ? Should I make rendering the "backplate" of the Slot the SlotEntity's responsibility?
+export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
   protected size
   protected padding
 
   public type: SlotType = null
 
   constructor (size: Vec2, padding: Vec2) {
-    super()
+    super(size)
 
     this.size = size
     this.padding = padding
@@ -21,25 +22,23 @@ export class SlotEntity extends Entity<never> implements ISlot {
   public draw (frame: Frame): void {
     super.draw(frame)
 
-    const size = this.size
-    const padding = this.padding
-    const type = this.type
+    const collider = this.getConstantCollider()
+    const colliderPosition = collider.getPosition()
+    const colliderSize = collider.getSize()
 
-    if (type !== null) {
-      const image = loader.getTexture(type)
+    const itemSize = this.size
+    const itemPadding = this.padding
+    const itemType = this.type
 
-      frame._drawImage(image, padding.x, padding.y, size.x, size.y, false)
+    const slot = loader.getTexture('slot')
+
+    frame._drawImage(slot, colliderPosition.x, colliderPosition.y, colliderSize.x, colliderSize.y, false)
+
+    if (itemType !== null) {
+      const image = loader.getTexture(itemType)
+
+      frame._drawImage(image, itemPadding.x, itemPadding.y, itemSize.x, itemSize.y, false)
     }
-
-    frame.drawText('Item Type:', 0, 0 + 16, 'white', '16px cursive')
-
-    if (type === null) {
-      frame.drawText('Empty', 0, 16 + 24, '#ABB2BF', '24px cursive')
-
-      return
-    }
-
-    frame.drawText(type, 0, 16 + 24, 'white', '24px cursive')
   }
 
   public getConstantCollider (): RectangularCollider {
