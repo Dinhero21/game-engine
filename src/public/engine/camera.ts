@@ -15,8 +15,10 @@ const Center = Align(new Vec2(0.5, 0.5))
 export const ViewportGenerators = { Align, TopLeftCorner, Center }
 
 export class Camera {
-  public position = new Vec2(0, 0)
-  public size = new Vec2(1920, 1080)
+  public clear: boolean = true
+
+  public position: Vec2 = new Vec2(0, 0)
+  public size: Vec2 = new Vec2(1920, 1080)
 
   public ViewportGenerator: ViewportGenerator = ViewportGenerators.TopLeftCorner
 
@@ -79,7 +81,7 @@ export class Camera {
     // Frame -> Camera Context
     frame.draw(viewportContext)
 
-    context.clearRect(0, 0, canvasSize.x, canvasSize.y)
+    if (this.clear) context.clearRect(0, 0, canvasSize.x, canvasSize.y)
 
     // Camera Context -> Context
     context.drawImage(viewportCanvas, 0, 0, canvasSize.x, canvasSize.y)
