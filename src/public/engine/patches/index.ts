@@ -111,3 +111,5 @@ export function patchEntity<T extends Entity> (entity: T) {
     entity[property] = patch as Original
   }
 }
+
+export default patchEntity

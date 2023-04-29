@@ -4,8 +4,8 @@ import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
-import InventoryEntity from './entities/inventory.js'
 import Vec2 from '../engine/util/vec2.js'
+import align from '../engine/patches/align.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   const socket: Socket = io()
@@ -43,8 +43,11 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     camera.render()
   })
 
-  const inventory = new InventoryEntity(new Vec2(3, 3), new Vec2(16, 16), new Vec2(16, 16))
-  scene.addChild(inventory)
+  const testSize = new Vec2(0, 0)
+  const test = new DebugEntity('Test', testSize)
+  scene.addChild(test)
+
+  align(test, 0.5)
 
   scene.addChild(mouseDebug)
 

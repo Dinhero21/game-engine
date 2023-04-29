@@ -3,7 +3,6 @@ import Vec2 from '../../engine/util/vec2.js'
 import Entity from '../../engine/entities/index.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
 import PointCollider from '../../engine/util/collision/point.js'
-import mouse from '../../engine/util/input/mouse.js'
 
 export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public title
@@ -34,10 +33,6 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
   }
 
   // Game Loop
-
-  public update (delta: number): void {
-    super.update(delta)
-  }
 
   public draw (frame: Frame): void {
     const position = this.position

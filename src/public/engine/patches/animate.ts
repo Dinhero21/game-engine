@@ -1,6 +1,6 @@
 import type Entity from '../entities/index.js'
-import { patchEntity } from './index.js'
 import type Vec2 from '../util/vec2.js'
+import { patchEntity } from './index.js'
 import { lerp2D } from '../util/math.js'
 
 export async function animate (entity: Entity, callback: (t: number) => void, duration: number): Promise<void> {
