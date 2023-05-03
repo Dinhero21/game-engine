@@ -4,8 +4,10 @@ import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
-import Vec2 from '../engine/util/vec2.js'
-import align from '../engine/patches/align.js'
+import WorldEntity from './entities/world.js'
+import MultiplayerContainerEntity from './entities/multiplayer-container.js'
+import mouse from '../engine/util/input/mouse.js'
+import { positionToTilePosition } from '../engine/util/tilemap/position-conversion.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   const socket: Socket = io()
@@ -43,11 +45,25 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     camera.render()
   })
 
-  const testSize = new Vec2(0, 0)
-  const test = new DebugEntity('Test', testSize)
-  scene.addChild(test)
+  const world = new WorldEntity(socket)
+  scene.addChild(world)
 
-  align(test, 0.5)
+  mouse.addEventListener('left.down', () => {
+    void (async () => {
+      const mouseGlobalPosition = world.getMouseGlobalPosition()
+
+      if (mouseGlobalPosition === undefined) return
+
+      const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
+
+      socket.emit('tile.click', globalMouseTilePosition.toArray())
+    })()
+  })
+
+  const multiplayerContainer = new MultiplayerContainerEntity(socket)
+  scene.addChild(multiplayerContainer)
+
+  multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
 
   scene.addChild(mouseDebug)
 

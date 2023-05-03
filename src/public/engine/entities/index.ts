@@ -6,6 +6,8 @@ import Vec2 from '../util/vec2.js'
 export class Entity<ValidChild extends Entity = Entity<any>> {
   // Game Loop
 
+  public ready (): void {}
+
   public update (delta: number): void {
     for (const child of this.children) child.update(delta)
   }
@@ -29,6 +31,8 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     this.children.add(child)
 
     child.setParent(this)
+
+    child.ready()
 
     return this
   }
@@ -145,7 +149,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     return this.getScene()?.getMouseViewportPosition()
   }
 
-  protected getMouseParentRelativePosition (): Vec2 | undefined {
+  public getMouseParentRelativePosition (): Vec2 | undefined {
     const mouseViewportPosition = this.getMouseViewportPosition()
 
     if (mouseViewportPosition === undefined) return
@@ -153,6 +157,22 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     const viewportPosition = this.getViewportPosition()
 
     return mouseViewportPosition.minus(viewportPosition)
+  }
+
+  public getMouseGlobalPosition (): Vec2 | undefined {
+    const mouseViewportPosition = this.getMouseViewportPosition()
+
+    if (mouseViewportPosition === undefined) return
+
+    const scene = this.getScene()
+
+    if (scene === undefined) return
+
+    const camera = scene.camera
+    const viewport = camera.getViewport()
+    const viewportPosition = viewport.getPosition()
+
+    return mouseViewportPosition.plus(viewportPosition)
   }
 }
 

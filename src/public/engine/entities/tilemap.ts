@@ -1,9 +1,9 @@
 import type Frame from '../util/frame.js'
 import type RectangularCollider from '../util/collision/rectangular.js'
+import type Tile from '../util/tilemap/tile.js'
 import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion.js'
 import { Chunk } from '../util/tilemap/chunk.js'
 import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
-import type Tile from '../util/tilemap/tile.js'
 import Entity from './index.js'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)

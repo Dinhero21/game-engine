@@ -44,6 +44,8 @@ export class Scene {
 
     child.setParent(this)
 
+    child.ready()
+
     return this
   }
 

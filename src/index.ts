@@ -114,7 +114,7 @@ io.on('connection', socket => {
       return
     }
 
-    if (player.inventory.addItem(tile.type)) world.setTile('air', tilePosition, 'change', 'change')
+    /* if (player.inventory.addItem(tile.type)) */ world.setTile('air', tilePosition, 'change', 'change')
   })
 
   socket.on('disconnect', () => {
