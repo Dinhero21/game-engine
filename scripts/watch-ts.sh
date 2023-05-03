@@ -1,0 +1,1 @@
+concurrently -k -p "[{name}]" -n "TSC,Nodemon" -c "cyan.bold,green.bold,yellow.bold" "tsc -w" "nodemon --watch src/public --ext * --exec \"bash scripts/copy-public-files.sh\""

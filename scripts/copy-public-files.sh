@@ -1,0 +1,1 @@
+rsync -r --exclude='.js,.ts' --progress "src/public/" "dist/public/" || exit 0

@@ -17,13 +17,15 @@ const __filename = url.fileURLToPath(import.meta.url)
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = path.dirname(__filename)
 
+const PORT = process.env.PORT ?? 8080
+
 const SCREEN_SIZE = new Vec2(1920, 1080)
 
 const HALF_SCREEN_SIZE = SCREEN_SIZE.divided(2)
 
 const app = express()
 
-app.use('/', express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 const server = http.createServer(app)
 
@@ -131,6 +133,6 @@ world.on('tile.set', tile => {
   io.emit('tile.set', type, tilePosition.toArray())
 })
 
-server.listen(80, () => {
-  console.info('Server listening on port 80')
+server.listen(PORT, () => {
+  console.info(`Server listening on port ${PORT}`)
 })
