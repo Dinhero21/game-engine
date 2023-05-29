@@ -36,8 +36,6 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
     const position = collider.getPosition()
     const size = collider.getSize()
 
-    console.log(position)
-
     frame.drawRect(position.x, position.y, size.x, size.y, '#9d9d9d')
 
     super.draw(frame)
