@@ -9,9 +9,14 @@ export const Frame = {
   }
 }
 
+export const Debug = {
+  movable_camera: false
+}
+
 export const globals = {
   camera: Camera,
-  frame: Frame
+  frame: Frame,
+  debug: Debug
 }
 
 export default globals

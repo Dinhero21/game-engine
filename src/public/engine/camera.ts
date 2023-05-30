@@ -1,5 +1,5 @@
 import type Scene from './scene.js'
-import { Camera as CameraGlobals } from '../globals.js'
+import { Camera as CameraGlobals, Debug as DebugGlobals } from '../globals.js'
 import Frame from './util/frame.js'
 import Vec2 from './util/vec2.js'
 import RectangularCollider from './util/collision/rectangular.js'
@@ -69,6 +69,8 @@ export class Camera {
 
     const frame = new Frame()
     frame.offset = viewport.getPosition().scaled(-1)
+
+    if (DebugGlobals.movable_camera) frame.offset.add(scene.getMouseViewportPosition().minus(viewport.getSize().divided(2)))
 
     // Scene -> Frame
     scene.draw(frame)
