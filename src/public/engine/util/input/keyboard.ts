@@ -1,3 +1,4 @@
+// TODO: Promises
 export class Keyboard {
   private readonly keys = new Set<string>()
 

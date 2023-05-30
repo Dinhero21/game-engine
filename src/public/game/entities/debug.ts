@@ -35,6 +35,8 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
   // Game Loop
 
   public draw (frame: Frame): void {
+    super.draw(frame)
+
     const position = this.position
     const globalPosition = this.getGlobalPosition()
     const viewportPosition = this.getViewportPosition();

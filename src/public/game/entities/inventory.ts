@@ -5,20 +5,23 @@ import Vec2 from '../../engine/util/vec2.js'
 import { type SlotType } from '../slot.js'
 import SlotEntity from './slot.js'
 
-// TODO: Make this configurable
-const ITEM_SIZE = new Vec2(64, 64)
-const SLOT_PADDING_SIZE = new Vec2(16, 16)
+// // TODO: Make this configurable
+// const ITEM_SIZE = new Vec2(64, 64)
+// const SLOT_PADDING_SIZE = new Vec2(16, 16)
 
 export type SlotFilter = string | ((slot: SlotEntity) => boolean)
 
 export class InventoryEntity extends GridContainerEntity<SlotEntity> {
   protected cursorItem: string | null = 'sus'
 
-  constructor (size: Vec2, spacing: Vec2, padding: Vec2) {
+  private readonly itemSize
+  private readonly slotPadding
+
+  constructor (size: Vec2, spacing: Vec2, padding: Vec2, itemSize: Vec2, slotPadding: Vec2) {
     super(size, spacing, padding, (x, y) => {
       const position = new Vec2(x, y)
 
-      const slot = new SlotEntity(ITEM_SIZE, SLOT_PADDING_SIZE)
+      const slot = new SlotEntity(itemSize, slotPadding)
 
       const manager = slot.manager
 
@@ -29,6 +32,9 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
 
       return slot
     })
+
+    this.itemSize = itemSize
+    this.slotPadding = slotPadding
   }
 
   public draw (frame: Frame): void {
@@ -55,7 +61,9 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
 
     const image = loader.getTexture(type)
 
-    frame._drawImage(image, mousePosition.x - ITEM_SIZE.x / 2, mousePosition.y - ITEM_SIZE.y / 2, ITEM_SIZE.x, ITEM_SIZE.y, false)
+    const itemSize = this.itemSize
+
+    frame._drawImage(image, mousePosition.x - itemSize.x / 2, mousePosition.y - itemSize.y / 2, itemSize.x, itemSize.y, false)
   }
 
   public getSlot (id: number | Vec2): SlotEntity | undefined {
