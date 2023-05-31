@@ -45,6 +45,9 @@ export class PlayerInventoryEntity extends InventoryEntity {
 
       this.setSlot(id, type)
     })
+
+    const position = this.getOpenPosition()
+    this.position.update(position)
   }
 
   protected getOpenPosition (): Vec2 {
