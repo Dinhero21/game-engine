@@ -8,7 +8,6 @@ export type PlayerInventoryState = 'open' | 'closed'
 export class PlayerInventoryEntity extends InventoryEntity {
   private animating: boolean = false
 
-  private oldState: PlayerInventoryState = 'open'
   public state: PlayerInventoryState = 'closed'
 
   protected getOpenPosition (): Vec2 {
@@ -69,19 +68,15 @@ export class PlayerInventoryEntity extends InventoryEntity {
   protected async updateAnimation (): Promise<void> {
     if (this.animating) return
 
-    const oldState = this.oldState
-    const newState = this.state
+    const state = this.state
 
-    if (oldState === newState) return
+    const position = this.getPosition(state)
 
-    this.oldState = newState
-
-    const oldPosition = this.getPosition(oldState)
-    const newPosition = this.getPosition(newState)
+    if (position.equals(this.position)) return
 
     this.animating = true
 
-    await animatePosition(this, oldPosition, newPosition, 0.5, TRANSFORMATIONS.EaseQuadratic)
+    await animatePosition(this, this.position, position, 0.5, TRANSFORMATIONS.EaseQuadratic)
       .getPromise()
 
     this.animating = false
