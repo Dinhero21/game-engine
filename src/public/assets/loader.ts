@@ -27,6 +27,10 @@ export class AssetLoader extends EventTarget {
       this.dispatchEvent(new Event('load'))
     })
 
+    image.addEventListener('error', event => {
+      throw new Error(`Could not load ${name}`)
+    })
+
     return image
   }
 

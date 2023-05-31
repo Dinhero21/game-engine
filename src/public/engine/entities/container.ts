@@ -3,8 +3,8 @@ import type Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 
 export abstract class ContainerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
-  protected spacing
-  protected padding
+  public readonly spacing
+  public readonly padding
 
   constructor (spacing: number, padding: Vec2) {
     super()

@@ -1,8 +1,7 @@
+import PlayerInventoryEntity from './entities/player-inventory.js'
 import type { IClientSocket as Socket } from '../../socket.io.js'
 import { ViewportGenerators } from '../engine/camera.js'
 import { positionToTilePosition } from '../engine/util/tilemap/position-conversion.js'
-import { TRANSFORMATIONS, animatePosition } from '../engine/patches/animate.js'
-import { sleep } from '../engine/util/sleep.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
@@ -10,10 +9,8 @@ import DebugEntity from './entities/debug.js'
 import WorldEntity from './entities/world.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 import mouse from '../engine/util/input/mouse.js'
-import InventoryEntity from './entities/inventory.js'
 import Vec2 from '../engine/util/vec2.js'
 import ViewportRelativeEntity from '../engine/entities/viewport.js'
-import keyboard from '../engine/util/input/keyboard.js'
 
 export default async function createScene (context: CanvasRenderingContext2D): Promise<Scene> {
   let running = true
@@ -106,42 +103,8 @@ export default async function createScene (context: CanvasRenderingContext2D): P
     const itemSize = new Vec2(64, 64)
     const slotPadding = new Vec2(16, 16)
 
-    const inventory = new InventoryEntity(new Vec2(3, 3), spacing, padding, itemSize, slotPadding)
+    const inventory = new PlayerInventoryEntity(new Vec2(3, 3), spacing, padding, itemSize, slotPadding)
     ui.addChild(inventory)
-
-    void (async () => {
-      const cameraSize = camera.size
-
-      const slotSize = itemSize.plus(slotPadding.scaled(2))
-
-      function centeredInventory (): Vec2 {
-        const inventoryCollider = inventory.getConstantCollider()
-        const inventorySize = inventoryCollider.getSize()
-
-        return inventorySize.scaled(-0.5)
-      }
-
-      let a = centeredInventory
-
-      let b = (): Vec2 => {
-        const centered = centeredInventory()
-
-        return new Vec2(centered.x, (cameraSize.y * 0.5) - (padding.y + slotSize.y + spacing.y / 2))
-      }
-
-      inventory.position.update(b())
-
-      while (true) {
-        await sleep(100)
-
-        if (!keyboard.isKeyDown('e')) continue
-
-        [a, b] = [b, a]
-
-        await animatePosition(inventory, a(), b(), 1, TRANSFORMATIONS.EaseQuadratic)
-          .getPromise()
-      }
-    })()
   }
 
   scene.addChild(mouseDebug)

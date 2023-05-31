@@ -7,8 +7,8 @@ import RectangularCollider from '../../engine/util/collision/rectangular.js'
 
 // ? Should I make rendering the "backplate" of the Slot the SlotEntity's responsibility?
 export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
-  protected size
-  protected padding
+  public readonly size
+  public readonly padding
 
   public type: SlotType = null
 
@@ -24,7 +24,6 @@ export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
 
     this.drawBackground(frame)
     this.drawItem(frame)
-    this.drawGlow(frame)
   }
 
   protected drawBackground (frame: Frame): void {
@@ -32,7 +31,10 @@ export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
     const colliderPosition = collider.getPosition()
     const colliderSize = collider.getSize()
 
-    const slot = loader.getTexture('slot')
+    const manager = this.manager
+    const isHovering = manager.isMouseInside()
+
+    const slot = loader.getTexture(`inventory/slot.${isHovering ? 'true' : 'false'}`)
 
     frame._drawImage(slot, colliderPosition.x, colliderPosition.y, colliderSize.x, colliderSize.y, false)
   }
@@ -46,19 +48,6 @@ export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
       const image = loader.getTexture(itemType)
 
       frame._drawImage(image, itemPadding.x, itemPadding.y, itemSize.x, itemSize.y, false)
-    }
-  }
-
-  protected drawGlow (frame: Frame): void {
-    const manager = this.manager
-    const isHovering = manager.isMouseInside()
-
-    if (isHovering) {
-      const collider = this.getConstantCollider()
-      const colliderPosition = collider.getPosition()
-      const colliderSize = collider.getSize()
-
-      frame.drawRectRGBA(colliderPosition.x, colliderPosition.y, colliderSize.x, colliderSize.y, 0xFF, 0xFF, 0xFF, 0.2)
     }
   }
 

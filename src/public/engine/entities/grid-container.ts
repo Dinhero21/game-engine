@@ -4,8 +4,12 @@ import VerticalContainerEntity from './vertical-container.js'
 import Vec2 from '../util/vec2.js'
 
 export class GridContainerEntity<ValidChild extends Entity = Entity> extends VerticalContainerEntity<HorizontalContainerEntity<ValidChild>> {
+  public readonly spacing2D
+
   constructor (size: Vec2, spacing: Vec2, padding: Vec2, callback: (x: number, y: number) => ValidChild) {
     super(spacing.x, padding)
+
+    this.spacing2D = spacing
 
     for (let y = 0; y < size.y; y++) {
       const row = new HorizontalContainerEntity<ValidChild>(spacing.y, new Vec2(0, 0))

@@ -14,8 +14,8 @@ export type SlotFilter = string | ((slot: SlotEntity) => boolean)
 export class InventoryEntity extends GridContainerEntity<SlotEntity> {
   protected cursorItem: string | null = 'sus'
 
-  private readonly itemSize
-  private readonly slotPadding
+  public readonly itemSize
+  public readonly slotPadding
 
   constructor (size: Vec2, spacing: Vec2, padding: Vec2, itemSize: Vec2, slotPadding: Vec2) {
     super(size, spacing, padding, (x, y) => {
@@ -42,7 +42,7 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
     const position = collider.getPosition()
     const size = collider.getSize()
 
-    frame.drawRect(position.x, position.y, size.x, size.y, '#9d9d9d')
+    frame._drawImage(loader.getTexture('inventory/background'), position.x, position.y, size.x, size.y)
 
     super.draw(frame)
 
