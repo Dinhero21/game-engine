@@ -1,7 +1,7 @@
 import { loader } from '../../assets/loader.js'
 import GridContainerEntity from '../../engine/entities/grid-container.js'
 import type Frame from '../../engine/util/frame.js'
-import Vec2 from '../../engine/util/vec2.js'
+import type Vec2 from '../../engine/util/vec2.js'
 import { type SlotType } from '../slot.js'
 import SlotEntity from './slot.js'
 
@@ -12,26 +12,13 @@ import SlotEntity from './slot.js'
 export type SlotFilter = string | ((slot: SlotEntity) => boolean)
 
 export class InventoryEntity extends GridContainerEntity<SlotEntity> {
-  protected cursorItem: string | null = 'sus'
+  protected cursorItem: string | null = null
 
   public readonly itemSize
   public readonly slotPadding
 
   constructor (size: Vec2, spacing: Vec2, padding: Vec2, itemSize: Vec2, slotPadding: Vec2) {
-    super(size, spacing, padding, (x, y) => {
-      const position = new Vec2(x, y)
-
-      const slot = new SlotEntity(itemSize, slotPadding)
-
-      const manager = slot.manager
-
-      // Swap cursor slot to slot
-      manager.addEventListener('left.up', () => {
-        this.swapWithCursor(position)
-      })
-
-      return slot
-    })
+    super(size, spacing, padding, () => new SlotEntity(itemSize, slotPadding))
 
     this.itemSize = itemSize
     this.slotPadding = slotPadding
@@ -77,39 +64,6 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
 
     slot.type = type
   }
-
-  // ? Should I make this public or protected (or private)?
-  public swapWithCursor (id: number | Vec2): void {
-    const slot = this.getGridItem(id)
-
-    if (slot === undefined) return
-
-    [this.cursorItem, slot.type] = [slot.type, this.cursorItem]
-  }
-
-  // public getSlots (filter: SlotFilter = () => true): SlotEntity[] {
-  //   if (typeof filter === 'string') filter = (slot: SlotEntity) => slot.type === filter
-
-  //   const slots = this.getGridItems()
-
-  //   return slots.filter(filter)
-  // }
-
-  // public findSlot (filter: SlotFilter): SlotEntity | undefined {
-  //   if (typeof filter === 'string') filter = (slot: SlotEntity) => slot.type === filter
-
-  //   const slots = this.getGridItems()
-
-  //   return slots.find(filter)
-  // }
-
-  // public findSlotId (filter: SlotFilter): number | undefined {
-  //   if (typeof filter === 'string') filter = (slot: SlotEntity) => slot.type === filter
-
-  //   const slots = this.getGridItems()
-
-  //   return slots.findIndex(filter)
-  // }
 }
 
 export default InventoryEntity

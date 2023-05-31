@@ -98,12 +98,7 @@ export default async function createScene (context: CanvasRenderingContext2D): P
     const ui = new ViewportRelativeEntity(new Vec2(0.5, 0.5))
     scene.addChild(ui)
 
-    const spacing = new Vec2(32, 32)
-    const padding = new Vec2(32, 32)
-    const itemSize = new Vec2(64, 64)
-    const slotPadding = new Vec2(16, 16)
-
-    const inventory = new PlayerInventoryEntity(new Vec2(3, 3), spacing, padding, itemSize, slotPadding)
+    const inventory = new PlayerInventoryEntity(socket)
     ui.addChild(inventory)
   }
 

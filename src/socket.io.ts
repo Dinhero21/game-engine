@@ -33,6 +33,7 @@ export interface ClientToServerEvents {
   // ? Should I make Chunk Removal the client's responsibility?
   'chunk.remove': (chunkPosition: Vec2) => void
   'tile.click': (tilePosition: Vec2) => void
+  'slot.click': (id: number) => void
 }
 
 // Server -> Server

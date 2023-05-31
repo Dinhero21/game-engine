@@ -1,3 +1,4 @@
+import { type IClientSocket as Socket } from '../../../socket.io.js'
 import { TRANSFORMATIONS, animatePosition } from '../../engine/patches/animate.js'
 import keyboard from '../../engine/util/input/keyboard.js'
 import Vec2 from '../../engine/util/vec2.js'
@@ -6,9 +7,45 @@ import InventoryEntity from './inventory.js'
 export type PlayerInventoryState = 'open' | 'closed'
 
 export class PlayerInventoryEntity extends InventoryEntity {
+  private readonly socket
+
   private animating: boolean = false
 
   public state: PlayerInventoryState = 'closed'
+
+  constructor (socket: Socket) {
+    super(
+      new Vec2(3, 3),
+      new Vec2(32, 32),
+      new Vec2(16, 16),
+      new Vec2(64, 64),
+      new Vec2(16, 16)
+    )
+
+    this.socket = socket
+
+    const slots = this.getGridItems()
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i]
+
+      const manager = slot.manager
+
+      manager.addEventListener('left.up', () => {
+        socket.emit('slot.click', i)
+      })
+    }
+
+    socket.on('slot.set', (id, type) => {
+      // Cursor
+      if (id === -1) {
+        this.cursorItem = type
+
+        return
+      }
+
+      this.setSlot(id, type)
+    })
+  }
 
   protected getOpenPosition (): Vec2 {
     const collider = this.getConstantCollider()

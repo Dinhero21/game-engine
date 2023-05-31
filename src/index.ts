@@ -46,6 +46,14 @@ io.on('connection', socket => {
 
   players.add(player)
 
+  socket.on('slot.click', id => {
+    const slot = player.inventory.getSlot(id) ?? null
+    const cursorSlot = player.inventory.getSlot(-1) ?? null
+
+    player.inventory.setSlot(-1, slot)
+    player.inventory.setSlot(id, cursorSlot)
+  })
+
   player.on('inventory.update', (slot, oldType, newType) => {
     const id = player.inventory.getSlotId(slot)
 
@@ -114,7 +122,7 @@ io.on('connection', socket => {
       return
     }
 
-    /* if (player.inventory.addItem(tile.type)) */ world.setTile('air', tilePosition, 'change', 'change')
+    if (player.inventory.addItem(tile.type)) world.setTile('air', tilePosition, 'change', 'change')
   })
 
   socket.on('disconnect', () => {

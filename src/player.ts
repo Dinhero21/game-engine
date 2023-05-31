@@ -26,7 +26,7 @@ export class Player extends TypedEmitter<PlayerEvents> {
     this.inventory = inventory
 
     inventory.on('update', (slot, oldType, newType) => {
-      this.emit('inventory.update', slot, oldType, newType)
+      this.emit('inventory.update', slot, newType, oldType)
     })
   }
 

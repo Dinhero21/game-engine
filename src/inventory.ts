@@ -3,7 +3,7 @@ import { TypedEmitter } from 'tiny-typed-emitter'
 import Vec2 from './public/engine/util/vec2.js'
 
 export interface InventoryEvents {
-  'update': (slot: Slot, oldType: SlotType | undefined, newType: SlotType) => void
+  'update': (slot: Slot, newType: SlotType, oldType: SlotType | undefined) => void
 }
 
 export class Inventory extends TypedEmitter<InventoryEvents> {
@@ -53,7 +53,7 @@ export class Inventory extends TypedEmitter<InventoryEvents> {
 
     this.slots.set(slotId, type)
 
-    this.emit('update', slot, oldType, type)
+    this.emit('update', slot, type, oldType)
   }
 
   public getSlot (slot: Slot): SlotType | undefined {
