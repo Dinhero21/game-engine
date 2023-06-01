@@ -15,4 +15,6 @@ export type TileType = keyof Tiles
 export type TileConstructor = Tiles[TileType]
 export type Tile = InstanceType<TileConstructor>
 
+export const TileTypes = Object.keys(tiles) as TileType[]
+
 export default tiles

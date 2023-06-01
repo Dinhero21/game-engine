@@ -1,3 +1,4 @@
+import { type TileType } from './index.js'
 import type Vec2 from '../../public/engine/util/vec2.js'
 import type Chunk from '../chunk.js'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from '../../public/engine/util/tilemap/position-conversion.js'

@@ -38,10 +38,10 @@ export class WorldEntity extends TileMapEntity<Tile> {
       this.setChunk(chunk, chunkPosition)
     })
 
-    socket.on('tile.set', async (name, rawTilePosition) => {
+    socket.on('tile.set', async (rawTilePosition, type) => {
       const tilePosition = new Vec2(...rawTilePosition)
 
-      const tile = await createTile(name)
+      const tile = await createTile(type)
 
       this.setTile(tile, tilePosition)
     })

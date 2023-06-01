@@ -24,9 +24,11 @@ export class PlayerInventoryEntity extends InventoryEntity {
 
     this.socket = socket
 
-    const slots = this.getGridItems()
-    for (let i = 0; i < slots.length; i++) {
-      const slot = slots[i]
+    const slotCount = this.children.size
+    for (let i = 0; i < slotCount; i++) {
+      const slot = this.getSlot(i)
+
+      if (slot === undefined) throw new Error(`Invalid slot ${i}`)
 
       const manager = slot.manager
 

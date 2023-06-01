@@ -5,7 +5,7 @@ import Inventory from './inventory.js'
 import Vec2 from './public/engine/util/vec2.js'
 
 export interface PlayerEvents {
-  'inventory.update': (slot: Slot, oldType: SlotType | undefined, newType: SlotType) => void
+  'inventory.update': (slot: Slot, newType: SlotType, oldType: SlotType | undefined) => void
 }
 
 export class Player extends TypedEmitter<PlayerEvents> {
@@ -25,7 +25,7 @@ export class Player extends TypedEmitter<PlayerEvents> {
     const inventory = new Inventory(new Vec2(3, 3))
     this.inventory = inventory
 
-    inventory.on('update', (slot, oldType, newType) => {
+    inventory.on('update', (slot, newType, oldType) => {
       this.emit('inventory.update', slot, newType, oldType)
     })
   }

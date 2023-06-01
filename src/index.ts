@@ -47,16 +47,16 @@ io.on('connection', socket => {
   players.add(player)
 
   socket.on('slot.click', id => {
-    const slot = player.inventory.getSlot(id) ?? null
     const cursorSlot = player.inventory.getSlot(-1) ?? null
 
-    player.inventory.setSlot(-1, slot)
+    const slot = player.inventory.getSlot(id) ?? null
+
     player.inventory.setSlot(id, cursorSlot)
+    player.inventory.setSlot(-1, slot)
   })
 
-  player.on('inventory.update', (slot, oldType, newType) => {
+  player.on('inventory.update', (slot, newType) => {
     const id = player.inventory.getSlotId(slot)
-
     socket.emit('slot.set', id, newType)
   })
 
@@ -117,7 +117,11 @@ io.on('connection', socket => {
     if (tile === undefined) return
 
     if (tile.type === 'air') {
-      world.setTile('sus', tilePosition, 'change', 'change')
+      const newTile = player.inventory.getSlot(-1) ?? 'air'
+
+      world.setTile(newTile as TileType, tilePosition, 'change', 'change')
+
+      player.inventory.setSlot(-1, null)
 
       return
     }
@@ -138,7 +142,7 @@ world.on('tile.set', tile => {
   const type = tile.type as TileType
   const tilePosition = tile.getTilePosition()
 
-  io.emit('tile.set', type, tilePosition.toArray())
+  io.emit('tile.set', tilePosition.toArray(), type)
 })
 
 server.listen(PORT, () => {
