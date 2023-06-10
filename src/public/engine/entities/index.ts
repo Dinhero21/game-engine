@@ -25,7 +25,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
   // Entity Relationship
 
-  protected readonly children = new Set<ValidChild>()
+  public readonly children = new Set<ValidChild>()
 
   public addChild (child: ValidChild): this {
     this.children.add(child)
@@ -57,6 +57,17 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
   public getScene (): Scene | undefined {
     return this.parent?.getScene()
+  }
+
+  public getPath (): number[] {
+    const parent = this.parent
+
+    if (parent === undefined) return []
+
+    const id = Array.from(parent.children)
+      .findIndex(child => child === this)
+
+    return [...parent.getPath(), id]
   }
 
   // Position

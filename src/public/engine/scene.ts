@@ -2,7 +2,7 @@ import type Entity from './entities/index.js'
 import Camera from './camera.js'
 import Frame from './util/frame.js'
 import Vec2 from './util/vec2.js'
-import mouse from './util/input/mouse.js'
+import mouse from './util/input/mouse/index.js'
 
 // TODO: Make canvas accessible from Entity
 export class Scene {
@@ -37,7 +37,7 @@ export class Scene {
 
   // Entity Relationship
 
-  private readonly children = new Set<Entity>()
+  public readonly children = new Set<Entity>()
 
   public addChild (child: Entity): this {
     this.children.add(child)
@@ -53,6 +53,10 @@ export class Scene {
     this.children.delete(child)
 
     return this
+  }
+
+  public getPath (): number[] {
+    return []
   }
 
   // Position

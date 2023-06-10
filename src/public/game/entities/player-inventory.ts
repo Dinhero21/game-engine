@@ -24,16 +24,15 @@ export class PlayerInventoryEntity extends InventoryEntity {
 
     this.socket = socket
 
-    const slotCount = this.children.size
-    for (let i = 0; i < slotCount; i++) {
-      const slot = this.getSlot(i)
-
-      if (slot === undefined) throw new Error(`Invalid slot ${i}`)
+    for (const [id, slot] of this.getSlotMap()) {
+      if (slot === undefined) throw new Error(`Invalid slot ${id}`)
 
       const manager = slot.manager
 
-      manager.addEventListener('left.up', () => {
-        socket.emit('slot.click', i)
+      manager.addEventListener('left.down', event => {
+        socket.emit('slot.click', id)
+
+        event.original.stopPropagation()
       })
     }
 

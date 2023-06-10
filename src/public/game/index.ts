@@ -8,11 +8,11 @@ import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
 import WorldEntity from './entities/world.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
-import mouse from '../engine/util/input/mouse.js'
 import Vec2 from '../engine/util/vec2.js'
 import ViewportRelativeEntity from '../engine/entities/viewport.js'
+import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization.js'
 
-export default async function createScene (context: CanvasRenderingContext2D): Promise<Scene> {
+export default function createScene (context: CanvasRenderingContext2D): Scene {
   let running = true
 
   const socket: Socket = io()
@@ -77,16 +77,14 @@ export default async function createScene (context: CanvasRenderingContext2D): P
   const world = new WorldEntity(socket)
   scene.addChild(world)
 
-  mouse.addEventListener('left.down', () => {
-    void (async () => {
-      const mouseGlobalPosition = world.getMouseGlobalPosition()
+  new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
+    const mouseGlobalPosition = world.getMouseGlobalPosition()
 
-      if (mouseGlobalPosition === undefined) return
+    if (mouseGlobalPosition === undefined) return
 
-      const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
+    const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
 
-      socket.emit('tile.click', globalMouseTilePosition.toArray())
-    })()
+    socket.emit('tile.click', globalMouseTilePosition.toArray())
   })
 
   const multiplayerContainer = new MultiplayerContainerEntity(socket)

@@ -57,6 +57,16 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
     return this.getGridItem(id)
   }
 
+  public getSlotArray (): SlotEntity[] {
+    return this.getGridItems()
+  }
+
+  public getSlotMap (): Map<number, SlotEntity> {
+    const slots = this.getSlotArray()
+
+    return new Map(slots.map((slot, i) => [i, slot]))
+  }
+
   public setSlot (id: number | Vec2, type: SlotType): void {
     const slot = this.getGridItem(id)
 

@@ -2,7 +2,8 @@ import Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 import RectangularCollider from '../util/collision/rectangular.js'
 import PointCollider from '../util/collision/point.js'
-import ButtonManager, { type IButton } from '../util/button-manager.js'
+import ClickHandler, { type IButton } from '../util/input/mouse/click-handler.js'
+import { PrioritizedMouse } from '../util/input/mouse/prioritization.js'
 
 // ? Should I make this a Generic?
 export type IButtonEntity = IButton & Entity
@@ -10,7 +11,7 @@ export type IButtonEntity = IButton & Entity
 export class ButtonEntity extends Entity<never> {
   protected size
 
-  public readonly manager = new ButtonManager(() => {
+  public readonly manager = new ClickHandler(() => {
     const collider = this.getViewportCollider()
 
     if (collider === undefined) return false
@@ -22,7 +23,7 @@ export class ButtonEntity extends Entity<never> {
     const mouseCollider = new PointCollider(mouseViewportPosition)
 
     return collider.overlapping(mouseCollider)
-  })
+  }, new PrioritizedMouse(() => this.getPath()))
 
   constructor (size: Vec2) {
     super()
