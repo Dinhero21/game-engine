@@ -1,7 +1,11 @@
 import type Scene from '../scene.js'
 import RectangularCollider from '../util/collision/rectangular.js'
 import Frame from '../util/frame.js'
+import { randomArrayFromNumber, randomFromArray } from '../util/math.js'
 import Vec2 from '../util/vec2.js'
+import { Debug as DebugGlobals } from '../../globals.js'
+
+const DEBUG = DebugGlobals.entity
 
 export class Entity<ValidChild extends Entity = Entity<any>> {
   // Game Loop
@@ -20,6 +24,31 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
       child.draw(childFrame)
 
       childFrame.draw(frame)
+    }
+
+    const path = this.getPath()
+
+    const random = randomFromArray(path)
+
+    const [r, g, b] = randomArrayFromNumber(random, 3)
+      .map(i => Math.abs(i / 4294967296) * 0xFF)
+
+    if (DEBUG.tree) {
+      const position = this.position
+
+      frame.drawLineRGBA(-position.x, -position.y, 0, 0, r, g, b, 0.5, 3)
+    }
+
+    if (DEBUG.path) {
+      frame.drawText(path.join('.'), 0, 0, 'white', '16px cursive')
+    }
+
+    if (DEBUG.collider) {
+      const collider = this.getConstantCollider()
+      const position = collider.getPosition()
+      const size = collider.getSize()
+
+      frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, r, g, b, 0.5, 1)
     }
   }
 

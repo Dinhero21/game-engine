@@ -70,7 +70,7 @@ export class Camera {
     const frame = new Frame()
     frame.offset = viewport.getPosition().scaled(-1)
 
-    if (DebugGlobals.movable_camera) frame.offset.add(scene.getMouseViewportPosition().minus(viewport.getSize().divided(2)))
+    if (DebugGlobals.camera.movable) frame.offset.add(scene.getMouseViewportPosition().minus(viewport.getSize().divided(2)))
 
     // Scene -> Frame
     scene.draw(frame)

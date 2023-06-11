@@ -9,8 +9,16 @@ export const Frame = {
   }
 }
 
+// TODO: Make these configurable
 export const Debug = {
-  movable_camera: false
+  camera: {
+    movable: false
+  },
+  entity: {
+    tree: true,
+    path: false,
+    collider: false
+  }
 }
 
 export const globals = {

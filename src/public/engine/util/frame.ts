@@ -348,6 +348,12 @@ export class Frame {
     return this
   }
 
+  public drawLineRGBA (startX: number, startY: number, endX: number, endY: number, r: number, g: number, b: number, a: number = 1, width: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
+    this.drawLine(startX, startY, endX, endY, `rgba(${r},${g},${b},${a})`, width)
+
+    return this
+  }
+
   public drawRect (x: number, y: number, w: number, h: number, color: HTMLRenderingContext2D['fillStyle'] | None): this {
     if (!isNone(color)) this.setFillStyle(color)
 
