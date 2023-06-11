@@ -20,7 +20,7 @@ export const Debug = {
     collider: false
   },
   frame: {
-    outline_drawImage: true
+    outline_drawImage: false
   }
 }
 
