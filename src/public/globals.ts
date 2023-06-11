@@ -15,7 +15,7 @@ export const Debug = {
     movable: false
   },
   entity: {
-    tree: true,
+    tree: false,
     path: false,
     collider: false
   }
