@@ -1,6 +1,13 @@
 import { isNone, type None } from '../../none.js'
-import { Frame as FrameGlobals } from '../../globals.js'
+import { Debug, Frame as FrameGlobals } from '../../globals.js'
 import Vec2 from './vec2.js'
+import Loop from './loop.js'
+
+let color = 0
+
+Loop.draw()(() => {
+  color = 0
+})
 
 export type HTMLRenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D
 export type RenderingContext2D = Frame | HTMLRenderingContext2D
@@ -315,6 +322,39 @@ export class Frame {
 
       context.imageSmoothingEnabled = smoothing
     })
+
+    if (Debug.frame.outline_drawImage) {
+      let width = 0
+
+      if ('width' in image) {
+        if (typeof image.width === 'number') width = image.width
+      }
+
+      if ('getContext' in image) {
+        const context = image.getContext('2d')
+
+        if (context !== null) width = context.canvas.width
+      }
+
+      let height = 0
+
+      if ('height' in image) {
+        if (typeof image.height === 'number') height = image.height
+      }
+
+      if ('getContext' in image) {
+        const context = image.getContext('2d')
+
+        if (context !== null) height = context.canvas.height
+      }
+
+      dw ??= width
+      dh ??= height
+
+      color++
+
+      this.drawFancyRectRGBA(dx, dy, dw, dh, [0xFF, 0, 0][color % 3], [0, 0xFF, 0][color % 3], [0, 0, 0xFF][color % 3], 0.5, 1)
+    }
 
     return this
   }

@@ -18,6 +18,9 @@ export const Debug = {
     tree: false,
     path: false,
     collider: false
+  },
+  frame: {
+    outline_drawImage: true
   }
 }
 
