@@ -1,5 +1,6 @@
 import { type IClientSocket as Socket } from '../../../socket.io.js'
 import { TRANSFORMATIONS, animatePosition } from '../../engine/patches/animate.js'
+import Frame from '../../engine/util/frame.js'
 import keyboard from '../../engine/util/input/keyboard.js'
 import Vec2 from '../../engine/util/vec2.js'
 import InventoryEntity from './inventory.js'
@@ -7,8 +8,6 @@ import InventoryEntity from './inventory.js'
 export type PlayerInventoryState = 'open' | 'closed'
 
 export class PlayerInventoryEntity extends InventoryEntity {
-  private readonly socket
-
   private animating: boolean = false
 
   public state: PlayerInventoryState = 'closed'
@@ -21,8 +20,6 @@ export class PlayerInventoryEntity extends InventoryEntity {
       new Vec2(64, 64),
       new Vec2(16, 16)
     )
-
-    this.socket = socket
 
     for (const [id, slot] of this.getSlotMap()) {
       if (slot === undefined) throw new Error(`Invalid slot ${id}`)
@@ -93,17 +90,7 @@ export class PlayerInventoryEntity extends InventoryEntity {
   public update (delta: number): void {
     super.update(delta)
 
-    this.updateState()
-
     void this.updateAnimation()
-  }
-
-  protected updateState (): void {
-    if (this.animating) return
-
-    if (!keyboard.isKeyDown('e')) return
-
-    this.state = this.state === 'open' ? 'closed' : 'open'
   }
 
   protected async updateAnimation (): Promise<void> {

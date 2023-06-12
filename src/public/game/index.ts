@@ -11,6 +11,8 @@ import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 import Vec2 from '../engine/util/vec2.js'
 import ViewportRelativeEntity from '../engine/entities/viewport.js'
 import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization.js'
+import CraftingEntity from './entities/crafting.js'
+import { UserInterfaceEntity } from './entities/ui.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   let running = true
@@ -92,13 +94,8 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
 
-  {
-    const ui = new ViewportRelativeEntity(new Vec2(0.5, 0.5))
-    scene.addChild(ui)
-
-    const inventory = new PlayerInventoryEntity(socket)
-    ui.addChild(inventory)
-  }
+  const ui = new UserInterfaceEntity(socket)
+  scene.addChild(ui)
 
   scene.addChild(mouseDebug)
 
