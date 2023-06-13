@@ -17,11 +17,18 @@ export class CraftingEntity extends Entity {
   }
 
   protected getOpenPosition (): Vec2 {
-    return new Vec2(0, 0)
+    const collider = this.getConstantCollider()
+    const position = collider.getPosition()
+
+    return position
   }
 
   protected getClosedPosition (): Vec2 {
-    return new Vec2(-1000, 0)
+    const collider = this.getConstantCollider()
+    const position = collider.getPosition()
+    const size = collider.getSize()
+
+    return new Vec2(position.x - size.x, position.y)
   }
 
   protected getPosition (state: CraftingState): Vec2 {
