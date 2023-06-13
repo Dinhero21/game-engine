@@ -3,7 +3,6 @@ import Entity from '../../engine/entities/index.js'
 import { TRANSFORMATIONS, animatePosition } from '../../engine/patches/animate.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
 import type Frame from '../../engine/util/frame.js'
-import keyboard from '../../engine/util/input/keyboard.js'
 import Vec2 from '../../engine/util/vec2.js'
 
 export type CraftingState = 'open' | 'closed'
