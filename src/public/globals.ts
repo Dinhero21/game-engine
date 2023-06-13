@@ -30,4 +30,6 @@ export const globals = {
   debug: Debug
 }
 
-export default globals
+export default globals;
+
+(window as any).globals = globals
