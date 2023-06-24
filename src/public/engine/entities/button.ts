@@ -8,7 +8,7 @@ import { PrioritizedMouse } from '../util/input/mouse/prioritization.js'
 // ? Should I make this a Generic?
 export type IButtonEntity = IButton & Entity
 
-export class ButtonEntity extends Entity<never> {
+export class ButtonEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   protected size
 
   public readonly manager = new ClickHandler(() => {
@@ -32,9 +32,7 @@ export class ButtonEntity extends Entity<never> {
   }
 
   public getConstantCollider (): RectangularCollider {
-    const size = this.size
-
-    return new RectangularCollider(new Vec2(0, 0), size)
+    return new RectangularCollider(new Vec2(0, 0), this.size)
   }
 }
 

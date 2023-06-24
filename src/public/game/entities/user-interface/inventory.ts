@@ -1,7 +1,7 @@
-import { type IClientSocket as Socket } from '../../../socket.io.js'
-import { TRANSFORMATIONS, animatePosition } from '../../engine/patches/animate.js'
-import Vec2 from '../../engine/util/vec2.js'
-import InventoryEntity from './inventory.js'
+import { type IClientSocket as Socket } from '../../../../socket.io.js'
+import { TRANSFORMATIONS, animatePosition } from '../../../engine/patches/animate.js'
+import Vec2 from '../../../engine/util/vec2.js'
+import InventoryEntity from '../inventory.js'
 
 export type PlayerInventoryState = 'open' | 'closed'
 

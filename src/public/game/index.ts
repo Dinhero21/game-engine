@@ -1,18 +1,10 @@
-import PlayerInventoryEntity from './entities/player-inventory.js'
 import type { IClientSocket as Socket } from '../../socket.io.js'
 import { ViewportGenerators } from '../engine/camera.js'
-import { positionToTilePosition } from '../engine/util/tilemap/position-conversion.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
-import WorldEntity from './entities/world.js'
-import MultiplayerContainerEntity from './entities/multiplayer-container.js'
-import Vec2 from '../engine/util/vec2.js'
-import ViewportRelativeEntity from '../engine/entities/viewport.js'
-import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization.js'
-import CraftingEntity from './entities/crafting.js'
-import { UserInterfaceEntity } from './entities/ui.js'
+import CraftingEntity from './entities/user-interface/crafting/index.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   let running = true
@@ -35,8 +27,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   const camera = scene.camera
 
   camera.ViewportGenerator = ViewportGenerators.Center
-
-  const mouseDebug = new DebugEntity('Mouse')
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
@@ -76,28 +66,35 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     }
   })
 
-  const world = new WorldEntity(socket)
-  scene.addChild(world)
+  const mouseDebug = new DebugEntity('Mouse')
 
-  new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
-    const mouseGlobalPosition = world.getMouseGlobalPosition()
+  // const world = new WorldEntity(socket)
+  // scene.addChild(world)
 
-    if (mouseGlobalPosition === undefined) return
+  // new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
+  //   const mouseGlobalPosition = world.getMouseGlobalPosition()
 
-    const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
+  //   if (mouseGlobalPosition === undefined) return
 
-    socket.emit('tile.click', globalMouseTilePosition.toArray())
-  })
+  //   const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
 
-  const multiplayerContainer = new MultiplayerContainerEntity(socket)
-  scene.addChild(multiplayerContainer)
+  //   socket.emit('tile.click', globalMouseTilePosition.toArray())
+  // })
 
-  multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
+  // const multiplayerContainer = new MultiplayerContainerEntity(socket)
+  // scene.addChild(multiplayerContainer)
 
-  const ui = new UserInterfaceEntity(socket)
-  scene.addChild(ui)
+  // multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
 
-  scene.addChild(mouseDebug)
+  // const ui = new UserInterfaceEntity(socket)
+  // scene.addChild(ui)
+
+  // scene.addChild(mouseDebug)
+
+  // globals.debug.entity.collider = true
+
+  const crafting = new CraftingEntity()
+  scene.addChild(crafting)
 
   return scene
 
