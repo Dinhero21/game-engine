@@ -1,5 +1,6 @@
 import mouse, { type MouseButtonId, type MouseButtonName, MouseButtonMap, type MouseGlobalEventMap, type MouseMoveEvent, type MouseDownEvent, type MouseUpEvent } from './index.js'
 import { TypedEventTarget } from '../../typed-event-target.js'
+import { EventFrame } from '../../event.js'
 
 export type MouseEvent = MouseMoveEvent | MouseDownEvent | MouseUpEvent
 
@@ -28,17 +29,21 @@ export class ClickHandlerEvent extends Event {
 
 export class ClickHandler extends TypedEventTarget<ClickHandlerEventMap> {
   private readonly _isMouseInside
-
-  private inside: boolean = false
+  private readonly frame
 
   private readonly clickStates: ButtonMap<ClickState> = new Map()
+
+  private inside: boolean = false
 
   constructor (isMouseInside: () => boolean, emitter: ButtonEmitter = mouse) {
     super()
 
     this._isMouseInside = isMouseInside
 
-    emitter.addEventListener('down', event => {
+    const frame = new EventFrame(emitter) as typeof emitter & EventFrame<typeof emitter>
+    this.frame = frame
+
+    frame.addEventListener('down', event => {
       if (!this._isMouseInside()) return
 
       const id = event.button
@@ -46,7 +51,7 @@ export class ClickHandler extends TypedEventTarget<ClickHandlerEventMap> {
       this.setClickState(id, 'down', event)
     })
 
-    emitter.addEventListener('up', event => {
+    frame.addEventListener('up', event => {
       if (!this._isMouseInside()) return
 
       const id = event.button
@@ -54,7 +59,7 @@ export class ClickHandler extends TypedEventTarget<ClickHandlerEventMap> {
       if (this.getClickState(id) === 'down') this.setClickState(id, 'up', event)
     })
 
-    emitter.addEventListener('move', event => {
+    frame.addEventListener('move', event => {
       const inside = this._isMouseInside()
 
       const oldInside = this.inside
@@ -95,6 +100,12 @@ export class ClickHandler extends TypedEventTarget<ClickHandlerEventMap> {
     const clicks = this.clickStates
 
     clicks.set(button, state)
+  }
+
+  public free (): this {
+    this.frame.free()
+
+    return this
   }
 }
 

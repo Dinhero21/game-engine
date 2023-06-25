@@ -1,1 +1,1 @@
-scripts/build && scripts/watch-debug
+scripts/build.sh && scripts/watch-debug.sh

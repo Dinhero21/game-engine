@@ -20,6 +20,20 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
 
     return this
   }
+
+  public removeItem (item: ValidItem): this {
+    this.container.removeChild(item)
+
+    return this
+  }
+
+  public clearItems (): this {
+    const container = this.container
+
+    for (const child of container.children) container.removeChild(child)
+
+    return this
+  }
 }
 
 export default ListEntity

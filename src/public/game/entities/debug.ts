@@ -8,7 +8,7 @@ export interface ConstantRectangularCollidable {
   getConstantCollider: () => RectangularCollider
 }
 
-export type DebugCollider = Vec2 | RectangularCollider | ConstantRectangularCollidable | undefined
+export type DebugCollider = Vec2 | RectangularCollider | ConstantRectangularCollidable
 
 export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public title
@@ -16,7 +16,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
   protected collider
   protected drawText
 
-  constructor (title: string | string[] = 'Debug', collider: DebugCollider, drawText: boolean = true) {
+  constructor (title: string = 'Debug', collider?: DebugCollider, drawText: boolean = true) {
     super()
 
     if (collider === undefined) collider = new Vec2(0, 0)
@@ -31,9 +31,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
   protected getTitle (): string[] {
     const title = this.title
 
-    if (Array.isArray(title)) return title
-
-    return [title]
+    return title.split('\n')
   }
 
   // Collision

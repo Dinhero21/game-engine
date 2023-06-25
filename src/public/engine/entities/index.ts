@@ -69,6 +69,8 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
   public removeChild (child: ValidChild): this {
     this.children.delete(child)
 
+    child.deleteParent()
+
     return this
   }
 
@@ -80,6 +82,12 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
   public setParent (parent: Entity | Scene): this {
     this.parent = parent
+
+    return this
+  }
+
+  public deleteParent (): this {
+    this.parent = undefined
 
     return this
   }

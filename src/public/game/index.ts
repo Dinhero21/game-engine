@@ -4,9 +4,13 @@ import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
-import CraftingEntity from './entities/user-interface/crafting/index.js'
+import UserInterfaceEntity from './entities/user-interface/index.js'
+import { lerp } from '../engine/util/math.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
+  let averageUpdateDelta = 0
+  let averageDrawDelta = 0
+
   let running = true
 
   const socket: Socket = io()
@@ -28,9 +32,15 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   camera.ViewportGenerator = ViewportGenerators.Center
 
+  let frame = 0
+
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
+    averageUpdateDelta = lerp(averageUpdateDelta, delta, 0.1)
+
     if (!running) return
+
+    frame++
 
     try {
       scene.update(delta)
@@ -51,6 +61,8 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
+    averageDrawDelta = lerp(averageDrawDelta, delta, 0.1)
+
     if (!running) return
 
     try {
@@ -65,6 +77,14 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
       throw error
     }
   })
+
+  // Loop.interval(1000 / 6)(() => {
+  //   console.clear()
+  //   console.table({
+  //     update: Math.floor(1 / averageUpdateDelta),
+  //     draw: Math.floor(1 / averageDrawDelta)
+  //   })
+  // })
 
   const mouseDebug = new DebugEntity('Mouse')
 
@@ -86,15 +106,12 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
 
-  // const ui = new UserInterfaceEntity(socket)
-  // scene.addChild(ui)
+  const ui = new UserInterfaceEntity(socket)
+  scene.addChild(ui)
 
   // scene.addChild(mouseDebug)
 
   // globals.debug.entity.collider = true
-
-  const crafting = new CraftingEntity()
-  scene.addChild(crafting)
 
   return scene
 

@@ -53,6 +53,8 @@ interface PrioritizedMouseEvent {
 const prioritizedEventMap = new Map<MouseEventEmitter, Set<PrioritizedMouseEvent>>()
 
 export class PrioritizedMouseEventEmitter extends TypedEventTarget<MouseEventEmitterEventMap> implements MouseEventEmitter {
+  public readonly free
+
   constructor (priority: Priority, emitter: MouseEventEmitter = window) {
     super()
 
@@ -61,7 +63,7 @@ export class PrioritizedMouseEventEmitter extends TypedEventTarget<MouseEventEmi
     const prioritizedEvents = prioritizedEventMap.get(emitter) ?? new Set()
     prioritizedEventMap.set(emitter, prioritizedEvents)
 
-    prioritizedEvents.add({
+    const event = {
       callback: (event: MouseEvent) => {
         const type = event.type as keyof MouseEventEmitterEventMap
 
@@ -74,7 +76,13 @@ export class PrioritizedMouseEventEmitter extends TypedEventTarget<MouseEventEmi
         this.dispatchTypedEvent(type, subEvent)
       },
       priority
-    })
+    }
+
+    prioritizedEvents.add(event)
+
+    this.free = () => {
+      prioritizedEvents.delete(event)
+    }
 
     if (!first) return
 
@@ -118,8 +126,22 @@ export class PrioritizedMouseEventEmitter extends TypedEventTarget<MouseEventEmi
 }
 
 export class PrioritizedMouse extends Mouse {
+  private readonly _emitter
+
   constructor (priority: Priority, emitter?: MouseEventEmitter) {
-    super(new PrioritizedMouseEventEmitter(priority, emitter))
+    const _emitter = new PrioritizedMouseEventEmitter(priority, emitter)
+
+    super(_emitter)
+
+    this._emitter = _emitter
+  }
+
+  public free (): this {
+    this._emitter.free()
+
+    super.free()
+
+    return this
   }
 }
 

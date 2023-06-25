@@ -1,1 +1,1 @@
-scripts/build-ts && scripts/lint
+scripts/build-ts.sh && scripts/lint.sh

@@ -1,3 +1,4 @@
+import { EventFrame } from '../../event.js'
 import { TypedEventTarget } from '../../typed-event-target.js'
 import Vec2 from '../../vec2.js'
 
@@ -72,18 +73,42 @@ export type MouseEventMap = ButtonEventMap & MouseGlobalEventMap
 
 export type MouseEventEmitterEventMap = Record<`mouse${'move' | 'down' | 'up'}`, MouseEvent>
 
-export interface MouseEventEmitter {
-  addEventListener: <K extends keyof MouseEventEmitterEventMap = keyof MouseEventEmitterEventMap>(type: K, listener: (event: MouseEventEmitterEventMap[keyof MouseEventEmitterEventMap]) => void) => void
+type MouseEventListener = (evt: MouseEvent) => void
+
+interface MouseEventListenerObject {
+  handleEvent: (object: MouseEvent) => void
+}
+
+// TODO: Figure out why everything goes wrong if this is an interface
+export abstract class MouseEventEmitter extends EventTarget {
+  abstract addEventListener (
+    type:
+    string, callback: MouseEventListener | MouseEventListenerObject | null,
+    options?: AddEventListenerOptions | boolean
+  ): void
+
+  abstract dispatchEvent (event: MouseEvent): boolean
+
+  abstract removeEventListener (
+    type: string,
+    callback: MouseEventListener | MouseEventListenerObject | null,
+    options?: EventListenerOptions | boolean
+  ): void
 }
 
 export class Mouse extends TypedEventTarget<MouseEventMap> {
+  private readonly frame
+
   constructor (emitter: MouseEventEmitter = window) {
     super()
 
-    emitter.addEventListener('mousemove', event => { this.onMouseMove(event) })
+    const frame = new EventFrame(emitter) as typeof emitter & EventFrame<typeof emitter>
+    this.frame = frame
 
-    emitter.addEventListener('mousedown', event => { this.onMouseDown(event) })
-    emitter.addEventListener('mouseup', event => { this.onMouseUp(event) })
+    frame.addEventListener('mousemove', event => { this.onMouseMove(event) })
+
+    frame.addEventListener('mousedown', event => { this.onMouseDown(event) })
+    frame.addEventListener('mouseup', event => { this.onMouseUp(event) })
   }
 
   private readonly position = new Vec2(0, 0)
@@ -181,6 +206,12 @@ export class Mouse extends TypedEventTarget<MouseEventMap> {
     this.dispatchTypedEvent('up', newEvent)
 
     this.buttons.set(button, false)
+  }
+
+  public free (): this {
+    this.frame.free()
+
+    return this
   }
 }
 

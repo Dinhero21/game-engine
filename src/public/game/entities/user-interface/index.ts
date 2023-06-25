@@ -1,4 +1,5 @@
 import { type IClientSocket as Socket } from '../../../../socket.io.js'
+import recipes from '../../../assets/recipes.js'
 import AnchorEntity from '../../../engine/entities/anchor.js'
 import Entity from '../../../engine/entities/index.js'
 import ViewportEntity from '../../../engine/entities/viewport.js'
@@ -12,6 +13,9 @@ export type UIState = 'open' | 'closed'
 export class UserInterfaceEntity extends Entity<ViewportEntity> {
   private state: UIState = 'closed'
 
+  private readonly inventory
+  private readonly crafting
+
   constructor (socket: Socket) {
     super()
 
@@ -24,14 +28,23 @@ export class UserInterfaceEntity extends Entity<ViewportEntity> {
     const inventory = new PlayerInventoryEntity(socket)
     centeredUi.addChild(inventory)
 
+    this.inventory = inventory
+
     const crafting = new CraftingEntity()
     ui.addChild(crafting)
+
+    this.crafting = crafting
+
+    crafting.manager.addEventListener('crafted', event => {
+      console.log('Crafted!', JSON.stringify(event.recipe))
+    })
   }
 
   public update (delta: number): void {
     super.update(delta)
 
     this.updateState()
+    this.updateRecipes()
   }
 
   private updateState (): void {
@@ -42,6 +55,16 @@ export class UserInterfaceEntity extends Entity<ViewportEntity> {
     this.state = this.state === 'open' ? 'closed' : 'open'
 
     this.setState(this, this.state)
+  }
+
+  private updateRecipes (): void {
+    const crafting = this.crafting
+
+    crafting.clearRecipes()
+
+    for (const recipe of recipes) {
+      crafting.addRecipe(recipe)
+    }
   }
 
   protected setState (entity: Entity, state: UIState): void {

@@ -1,1 +1,1 @@
-tsc && scripts/copy-public-files
+tsc && scripts/copy-public-files.sh

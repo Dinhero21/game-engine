@@ -1,1 +1,1 @@
-scripts/test -- --watchAll
+scripts/test.sh -- --watchAll
