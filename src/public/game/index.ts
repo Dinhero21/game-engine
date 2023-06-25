@@ -32,15 +32,11 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   camera.ViewportGenerator = ViewportGenerators.Center
 
-  let frame = 0
-
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
     averageUpdateDelta = lerp(averageUpdateDelta, delta, 0.1)
 
     if (!running) return
-
-    frame++
 
     try {
       scene.update(delta)
