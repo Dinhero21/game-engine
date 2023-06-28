@@ -1,12 +1,13 @@
 import { type IClientSocket as Socket } from '../../../../socket.io.js'
+import type Entity from '../../../engine/entities/index.js'
 import recipes from '../../../assets/recipes.js'
 import AnchorEntity from '../../../engine/entities/anchor.js'
-import type Entity from '../../../engine/entities/index.js'
 import ViewportEntity from '../../../engine/entities/viewport.js'
 import keyboard from '../../../engine/util/input/keyboard.js'
 import Vec2 from '../../../engine/util/vec2.js'
 import CraftingEntity from './crafting/index.js'
 import PlayerInventoryEntity from './inventory.js'
+import { type CraftingEvent } from './crafting/manager.js'
 
 export type UIState = 'open' | 'closed'
 
@@ -22,10 +23,6 @@ export class UserInterfaceEntity extends ViewportEntity {
     const crafting = new CraftingEntity()
     this.addChild(crafting)
 
-    crafting.manager.addEventListener('crafted', event => {
-      console.log('Crafted!', JSON.stringify(event.recipe))
-    })
-
     this.crafting = crafting
 
     const centeredUi = new AnchorEntity(new Vec2(0.5, 0.5))
@@ -36,11 +33,13 @@ export class UserInterfaceEntity extends ViewportEntity {
 
     const inventory = inventoryEntity.inventory
 
+    this.inventory = inventoryEntity
+
     inventory.manager.addEventListener('slot.update', event => {
       if (event.before !== event.after) this.updateRecipes()
     })
 
-    this.inventory = inventoryEntity
+    crafting.manager.addEventListener('crafted', event => { this.onItemCrafted(event) })
   }
 
   public update (delta: number): void {
@@ -61,11 +60,38 @@ export class UserInterfaceEntity extends ViewportEntity {
 
   private updateRecipes (): void {
     const crafting = this.crafting
+    const inventoryEntity = this.inventory
+    const inventory = inventoryEntity.inventory
+
+    const list = inventory.list()
 
     crafting.clearRecipes()
 
     for (const recipe of recipes) {
+      if (!recipe.inputs.every(input => (list.get(input.type) ?? 0) >= input.amount)) continue
+
       crafting.addRecipe(recipe)
+    }
+  }
+
+  private onItemCrafted (event: CraftingEvent): void {
+    const recipe = event.recipe
+
+    const inventoryEntity = this.inventory
+    const inventory = inventoryEntity.inventory
+
+    const inputs = recipe.inputs
+
+    for (const input of inputs) {
+      for (let i = 0; i < input.amount; i++) {
+        inventory.removeItem(input.type)
+      }
+    }
+
+    const output = recipe.output
+
+    for (let i = 0; i < output.amount; i++) {
+      inventory.addItem(output.type)
     }
   }
 

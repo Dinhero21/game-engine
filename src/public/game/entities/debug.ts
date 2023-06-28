@@ -123,7 +123,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i]
 
-      frame.drawText(line, 0, 16 * (i + 1), 'white', '16px cursive')
+      frame.drawText(line, 0, 16 * (i + 1), 'white', '16px monospace')
     }
   }
 }

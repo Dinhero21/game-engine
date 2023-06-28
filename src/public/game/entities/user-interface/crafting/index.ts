@@ -9,6 +9,7 @@ import DisplayEntity from './display.js'
 import ItemEntity from './item.js'
 import CraftingManager from './manager.js'
 import CraftingProgressEntity from './progress.js'
+import { chunk } from '../../../util/string.js'
 
 export type CraftingState = 'open' | 'closed'
 
@@ -132,7 +133,10 @@ export class CraftingEntity extends HorizontalContainerEntity {
 
     if (recipe === undefined) return
 
-    display.title = JSON.stringify(recipe, null, 2)
+    const string = JSON.stringify(recipe)
+    const chunks = chunk(string, 13)
+
+    display.title = chunks.join('\n')
   }
 
   public addRecipe (recipe: Recipe): this {

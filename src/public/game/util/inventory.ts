@@ -33,7 +33,7 @@ export class Inventory {
   }
 
   public getSlots (): IterableIterator<Slot> {
-    return this.getSlots()
+    return this.getSlotMap().values()
   }
 
   public getSlot (id: SlotId): Slot | undefined {
@@ -76,6 +76,16 @@ export class Inventory {
     }
 
     return total
+  }
+
+  public list (): Map<SlotType, number> {
+    const list = new Map<SlotType, number>()
+
+    for (const slot of this.getSlots()) {
+      list.set(slot.getType(), list.get(slot.getType()) ?? 0 + 1)
+    }
+
+    return list
   }
 
   public every (predicate: SlotPredicate): boolean {
@@ -128,6 +138,16 @@ export class Inventory {
     if (emptyId === undefined) return false
 
     this.setItem(emptyId, type)
+
+    return true
+  }
+
+  public removeItem (type: SlotType): boolean {
+    const id = this.findSlotId(type)
+
+    if (id === undefined) return false
+
+    this.setItem(id, null)
 
     return true
   }
