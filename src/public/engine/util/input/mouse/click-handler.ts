@@ -83,7 +83,7 @@ export class ClickHandler extends TypedEventTarget<ClickHandlerEventMap> {
   private setInside (inside: boolean, original: MouseEvent): void {
     this.inside = inside
 
-    this.dispatchTypedEvent<'enter' | 'exit'>(inside ? 'enter' : 'exit', new ClickHandlerEvent(inside ? 'enter' : 'exit', original))
+    this.dispatchTypedEvent(inside ? 'enter' : 'exit', new ClickHandlerEvent(inside ? 'enter' : 'exit', original))
   }
 
   public getClickState (button: MouseButtonId): ClickState | undefined {
@@ -94,7 +94,7 @@ export class ClickHandler extends TypedEventTarget<ClickHandlerEventMap> {
 
   private setClickState (button: MouseButtonId, state: ClickState, original: MouseEvent): void {
     for (const [name, id] of Object.entries(MouseButtonMap) as Array<[MouseButtonName, MouseButtonId]>) {
-      if (id === button) this.dispatchTypedEvent<`${typeof name}.${typeof state}`>(`${name}.${state}`, new ClickHandlerEvent(`${name}.${state}`, original))
+      if (id === button) this.dispatchTypedEvent(`${name}.${state}`, new ClickHandlerEvent(`${name}.${state}`, original))
     }
 
     const clicks = this.clickStates

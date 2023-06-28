@@ -78,7 +78,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
     return Array.from(this.children)
   }
 
-  protected parent?: Entity | Scene
+  public parent?: Entity | Scene
 
   public setParent (parent: Entity | Scene): this {
     this.parent = parent

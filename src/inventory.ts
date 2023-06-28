@@ -1,112 +1,37 @@
-import { type Slot, type SlotType, type SlotFilter } from './public/game/slot.js'
+import { Inventory as BaseInventory, Slot, type SlotId, type SlotType } from './public/game/util/inventory.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
-import Vec2 from './public/engine/util/vec2.js'
+
+// TODO: Managed Slots (instead of InventoryManager firing when Inventory.setItem is called, InventoryManager firing when SlotManger fires and SlotManager firing when Slot.setType is called)
 
 export interface InventoryEvents {
-  'update': (slot: Slot, newType: SlotType, oldType: SlotType | undefined) => void
+  'slot.update': (id: SlotId, after: SlotType, before: SlotType | undefined) => void
 }
 
-export class Inventory extends TypedEmitter<InventoryEvents> {
-  private readonly slots = new Map<number, SlotType>()
+export class InventoryManager extends TypedEmitter<InventoryEvents> {}
 
-  public size
+export class Inventory extends BaseInventory {
+  public manager: InventoryManager = new InventoryManager()
 
-  constructor (size: Vec2) {
+  constructor (size: number) {
     super()
 
-    this.size = size
+    const slots = this.slots
 
-    for (let x = 0; x < size.x; x++) {
-      for (let y = 0; y < size.y; y++) {
-        this.setSlot(new Vec2(x, y), null)
-      }
-    }
+    for (let i = 0; i < size; i++) slots.set(i, new Slot())
+
+    // Cursor Slot
+    slots.set(-1, new Slot())
   }
 
-  public getSlotId (slot: Slot): number {
-    const size = this.size
-    if (slot instanceof Vec2) slot = slot.x + slot.y * size.x
+  public setItem (id: SlotId, type: SlotType): boolean {
+    const slot = this.getSlot(id)
+    const before = slot?.getType()
 
-    return slot
-  }
+    const after = type
 
-  public getSlotPosition (slot: Slot): Vec2 {
-    const size = this.size
-    if (typeof slot === 'number') {
-      slot = new Vec2(
-        Math.floor(slot / size.x),
-        Math.floor(slot % size.x)
-      )
-    }
+    this.manager.emit('slot.update', id, after, before)
 
-    return slot
-  }
-
-  public getSlotArray (): SlotType[] {
-    return Array.from(this.slots.values())
-  }
-
-  public setSlot (slot: Slot, type: SlotType): void {
-    const slotId = this.getSlotId(slot)
-
-    const oldType = this.getSlot(slot)
-
-    this.slots.set(slotId, type)
-
-    this.emit('update', slot, type, oldType)
-  }
-
-  public getSlot (slot: Slot): SlotType | undefined {
-    const slotId = this.getSlotId(slot)
-
-    return this.slots.get(slotId)
-  }
-
-  public findSlot (filter: SlotFilter): SlotType | undefined {
-    if (typeof filter === 'string' || filter === null) filter = (type: SlotType) => type === filter
-
-    const slots = this.getSlotArray()
-
-    return slots.find(filter)
-  }
-
-  public findSlotId (filter: SlotFilter): number | undefined {
-    if (typeof filter === 'string' || filter === null) filter = (type: SlotType) => type === filter
-
-    const slots = this.getSlotArray()
-
-    return slots.findIndex(filter)
-  }
-
-  public clear (): void {
-    this.slots.clear()
-  }
-
-  public isEmpty (): boolean {
-    return this.getSlotArray().every(type => type === null)
-  }
-
-  public isFull (): boolean {
-    return this.findSlot(null) === undefined
-  }
-
-  public addItem (item: SlotType): boolean {
-    const size = this.size
-
-    for (let y = 0; y < size.y; y++) {
-      for (let x = 0; x < size.x; x++) {
-        const position = new Vec2(x, y)
-        const slot = this.getSlot(position)
-
-        if (slot !== null) continue
-
-        this.setSlot(position, item)
-
-        return true
-      }
-    }
-
-    return false
+    return super.setItem(id, type)
   }
 }
 

@@ -28,7 +28,9 @@ export class AssetLoader extends EventTarget {
     })
 
     image.addEventListener('error', event => {
-      throw new Error(`Could not load ${name}`)
+      if (image === undefined) throw new Error('Failed to get image during missing texture initialization')
+
+      image.src = this.getTexture('missing').src
     })
 
     return image

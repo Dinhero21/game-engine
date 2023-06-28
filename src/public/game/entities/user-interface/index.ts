@@ -1,7 +1,7 @@
 import { type IClientSocket as Socket } from '../../../../socket.io.js'
 import recipes from '../../../assets/recipes.js'
 import AnchorEntity from '../../../engine/entities/anchor.js'
-import Entity from '../../../engine/entities/index.js'
+import type Entity from '../../../engine/entities/index.js'
 import ViewportEntity from '../../../engine/entities/viewport.js'
 import keyboard from '../../../engine/util/input/keyboard.js'
 import Vec2 from '../../../engine/util/vec2.js'
@@ -10,45 +10,47 @@ import PlayerInventoryEntity from './inventory.js'
 
 export type UIState = 'open' | 'closed'
 
-export class UserInterfaceEntity extends Entity<ViewportEntity> {
+export class UserInterfaceEntity extends ViewportEntity {
   private state: UIState = 'closed'
 
-  private readonly inventory
-  private readonly crafting
+  public readonly inventory
+  public readonly crafting
 
   constructor (socket: Socket) {
     super()
 
-    const ui = new ViewportEntity()
-    this.addChild(ui)
-
-    const centeredUi = new AnchorEntity(new Vec2(0.5, 0.5))
-    ui.addChild(centeredUi)
-
-    const inventory = new PlayerInventoryEntity(socket)
-    centeredUi.addChild(inventory)
-
-    this.inventory = inventory
-
     const crafting = new CraftingEntity()
-    ui.addChild(crafting)
-
-    this.crafting = crafting
+    this.addChild(crafting)
 
     crafting.manager.addEventListener('crafted', event => {
       console.log('Crafted!', JSON.stringify(event.recipe))
     })
+
+    this.crafting = crafting
+
+    const centeredUi = new AnchorEntity(new Vec2(0.5, 0.5))
+    this.addChild(centeredUi)
+
+    const inventoryEntity = new PlayerInventoryEntity(socket)
+    centeredUi.addChild(inventoryEntity)
+
+    const inventory = inventoryEntity.inventory
+
+    inventory.manager.addEventListener('slot.update', event => {
+      if (event.before !== event.after) this.updateRecipes()
+    })
+
+    this.inventory = inventoryEntity
   }
 
   public update (delta: number): void {
-    super.update(delta)
-
     this.updateState()
-    this.updateRecipes()
+
+    super.update(delta)
   }
 
   private updateState (): void {
-    if (this.getAnimating(this)) return
+    if (this.isAnimating(this)) return
 
     if (!keyboard.isKeyDown('e')) return
 
@@ -75,10 +77,10 @@ export class UserInterfaceEntity extends Entity<ViewportEntity> {
     }
   }
 
-  protected getAnimating (entity: Entity): boolean {
+  protected isAnimating (entity: Entity): boolean {
     if ('animating' in entity) if (entity.animating === true) return true
 
-    for (const child of entity.children) if (this.getAnimating(child)) return true
+    for (const child of entity.children) if (this.isAnimating(child)) return true
 
     return false
   }

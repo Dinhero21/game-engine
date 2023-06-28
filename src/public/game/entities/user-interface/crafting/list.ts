@@ -1,7 +1,7 @@
 import type Entity from '../../../../engine/entities'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container.js'
 import Vec2 from '../../../../engine/util/vec2.js'
-import ClippingEntity from '../../clipper.js'
+import ClippingEntity from '../../../../engine/entities/clipper.js'
 
 export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
   protected container
@@ -13,6 +13,16 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
     this.addChild(listContainer)
 
     this.container = listContainer
+  }
+
+  public update (delta: number): void {
+    super.update(delta)
+
+    const container = this.container
+    const collider = container.getConstantCollider()
+    const position = collider.getPosition()
+
+    container.position = position
   }
 
   public addItem (item: ValidItem): this {

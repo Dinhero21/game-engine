@@ -17,7 +17,7 @@ export interface CraftingManagerEventMap {
 
 export class CraftingManager extends TypedEventTarget<CraftingManagerEventMap> {
   public onCrafted (recipe: Recipe): void {
-    this.dispatchTypedEvent<'crafted'>('crafted', new CraftingEvent(recipe))
+    this.dispatchTypedEvent('crafted', new CraftingEvent(recipe))
   }
 }
 

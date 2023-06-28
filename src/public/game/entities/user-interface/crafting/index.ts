@@ -3,26 +3,21 @@ import { TRANSFORMATIONS, animatePosition } from '../../../../engine/patches/ani
 import { MouseButtonMap } from '../../../../engine/util/input/mouse/index.js'
 import Vec2 from '../../../../engine/util/vec2.js'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container.js'
-import DebugEntity from '../../debug.js'
-import ProgressBarEntity from '../../progress-bar.js'
 import HorizontalContainerEntity from '../../../../engine/entities/horizontal-container.js'
-import ButtonEntity from '../../../../engine/entities/button.js'
-import center from '../../../../engine/patches/center.js'
-import AnchorEntity from '../../../../engine/entities/anchor.js'
 import ListEntity from './list.js'
 import DisplayEntity from './display.js'
 import ItemEntity from './item.js'
 import CraftingManager from './manager.js'
+import CraftingProgressEntity from './progress.js'
 
 export type CraftingState = 'open' | 'closed'
 
 export class CraftingEntity extends HorizontalContainerEntity {
   private animating: boolean = false
 
-  private readonly list
-  private readonly display
-  private readonly button
-  private readonly progress
+  public readonly list
+  public readonly display
+  public readonly progress
 
   public readonly manager: CraftingManager = new CraftingManager()
 
@@ -52,28 +47,13 @@ export class CraftingEntity extends HorizontalContainerEntity {
 
     this.display = display
 
-    const progress = new ProgressBarEntity({
-      size: new Vec2(128, 64),
-      color: {
-        background: [0x00, 0x00, 0x00],
-        foreground: [0xFF, 0xFF, 0xFF]
-      }
+    const progress = new CraftingProgressEntity(new Vec2(128, 64), {
+      background: [0x00, 0x00, 0x00],
+      foreground: [0xFF, 0xFF, 0xFF]
     })
     container.addChild(progress)
 
     this.progress = progress
-
-    const progressCenter = new AnchorEntity(new Vec2(0.5, 0.5))
-    progress.addChild(progressCenter)
-
-    const button = new ButtonEntity(new Vec2(64, 32))
-    progressCenter.addChild(button)
-    center(button)
-
-    this.button = button
-
-    const debug = new DebugEntity('🔨🔨🔨', button, false)
-    button.addChild(debug)
   }
 
   protected getOpenPosition (): Vec2 {
@@ -129,7 +109,7 @@ export class CraftingEntity extends HorizontalContainerEntity {
 
   private updateProgress (delta: number): void {
     const progress = this.progress
-    const button = this.button
+    const button = progress.button
     const manager = this.manager
     const recipe = this.recipe
 
@@ -158,7 +138,7 @@ export class CraftingEntity extends HorizontalContainerEntity {
   public addRecipe (recipe: Recipe): this {
     const output = recipe.output
 
-    const entity = new ItemEntity(output.name, new Vec2(32, 32))
+    const entity = new ItemEntity(output.type, new Vec2(32, 32))
 
     // ? left.down or left.up
     entity.manager.addEventListener('left.down', () => {

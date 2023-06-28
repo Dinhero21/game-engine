@@ -158,7 +158,7 @@ export class Mouse extends TypedEventTarget<MouseEventMap> {
         event.stopImmediatePropagation()
       }
 
-      if (id === button) this.dispatchTypedEvent<`${typeof name}.down`>(`${name}.down`, newEvent)
+      if (id === button) this.dispatchTypedEvent(`${name}.down`, newEvent)
     }
 
     const newEvent = new MouseDownEvent(button)
@@ -190,7 +190,7 @@ export class Mouse extends TypedEventTarget<MouseEventMap> {
         event.stopImmediatePropagation()
       }
 
-      if (id === button) this.dispatchTypedEvent<`${typeof name}.up`>(`${name}.up`, newEvent)
+      if (id === button) this.dispatchTypedEvent(`${name}.up`, newEvent)
     }
 
     const newEvent = new MouseUpEvent(button)

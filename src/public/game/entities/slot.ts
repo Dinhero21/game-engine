@@ -1,12 +1,12 @@
-import { type SlotType, type ISlot } from '../slot.js'
-import ButtonEntity, { type IButtonEntity } from '../../engine/entities/button.js'
+import { type SlotType, type Slot } from '../util/inventory.js'
 import type Frame from '../../engine/util/frame.js'
 import { loader } from '../../assets/loader.js'
+import ButtonEntity from '../../engine/entities/button.js'
 import Vec2 from '../../engine/util/vec2.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
 
 // ? Should I make rendering the "backplate" of the Slot the SlotEntity's responsibility?
-export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
+export class SlotEntity extends ButtonEntity {
   public readonly size
   public readonly padding
 
@@ -40,15 +40,15 @@ export class SlotEntity extends ButtonEntity implements ISlot, IButtonEntity {
   }
 
   protected drawItem (frame: Frame): void {
-    const itemSize = this.size
-    const itemPadding = this.padding
-    const itemType = this.type
+    const size = this.size
+    const padding = this.padding
+    const type = this.type
 
-    if (itemType !== null) {
-      const image = loader.getTexture(itemType)
+    if (type === null) return
 
-      frame._drawImage(image, itemPadding.x, itemPadding.y, itemSize.x, itemSize.y, false)
-    }
+    const image = loader.getTexture(type)
+
+    frame._drawImage(image, padding.x, padding.y, size.x, size.y, false)
   }
 
   public getConstantCollider (): RectangularCollider {

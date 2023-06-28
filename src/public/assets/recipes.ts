@@ -1,15 +1,23 @@
+export interface Slot {
+  type: string
+  amount: number
+}
 
 export interface Recipe {
-  output: {
-    name: string
-    amount: number
-  }
+  inputs: Slot[]
+  output: Slot
 }
 
 export const recipes: Recipe[] = [
   {
+    inputs: [
+      {
+        type: 'sus',
+        amount: 1
+      }
+    ],
     output: {
-      name: 'test',
+      type: 'sus',
       amount: 1
     }
   }

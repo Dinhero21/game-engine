@@ -1,11 +1,11 @@
+import { type SlotId, type SlotType } from './public/game/util/inventory.js'
 import type { Player as ClientPlayer } from './socket.io'
-import { type Slot, type SlotType } from './public/game/slot.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
 import Inventory from './inventory.js'
 import Vec2 from './public/engine/util/vec2.js'
 
 export interface PlayerEvents {
-  'inventory.update': (slot: Slot, newType: SlotType, oldType: SlotType | undefined) => void
+  'inventory.update': (id: SlotId, after: SlotType, before: SlotType | undefined) => void
 }
 
 export class Player extends TypedEmitter<PlayerEvents> {
@@ -22,11 +22,13 @@ export class Player extends TypedEmitter<PlayerEvents> {
 
     this.id = id
 
-    const inventory = new Inventory(new Vec2(3, 3))
+    const inventory = new Inventory(9)
     this.inventory = inventory
 
-    inventory.on('update', (slot, newType, oldType) => {
-      this.emit('inventory.update', slot, newType, oldType)
+    const manager = inventory.manager
+
+    manager.on('slot.update', (id, after, before) => {
+      this.emit('inventory.update', id, after, before)
     })
   }
 

@@ -1,11 +1,11 @@
 import type { IClientSocket as Socket } from '../../socket.io.js'
 import { ViewportGenerators } from '../engine/camera.js'
+import { lerp } from '../engine/util/math.js'
 import Scene from '../engine/scene.js'
 import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
 import UserInterfaceEntity from './entities/user-interface/index.js'
-import { lerp } from '../engine/util/math.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   let averageUpdateDelta = 0
@@ -106,8 +106,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   scene.addChild(ui)
 
   // scene.addChild(mouseDebug)
-
-  // globals.debug.entity.collider = true
 
   return scene
 

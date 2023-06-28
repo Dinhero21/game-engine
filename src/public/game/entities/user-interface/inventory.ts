@@ -19,7 +19,12 @@ export class PlayerInventoryEntity extends InventoryEntity {
       new Vec2(16, 16)
     )
 
-    for (const [id, slot] of this.getSlotMap()) {
+    const inventory = this.inventory
+
+    const slots = this.getGridItems()
+    for (let id = 0; id < slots.length; id++) {
+      const slot = slots[id]
+
       if (slot === undefined) throw new Error(`Invalid slot ${id}`)
 
       const manager = slot.manager
@@ -32,14 +37,7 @@ export class PlayerInventoryEntity extends InventoryEntity {
     }
 
     socket.on('slot.set', (id, type) => {
-      // Cursor
-      if (id === -1) {
-        this.cursorItem = type
-
-        return
-      }
-
-      this.setSlot(id, type)
+      inventory.setItem(id, type)
     })
 
     const position = this.getOpenPosition()

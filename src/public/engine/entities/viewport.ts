@@ -1,4 +1,4 @@
-import type RectangularCollider from '../util/collision/rectangular.js'
+import RectangularCollider from '../util/collision/rectangular.js'
 import Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 
@@ -8,15 +8,14 @@ export class ViewportEntity<ValidChild extends Entity = Entity> extends Entity<V
 
     if (scene === undefined) throw new Error('ViewportEntity.getConstantCollider called before scene initialization')
 
-    let parentPosition = new Vec2(0, 0)
-
-    if (this.parent instanceof Entity) parentPosition = this.parent.getViewportPosition()
+    const parentGlobalPosition = this.getParentGlobalPosition()
 
     const camera = scene.camera
 
     const viewport = camera.getViewport()
+    const size = viewport.getSize()
 
-    return viewport.offset(parentPosition)
+    return new RectangularCollider(parentGlobalPosition, size)
   }
 
   public update (delta: number): void {

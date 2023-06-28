@@ -15,8 +15,6 @@ export class VerticalContainerEntity<ValidChild extends Entity = Entity> extends
     for (const child of children) {
       const childCollider = child.getConstantCollider()
 
-      if (childCollider === null) continue
-
       const childSize = childCollider.getSize()
       const childWidth = childSize.x
 
@@ -27,8 +25,6 @@ export class VerticalContainerEntity<ValidChild extends Entity = Entity> extends
 
     for (const child of children) {
       const childCollider = child.getConstantCollider()
-
-      if (childCollider === null) continue
 
       const childSize = childCollider.getSize()
       const childHeight = childSize.y
@@ -58,8 +54,6 @@ export class VerticalContainerEntity<ValidChild extends Entity = Entity> extends
       child.position.update(position)
 
       const childCollider = child.getConstantCollider()
-
-      if (childCollider === null) continue
 
       const childSize = childCollider.getSize()
       const childWidth = childSize.y

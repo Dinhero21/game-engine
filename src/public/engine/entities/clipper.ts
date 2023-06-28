@@ -1,7 +1,7 @@
-import type Vec2 from '../../engine/util/vec2.js'
-import Entity from '../../engine/entities/index.js'
-import RectangularCollider from '../../engine/util/collision/rectangular.js'
-import Frame from '../../engine/util/frame.js'
+import type Vec2 from '../util/vec2.js'
+import Entity from './index.js'
+import RectangularCollider from '../util/collision/rectangular.js'
+import Frame from '../util/frame.js'
 
 export class ClippingEntity extends Entity {
   protected offset
@@ -33,7 +33,7 @@ export class ClippingEntity extends Entity {
 
     subFrame.draw(context)
 
-    frame._drawImage(canvas, 0, 0, this.size.x, this.size.y, false)
+    frame._drawImage(canvas, 0, 0, size.x, size.y, false)
   }
 }
 

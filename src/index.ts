@@ -47,17 +47,17 @@ io.on('connection', socket => {
   players.add(player)
 
   socket.on('slot.click', id => {
-    const cursorSlot = player.inventory.getSlot(-1) ?? null
+    const inventory = player.inventory
 
-    const slot = player.inventory.getSlot(id) ?? null
+    const cursorType = inventory.getSlot(-1)?.getType() ?? null
+    const slotType = inventory.getSlot(id)?.getType() ?? null
 
-    player.inventory.setSlot(id, cursorSlot)
-    player.inventory.setSlot(-1, slot)
+    inventory.setItem(id, cursorType)
+    inventory.setItem(-1, slotType)
   })
 
-  player.on('inventory.update', (slot, newType) => {
-    const id = player.inventory.getSlotId(slot)
-    socket.emit('slot.set', id, newType)
+  player.on('inventory.update', (id, after, before) => {
+    socket.emit('slot.set', id, after)
   })
 
   socket.on('physics.update', (rawPosition, rawVelocity) => {
@@ -121,7 +121,7 @@ io.on('connection', socket => {
 
       world.setTile(newTile as TileType, tilePosition, 'change', 'change')
 
-      player.inventory.setSlot(-1, null)
+      player.inventory.setItem(-1, null)
 
       return
     }
@@ -136,6 +136,8 @@ io.on('connection', socket => {
 
     player.removeAllListeners()
   })
+
+  player.inventory.addItem('sus')
 })
 
 world.on('tile.set', tile => {
