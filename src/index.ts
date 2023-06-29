@@ -1,7 +1,7 @@
 import type { IServerServer as IServer } from './socket.io'
-import { type TileType } from './world/tiles/index.js'
 import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion.js'
 import { World } from './world/world.js'
+import { Server } from 'socket.io'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import Player from './player.js'
 import Loop from './public/engine/util/loop.js'
@@ -9,7 +9,7 @@ import http from 'http'
 import path from 'path'
 import url from 'url'
 import express from 'express'
-import { Server } from 'socket.io'
+import Tiles from './world/tiles/index.js'
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __filename = url.fileURLToPath(import.meta.url)
@@ -134,16 +134,20 @@ io.on('connection', socket => {
     if (tile === undefined) return
 
     if (tile.type === 'air') {
-      const newTile = player.inventory.getSlot(-1)?.getType() ?? 'air'
+      const newTileType = player.inventory.getSlot(-1)?.getType() ?? 'air'
 
-      world.setTile(newTile as TileType, tilePosition, 'change', 'change')
+      if (!(newTileType in Tiles)) return
+
+      const newTile = Tiles[newTileType as keyof typeof Tiles]
+
+      world.setTile(newTile.instance(), tilePosition, true, true)
 
       player.inventory.setItem(-1, null)
 
       return
     }
 
-    if (player.inventory.addItem(tile.type)) world.setTile('air', tilePosition, 'change', 'change')
+    if (player.inventory.addItem(tile.type)) world.setTile(Tiles.air.instance(), tilePosition, true, true)
   })
 
   socket.on('disconnect', () => {
@@ -156,10 +160,9 @@ io.on('connection', socket => {
 })
 
 world.on('tile.set', tile => {
-  const type = tile.type as TileType
   const tilePosition = tile.getTilePosition()
 
-  io.emit('tile.set', tilePosition.toArray(), type)
+  io.emit('tile.set', tilePosition.toArray(), tile.type)
 })
 
 server.listen(PORT, () => {

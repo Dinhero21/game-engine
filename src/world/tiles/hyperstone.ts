@@ -1,29 +1,32 @@
-import Tile from './base.js'
+import { Tile, TileInstance, type TileProperties } from './base.js'
+import Tiles from './index.js'
 
-export class HyperStoneTile extends Tile {
-  public type = 'hyperstone'
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface HyperStoneTileProperties {}
 
-  public update (): void {
-    const chunk = this.getChunk()
-    const world = chunk.getWorld()
-
-    const tilePosition = this.getTilePosition()
-
-    for (let x = -1; x <= 1; x++) {
-      for (let y = -1; y <= 1; y++) {
-        const offsetTilePosition = tilePosition.offset(x, y)
-        const offsetTile = world.getTile(offsetTilePosition)
-
-        if (offsetTile === undefined) continue
-
-        if (offsetTile.type === 'air') {
-          if (Math.random() < 0.2) world.setTile('hyperstone', offsetTilePosition, 'change', 'change')
-        }
-      }
-    }
-
-    world.setTile('stone', tilePosition, 'change', 'change')
+export class HyperStoneTile extends Tile<HyperStoneTileProperties> {
+  public instance () {
+    return (tileProperties: TileProperties) => new HyperStoneTileInstance(tileProperties, this.properties)
   }
 }
 
-export default HyperStoneTile
+export class HyperStoneTileInstance extends TileInstance<HyperStoneTileProperties> {
+  type = 'hyperstone'
+
+  public update (): void {
+    const world = this.getWorld()
+
+    const position = this.getTilePosition()
+
+    const x = Math.floor((Math.random() * 3) - 1)
+    const y = Math.floor((Math.random() * 3) - 1)
+
+    const offsetedPosition = position.offset(x, y)
+
+    let tile: Tile = Tiles.stone
+
+    if (Math.random() < 0.125) tile = Tiles.hyperstone
+
+    world.setTile(tile.instance(), offsetedPosition, true, true)
+  }
+}

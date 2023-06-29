@@ -1,10 +1,10 @@
-import { type TileType } from './tiles/index.js'
-import type Tile from './tiles/base.js'
+import { type Tile, type TileInstance, type TileProperties } from './tiles/base.js'
 import { chunkPositionToTilePosition, tilePositionToChunkPosition, CHUNK_SIZE } from '../public/engine/util/tilemap/position-conversion.js'
-import Vec2, { vec2ToString } from '../public/engine/util/vec2.js'
-import Chunk from './chunk.js'
 import { createNoise2D } from 'simplex-noise'
 import { TypedEmitter } from 'tiny-typed-emitter'
+import Vec2, { vec2ToString } from '../public/engine/util/vec2.js'
+import Chunk from './chunk.js'
+import Tiles from './tiles/index.js'
 
 const DISTORTION_SCALE = 0.001
 const DISTORTION_STRENGTH = 10
@@ -17,10 +17,8 @@ const getNoise = createNoise2D()
 
 export type Tick = () => void
 
-export type TileUpdateCondition = boolean | 'change'
-
 export interface WorldEvents {
-  'tile.set': (tile: Tile) => void
+  'tile.set': (tile: TileInstance) => void
 }
 
 // TODO: Separate Tick and Chunk logic
@@ -29,27 +27,16 @@ export class World extends TypedEmitter<WorldEvents> {
 
   private readonly chunks = new Map<string, Chunk>()
 
-  public setTile (type: TileType, tilePosition: Vec2, emit: TileUpdateCondition = 'change', update: TileUpdateCondition = false): void {
+  public setTile (Instance: (properties: TileProperties) => TileInstance, tilePosition: Vec2, emit: boolean = true, update: boolean = false): void {
     const chunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunk = this.getChunk(chunkPosition)
 
     const chunkTilePosition = chunk.getTilePosition()
     const relativeTilePosition = tilePosition.minus(chunkTilePosition)
 
-    const oldTile = chunk.getTile(relativeTilePosition)
+    chunk.setTile(Instance, relativeTilePosition, emit)
 
-    chunk.setTile({
-      position: relativeTilePosition,
-      type
-    }, emit)
-
-    if (oldTile === undefined) return
-
-    const oldTileType = oldTile.type
-
-    const shouldUpdate = update === true || (update === 'change' && oldTileType !== type)
-
-    if (shouldUpdate) {
+    if (update) {
       for (let y = -1; y <= 1; y++) {
         for (let x = -1; x <= 1; x++) {
           this.queueTick(() => {
@@ -65,7 +52,7 @@ export class World extends TypedEmitter<WorldEvents> {
     }
   }
 
-  public getTile (tilePosition: Vec2): Tile | undefined {
+  public getTile (tilePosition: Vec2): TileInstance | undefined {
     const tileChunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunk = this.getChunk(tileChunkPosition)
 
@@ -131,14 +118,11 @@ export class World extends TypedEmitter<WorldEvents> {
 
         const baseTerrain = -absoluteTileTilePosition.y + (noise * NOISE_STRENGTH)
 
-        let type: TileType = 'air'
+        let tile: Tile = Tiles.air
 
-        if (baseTerrain < 0) type = 'stone'
+        if (baseTerrain < 0) tile = Tiles.stone
 
-        chunk.setTile({
-          position: tileTilePosition,
-          type
-        })
+        chunk.setTile(tile.instance(), tileTilePosition)
       }
     }
 

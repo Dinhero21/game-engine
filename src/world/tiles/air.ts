@@ -1,9 +1,14 @@
-import Tile from './base.js'
+import { Tile, TileInstance, type TileProperties } from './base.js'
 
-export class AirTile extends Tile {
-  public type = 'air'
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface AirTileProperties {}
 
-  public update (): void {}
+export class AirTile extends Tile<AirTileProperties> {
+  public instance () {
+    return (tileProperties: TileProperties) => new AirTileInstance(tileProperties, this.properties)
+  }
 }
 
-export default AirTile
+export class AirTileInstance extends TileInstance<AirTileProperties> {
+  type = 'air'
+}

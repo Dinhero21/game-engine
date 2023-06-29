@@ -1,22 +1,16 @@
 import { type World, type TileUpdateCondition } from './world.js'
-import { type TileType, type Tile } from './tiles/index.js'
 import type Vec2 from '../public/engine/util/vec2.js'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion.js'
 import { vec2ToString } from '../public/engine/util/vec2.js'
-import { getTile } from './tile.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
+import { type TileInstance, type TileProperties } from './tiles/stone.js'
 
 export interface ChunkData {
   position: Vec2
 }
 
-export interface TileData {
-  position: Vec2
-  type: TileType
-}
-
 export interface ChunkEvents {
-  'tile.set': (tile: Tile) => void
+  'tile.set': (tile: TileInstance) => void
 }
 
 export class Chunk extends TypedEmitter<ChunkEvents> {
@@ -79,15 +73,11 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
 
   // Tile
 
-  private readonly tiles = new Map<string, Tile>()
+  private readonly tiles = new Map<string, TileInstance>()
 
-  public setTile (data: TileData, emit: TileUpdateCondition = 'change'): void {
-    const relativeTilePosition = data.position
-    const type = data.type
-
-    const Tile = getTile(type)
-
-    const tile = new Tile(this, relativeTilePosition)
+  public setTile (Instance: (properties: TileProperties) => TileInstance, relativeTilePosition: Vec2, emit: TileUpdateCondition = 'change'): void {
+    const tile = Instance({ chunk: this, position: relativeTilePosition })
+    const type = tile.type
 
     const tileId = vec2ToString(relativeTilePosition)
 
@@ -99,18 +89,18 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
 
     const oldTileType = oldTile.type
 
-    const shouldEmit = emit === true || (emit === 'change' && oldTileType !== data.type)
+    const shouldEmit = emit === true || (emit === 'change' && oldTileType !== type)
 
     if (shouldEmit) this.emit('tile.set', tile)
   }
 
-  public getTile (tilePosition: Vec2): Tile | undefined {
+  public getTile (tilePosition: Vec2): TileInstance | undefined {
     const tileId = vec2ToString(tilePosition)
 
     return this.tiles.get(tileId)
   }
 
-  public getTiles (): Map<string, Tile> {
+  public getTiles (): Map<string, TileInstance> {
     return this.tiles
   }
 }

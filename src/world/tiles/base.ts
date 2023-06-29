@@ -1,91 +1,59 @@
-import { type TileType } from './index.js'
 import type Vec2 from '../../public/engine/util/vec2.js'
 import type Chunk from '../chunk.js'
-import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from '../../public/engine/util/tilemap/position-conversion.js'
+import { type World } from '../world.js'
 
-export abstract class Tile {
-  private readonly chunk
+export interface TileProperties {
+  chunk: Chunk
+  position: Vec2
+}
+export abstract class Tile<Properties = any> {
+  protected readonly properties
+
+  constructor (properties: Properties) {
+    this.properties = properties
+  }
+
+  public abstract instance (): (tileProperties: TileProperties) => TileInstance<Properties>
+}
+
+export abstract class TileInstance<Properties = any> {
+  public readonly abstract type: string
+
+  protected readonly properties: Properties
+
+  constructor (tileProperties: TileProperties, properties: Properties) {
+    this.properties = properties
+
+    this.chunk = tileProperties.chunk
+    this.position = tileProperties.position
+  }
+
+  public update (): void {}
+
+  protected readonly chunk: Chunk
 
   public getChunk (): Chunk {
     return this.chunk
   }
 
-  public abstract readonly type: string
+  public getWorld (): World {
+    const chunk = this.chunk
 
-  constructor (chunk: Chunk, position: Vec2) {
-    this.chunk = chunk
-    this._position = position
+    return chunk.getWorld()
   }
 
-  // Position
-
-  private _position
-
-  // Position (Relative) (Getters)
-
-  public getRelativeTilePosition (): Vec2 {
-    return this._position
-  }
+  protected readonly position: Vec2
 
   public getRelativePosition (): Vec2 {
-    const tilePosition = this.getRelativeTilePosition()
-    const position = tilePositionToPosition(tilePosition)
-
-    return position
+    return this.position
   }
 
-  // Position (Relative) (Setters)
-
-  public setRelativeChunkPosition (chunkPosition: Vec2): void {
-    const tilePosition = chunkPositionToTilePosition(chunkPosition)
-
-    this.setRelativeTilePosition(tilePosition)
-  }
-
-  public setRelativeTilePosition (tilePosition: Vec2): void {
-    // ? Should I update via reference or value?
-    // Reference: position.update(value)
-    // Value:     position = value
-    this._position = tilePosition
-  }
-
-  public setRelativePosition (position: Vec2): void {
-    const tilePosition = positionToTilePosition(position)
-
-    this.setRelativeTilePosition(tilePosition)
-  }
-
-  // Position (Absolute) (Getters)
-
-  public getChunkPosition (): Vec2 {
-    const chunk = this.getChunk()
-
-    return chunk.getChunkPosition()
-  }
-
-  // ? Should I call it getTilePosition or getAbsoluteTilePosition?
   public getTilePosition (): Vec2 {
     const chunk = this.getChunk()
-
     const chunkTilePosition = chunk.getTilePosition()
-    const relativeTilePosition = this.getRelativeTilePosition()
 
-    return relativeTilePosition.plus(chunkTilePosition)
+    const relativeTilePosition = this.getRelativePosition()
+
+    return chunkTilePosition.plus(relativeTilePosition)
   }
-
-  // ? Should I call it getPosition or getAbsolutePosition?
-  public getPosition (): Vec2 {
-    const chunk = this.getChunk()
-
-    const chunkPosition = chunk.getPosition()
-    const relativePosition = this.getRelativePosition()
-
-    return relativePosition.plus(chunkPosition)
-  }
-
-  // Data Update
-
-  public abstract update (): void
 }
-
-export default Tile
