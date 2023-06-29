@@ -60,6 +60,23 @@ io.on('connection', socket => {
     socket.emit('slot.set', id, after)
   })
 
+  socket.on('recipe.crafted', recipe => {
+    const inventory = player.inventory
+    const inputs = recipe.inputs
+
+    for (const input of inputs) {
+      for (let i = 0; i < input.amount; i++) {
+        inventory.removeItem(input.type)
+      }
+    }
+
+    const output = recipe.output
+
+    for (let i = 0; i < output.amount; i++) {
+      inventory.addItem(output.type)
+    }
+  })
+
   socket.on('physics.update', (rawPosition, rawVelocity) => {
     const position = new Vec2(...rawPosition)
     const velocity = new Vec2(...rawVelocity)
@@ -117,7 +134,7 @@ io.on('connection', socket => {
     if (tile === undefined) return
 
     if (tile.type === 'air') {
-      const newTile = player.inventory.getSlot(-1) ?? 'air'
+      const newTile = player.inventory.getSlot(-1)?.getType() ?? 'air'
 
       world.setTile(newTile as TileType, tilePosition, 'change', 'change')
 
@@ -136,8 +153,6 @@ io.on('connection', socket => {
 
     player.removeAllListeners()
   })
-
-  player.inventory.addItem('sus')
 })
 
 world.on('tile.set', tile => {

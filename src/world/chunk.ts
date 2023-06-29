@@ -86,6 +86,7 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
     const type = data.type
 
     const Tile = getTile(type)
+
     const tile = new Tile(this, relativeTilePosition)
 
     const tileId = vec2ToString(relativeTilePosition)

@@ -29,9 +29,11 @@ export class Inventory extends BaseInventory {
 
     const after = type
 
+    const result = super.setItem(id, type)
+
     this.manager.emit('slot.update', id, after, before)
 
-    return super.setItem(id, type)
+    return result
   }
 }
 

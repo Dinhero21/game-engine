@@ -50,6 +50,8 @@ export class ManagedInventory extends Inventory {
     const before = slot?.getType()
     const after = type
 
+    const result = super.setItem(id, type)
+
     this.manager.dispatchTypedEvent('slot.update', new SlotUpdateEvent({
       before,
       after,
@@ -57,7 +59,7 @@ export class ManagedInventory extends Inventory {
       slot
     }))
 
-    return super.setItem(id, type)
+    return result
   }
 }
 

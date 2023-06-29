@@ -1,6 +1,7 @@
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
 import { type SlotType } from './public/game/util/inventory.js'
+import { type Recipe } from './public/assets/recipes.js'
 
 // Engine.ioified methods
 
@@ -33,6 +34,7 @@ export interface ClientToServerEvents {
   'chunk.remove': (chunkPosition: Vec2) => void
   'tile.click': (tilePosition: Vec2) => void
   'slot.click': (id: number) => void
+  'recipe.crafted': (recipe: Recipe) => void
 }
 
 // Server -> Server

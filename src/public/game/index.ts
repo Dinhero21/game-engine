@@ -6,6 +6,10 @@ import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
 import UserInterfaceEntity from './entities/user-interface/index.js'
+import WorldEntity from './entities/world.js'
+import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization.js'
+import { positionToTilePosition } from '../engine/util/tilemap/position-conversion.js'
+import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   let averageUpdateDelta = 0
@@ -84,28 +88,32 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const mouseDebug = new DebugEntity('Mouse')
 
-  // const world = new WorldEntity(socket)
-  // scene.addChild(world)
+  const world = new WorldEntity(socket)
+  scene.addChild(world)
 
-  // new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
-  //   const mouseGlobalPosition = world.getMouseGlobalPosition()
+  new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
+    const mouseGlobalPosition = world.getMouseGlobalPosition()
 
-  //   if (mouseGlobalPosition === undefined) return
+    if (mouseGlobalPosition === undefined) return
 
-  //   const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
+    const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
 
-  //   socket.emit('tile.click', globalMouseTilePosition.toArray())
-  // })
+    socket.emit('tile.click', globalMouseTilePosition.toArray())
+  })
 
-  // const multiplayerContainer = new MultiplayerContainerEntity(socket)
-  // scene.addChild(multiplayerContainer)
+  const multiplayerContainer = new MultiplayerContainerEntity(socket)
+  scene.addChild(multiplayerContainer)
 
-  // multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
+  multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
 
   const ui = new UserInterfaceEntity(socket)
   scene.addChild(ui)
 
-  // scene.addChild(mouseDebug)
+  ui.crafting.manager.addEventListener('crafted', event => {
+    socket.emit('recipe.crafted', event.recipe)
+  })
+
+  scene.addChild(mouseDebug)
 
   return scene
 

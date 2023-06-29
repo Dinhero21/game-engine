@@ -7,7 +7,6 @@ import keyboard from '../../../engine/util/input/keyboard.js'
 import Vec2 from '../../../engine/util/vec2.js'
 import CraftingEntity from './crafting/index.js'
 import PlayerInventoryEntity from './inventory.js'
-import { type CraftingEvent } from './crafting/manager.js'
 
 export type UIState = 'open' | 'closed'
 
@@ -36,10 +35,10 @@ export class UserInterfaceEntity extends ViewportEntity {
     this.inventory = inventoryEntity
 
     inventory.manager.addEventListener('slot.update', event => {
-      if (event.before !== event.after) this.updateRecipes()
-    })
+      if (event.before === event.after) return
 
-    crafting.manager.addEventListener('crafted', event => { this.onItemCrafted(event) })
+      this.updateRecipes()
+    })
   }
 
   public update (delta: number): void {
@@ -71,27 +70,6 @@ export class UserInterfaceEntity extends ViewportEntity {
       if (!recipe.inputs.every(input => (list.get(input.type) ?? 0) >= input.amount)) continue
 
       crafting.addRecipe(recipe)
-    }
-  }
-
-  private onItemCrafted (event: CraftingEvent): void {
-    const recipe = event.recipe
-
-    const inventoryEntity = this.inventory
-    const inventory = inventoryEntity.inventory
-
-    const inputs = recipe.inputs
-
-    for (const input of inputs) {
-      for (let i = 0; i < input.amount; i++) {
-        inventory.removeItem(input.type)
-      }
-    }
-
-    const output = recipe.output
-
-    for (let i = 0; i < output.amount; i++) {
-      inventory.addItem(output.type)
     }
   }
 

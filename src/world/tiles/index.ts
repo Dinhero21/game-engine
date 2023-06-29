@@ -1,5 +1,6 @@
 import AirTile from './air.js'
 import DebugTile from './debug.js'
+import HyperStoneTile from './hyperstone.js'
 import StoneTile from './stone.js'
 import SusTile from './sus.js'
 
@@ -7,7 +8,8 @@ export const tiles = {
   air: AirTile,
   debug: DebugTile,
   stone: StoneTile,
-  sus: SusTile
+  sus: SusTile,
+  hyperstone: HyperStoneTile
 } as const
 
 export type Tiles = typeof tiles

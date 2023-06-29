@@ -24,6 +24,8 @@ export class CraftingEntity extends HorizontalContainerEntity {
 
   private recipe?: Recipe
 
+  private readonly _recipes = new Set<Recipe>()
+
   public state: CraftingState = 'closed'
 
   constructor () {
@@ -118,6 +120,8 @@ export class CraftingEntity extends HorizontalContainerEntity {
       progress.progress += delta
     }
 
+    if (recipe === undefined) progress.progress = 0
+
     while (progress.progress > 1) {
       progress.progress -= 1
 
@@ -129,9 +133,16 @@ export class CraftingEntity extends HorizontalContainerEntity {
 
   private updateDisplay (): void {
     const display = this.display
+
+    if (this.recipe !== undefined && !this._recipes.has(this.recipe)) this.recipe = undefined
+
     const recipe = this.recipe
 
-    if (recipe === undefined) return
+    if (recipe === undefined) {
+      display.title = 'undefined'
+
+      return
+    }
 
     const string = JSON.stringify(recipe)
     const chunks = chunk(string, 13)
@@ -140,6 +151,8 @@ export class CraftingEntity extends HorizontalContainerEntity {
   }
 
   public addRecipe (recipe: Recipe): this {
+    this._recipes.add(recipe)
+
     const output = recipe.output
 
     const entity = new ItemEntity(output.type, new Vec2(32, 32))
@@ -155,6 +168,8 @@ export class CraftingEntity extends HorizontalContainerEntity {
   }
 
   public clearRecipes (): this {
+    this._recipes.clear()
+
     this.list.clearItems()
 
     return this

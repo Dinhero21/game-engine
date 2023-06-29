@@ -12,12 +12,12 @@ export const recipes: Recipe[] = [
   {
     inputs: [
       {
-        type: 'sus',
-        amount: 1
+        type: 'stone',
+        amount: 4
       }
     ],
     output: {
-      type: 'sus',
+      type: 'hyperstone',
       amount: 1
     }
   }

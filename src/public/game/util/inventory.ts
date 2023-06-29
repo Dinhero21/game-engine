@@ -82,7 +82,9 @@ export class Inventory {
     const list = new Map<SlotType, number>()
 
     for (const slot of this.getSlots()) {
-      list.set(slot.getType(), list.get(slot.getType()) ?? 0 + 1)
+      const type = slot.getType()
+
+      list.set(type, (list.get(type) ?? 0) + 1)
     }
 
     return list
