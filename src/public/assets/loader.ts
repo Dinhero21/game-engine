@@ -5,8 +5,9 @@ export interface RawTileData {
 
 // TODO: Add texture as HTMLImageElement or OffscreenCanvas (or something else)
 export interface TileData {
-  name: string
+  type: string
   collidable: boolean
+  texture: string
 }
 
 export class AssetLoader extends EventTarget {
@@ -55,12 +56,13 @@ export class AssetLoader extends EventTarget {
     return await tile
   }
 
-  public async getTileData (name: string): Promise<TileData> {
-    const rawTileData = await this.getRawTileData(name)
+  public async getTileData (type: string): Promise<TileData> {
+    const rawTileData = await this.getRawTileData(type)
 
     return {
-      name,
-      collidable: rawTileData.collidable
+      type,
+      collidable: rawTileData.collidable,
+      texture: rawTileData.texture
     }
   }
 }

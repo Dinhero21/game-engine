@@ -27,10 +27,10 @@ export class WorldEntity extends TileMapEntity<Tile> {
 
       const chunk = new Chunk<Tile>(chunkPosition, chunkSize)
 
-      for (const [tileId, tileName] of rawChunk) {
+      for (const [tileId, tileType] of rawChunk) {
         const tilePosition = stringToVec2(tileId)
 
-        const tile = await createTile(tileName)
+        const tile = await createTile(tileType)
 
         chunk.setTile(tile, tilePosition)
       }

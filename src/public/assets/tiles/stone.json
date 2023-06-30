@@ -1,4 +1,4 @@
 {
-  "texture": "assets/textures/stone.png",
+  "texture": "stone",
   "collidable": true
 }

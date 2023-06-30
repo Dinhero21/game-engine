@@ -1,4 +1,4 @@
 {
-  "texture": "assets/textures/hyperstone.png",
+  "texture": "hyperstone",
   "collidable": true
 }

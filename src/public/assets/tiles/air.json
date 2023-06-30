@@ -1,4 +1,4 @@
 {
-  "texture": "assets/textures/air.png",
+  "texture": "air",
   "collidable": false
 }
