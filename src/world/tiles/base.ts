@@ -1,6 +1,6 @@
 import type Vec2 from '../../public/engine/util/vec2.js'
 import type Chunk from '../chunk.js'
-import { type World } from '../world.js'
+import { type World } from '../index.js'
 
 export interface TileProperties {
   chunk: Chunk

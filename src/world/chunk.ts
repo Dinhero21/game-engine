@@ -1,4 +1,4 @@
-import { type World, type TileUpdateCondition } from './world.js'
+import { type World, type TileUpdateCondition } from './index.js'
 import type Vec2 from '../public/engine/util/vec2.js'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion.js'
 import { vec2ToString } from '../public/engine/util/vec2.js'

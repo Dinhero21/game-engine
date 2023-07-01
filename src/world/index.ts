@@ -1,19 +1,9 @@
-import { type Tile, type TileInstance, type TileProperties } from './tiles/base.js'
-import { chunkPositionToTilePosition, tilePositionToChunkPosition, CHUNK_SIZE } from '../public/engine/util/tilemap/position-conversion.js'
-import { createNoise2D } from 'simplex-noise'
-import { TypedEmitter } from 'tiny-typed-emitter'
+import { type TileInstance, type TileProperties } from './tiles/base.js'
+import { type WorldGen } from './gen/index.js'
 import Vec2, { vec2ToString } from '../public/engine/util/vec2.js'
 import Chunk from './chunk.js'
-import Tiles from './tiles/index.js'
-
-const DISTORTION_SCALE = 0.001
-const DISTORTION_STRENGTH = 10
-const NOISE_SCALE = 0.03
-const NOISE_STRENGTH = 10
-
-const getDistortionX = createNoise2D()
-const getDistortionY = createNoise2D()
-const getNoise = createNoise2D()
+import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion.js'
+import { TypedEmitter } from 'tiny-typed-emitter'
 
 export type Tick = () => void
 
@@ -26,6 +16,14 @@ export class World extends TypedEmitter<WorldEvents> {
   // Chunk
 
   private readonly chunks = new Map<string, Chunk>()
+
+  private readonly gen
+
+  constructor (gen: WorldGen) {
+    super()
+
+    this.gen = gen
+  }
 
   public setTile (Instance: (properties: TileProperties) => TileInstance, tilePosition: Vec2, emit: boolean = true, update: boolean = false): void {
     const chunkPosition = tilePositionToChunkPosition(tilePosition)
@@ -91,36 +89,19 @@ export class World extends TypedEmitter<WorldEvents> {
   }
 
   public generateChunk (chunkChunkPosition: Vec2): Chunk {
-    const chunk: Chunk = new Chunk(this, { position: chunkChunkPosition })
+    const gen = this.gen
 
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
-    for (let tileTilePositionY = 0; tileTilePositionY < CHUNK_SIZE; tileTilePositionY++) {
-      for (let tileTilePositionX = 0; tileTilePositionX < CHUNK_SIZE; tileTilePositionX++) {
-        const tileTilePosition = new Vec2(tileTilePositionX, tileTilePositionY)
+    const chunk = new Chunk(this, { position: chunkChunkPosition })
+
+    for (let x = 0; x < CHUNK_SIZE; x++) {
+      for (let y = 0; y < CHUNK_SIZE; y++) {
+        const tileTilePosition = new Vec2(x, y)
 
         const absoluteTileTilePosition = tileTilePosition.plus(chunkTilePosition)
 
-        const distortionNoisePosition = absoluteTileTilePosition.scaled(DISTORTION_SCALE)
-
-        const distortionX = getDistortionX(distortionNoisePosition.x, distortionNoisePosition.y)
-        const distortionY = getDistortionY(distortionNoisePosition.x, distortionNoisePosition.y)
-
-        const distortion = new Vec2(distortionX, distortionY)
-
-        distortion.scale(DISTORTION_STRENGTH)
-
-        const noisePosition = absoluteTileTilePosition.scaled(NOISE_SCALE)
-
-        noisePosition.add(distortion)
-
-        const noise = getNoise(noisePosition.x, noisePosition.y)
-
-        const baseTerrain = -absoluteTileTilePosition.y + (noise * NOISE_STRENGTH)
-
-        let tile: Tile = Tiles.air
-
-        if (baseTerrain < 0) tile = Tiles.stone
+        const tile = gen.getTile(absoluteTileTilePosition)
 
         chunk.setTile(tile.instance(), tileTilePosition)
       }
