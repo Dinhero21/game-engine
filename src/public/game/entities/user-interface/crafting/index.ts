@@ -1,6 +1,7 @@
 import { type Recipe } from '../../../../assets/recipes.js'
 import { TRANSFORMATIONS, animatePosition } from '../../../../engine/patches/animate.js'
 import { MouseButtonMap } from '../../../../engine/util/input/mouse/index.js'
+import { chunk } from '../../../util/string.js'
 import Vec2 from '../../../../engine/util/vec2.js'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container.js'
 import HorizontalContainerEntity from '../../../../engine/entities/horizontal-container.js'
@@ -9,7 +10,11 @@ import DisplayEntity from './display.js'
 import ItemEntity from './item.js'
 import CraftingManager from './manager.js'
 import CraftingProgressEntity from './progress.js'
-import { chunk } from '../../../util/string.js'
+
+const COLORS = {
+  BACKGROUND: [0x1F, 0x1F, 0x1F, 0.75],
+  FOREGROUND: [0xFF, 0xFF, 0xFF]
+} as const
 
 export type CraftingState = 'open' | 'closed'
 
@@ -34,7 +39,7 @@ export class CraftingEntity extends HorizontalContainerEntity {
       new Vec2(0, 0)
     )
 
-    const list = new ListEntity(new Vec2(64, 192), 32, new Vec2(16, 16))
+    const list = new ListEntity(new Vec2(64, 192), 32, new Vec2(16, 16), [...COLORS.BACKGROUND])
     this.addChild(list)
 
     this.list = list
@@ -51,8 +56,8 @@ export class CraftingEntity extends HorizontalContainerEntity {
     this.display = display
 
     const progress = new CraftingProgressEntity(new Vec2(128, 64), {
-      background: [0x00, 0x00, 0x00],
-      foreground: [0xFF, 0xFF, 0xFF]
+      background: [...COLORS.BACKGROUND],
+      foreground: [...COLORS.FOREGROUND]
     })
     container.addChild(progress)
 
