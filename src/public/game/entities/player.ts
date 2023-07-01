@@ -1,9 +1,11 @@
 import type Frame from '../../engine/util/frame.js'
+import { TILE_SIZE } from '../../engine/util/tilemap/position-conversion.js'
 import Entity from '../../engine/entities/index.js'
 import Vec2 from '../../engine/util/vec2.js'
 import keyboard from '../../engine/util/input/keyboard.js'
 import RectangularCollider from '../../engine/util/collision/rectangular.js'
-import { TILE_SIZE } from '../../engine/util/tilemap/position-conversion.js'
+
+const FRICTION = new Vec2(50, 5)
 
 export type OverlapDetector = (collider: RectangularCollider) => boolean
 
@@ -65,13 +67,16 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
   protected getUserInputDirection (): Vec2 {
     let horizontalDirection = 0
+    let verticalDirection = 0
 
     if (this.controllable) {
       if (keyboard.isKeyDown('a')) horizontalDirection--
       if (keyboard.isKeyDown('d')) horizontalDirection++
+
+      if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) verticalDirection--
     }
 
-    return new Vec2(horizontalDirection, 0)
+    return new Vec2(horizontalDirection, verticalDirection)
   }
 
   protected move (delta: number): void {
@@ -80,20 +85,19 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     const direction = this.getUserInputDirection()
 
     // velocity += direction * speed
-    velocity.add(direction.scaled(100))
+    velocity.add(direction.scaled(new Vec2(25000, 12500)).scaled(delta))
 
     // velocity.y += gravity
-    velocity.y += 15
-
-    if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) velocity.y = -500
+    velocity.y += 3750 * delta
 
     // Friction
-    // velocity /= friction + 1
-    velocity.x /= 1.2
-    velocity.y /= 1.02
+    velocity.x /= 1 + (FRICTION.x * delta)
+    velocity.y /= 1 + (FRICTION.y * delta)
+
+    const newVelocity = this.updatePosition(velocity.scaled(delta)).divided(delta)
 
     // TODO: Make this less convoluted
-    velocity.update(this.updatePosition(velocity.scaled(delta)).divided(delta))
+    velocity.update(newVelocity)
   }
 
   protected updatePosition (positionDelta: Vec2): Vec2 {
