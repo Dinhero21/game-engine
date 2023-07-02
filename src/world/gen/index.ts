@@ -21,6 +21,20 @@ export class WorldGen {
     strength: NOISE_STRENGTH
   }, this.distortion)
 
+  protected getNoise (tilePosition: Vec2): number {
+    return this.noise.get(tilePosition)
+  }
+
+  protected getDensity (tilePosition: Vec2): number {
+    const noise = this.getNoise(tilePosition)
+
+    return noise + tilePosition.y
+  }
+
+  protected getFloorTile (tilePosition: Vec2): Tile {
+    return (tilePosition.y + (Math.random() - 1) * 2 * 5) > 16 ? Tiles.stone : Tiles.dirt
+  }
+
   public getTile (tileTilePosition: Vec2): Tile {
     const id = `${tileTilePosition.x}|${tileTilePosition.y}`
 
@@ -28,13 +42,13 @@ export class WorldGen {
 
     if (cached !== undefined) return cached
 
-    const noise = this.noise.get(tileTilePosition)
-
-    const baseTerrain = -tileTilePosition.y + noise
+    const density = this.getDensity(tileTilePosition)
 
     let tile: Tile = Tiles.air
 
-    if (baseTerrain < 0) tile = Tiles.stone
+    if (density > 0) {
+      tile = this.getFloorTile(tileTilePosition)
+    }
 
     this.cache.set(id, tile)
 
