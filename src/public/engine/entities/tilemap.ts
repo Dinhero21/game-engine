@@ -76,6 +76,22 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
+    this._setTile(tile, tilePosition, chunkChunkPosition)
+
+    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
+
+    if (relativeTilePosition.x === 0) this._setTile(tile, tilePosition, chunkChunkPosition.offset(-1, 0))
+
+    if (relativeTilePosition.x === CHUNK_SIZE - 1) this._setTile(tile, tilePosition, chunkChunkPosition.offset(1, 0))
+
+    if (relativeTilePosition.y === 0) this._setTile(tile, tilePosition, chunkChunkPosition.offset(0, -1))
+
+    if (relativeTilePosition.y === CHUNK_SIZE - 1) this._setTile(tile, tilePosition, chunkChunkPosition.offset(0, 1))
+  }
+
+  protected _setTile (tile: ValidTile, tilePosition: Vec2, chunkChunkPosition: Vec2): void {
+    const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
+
     tilePosition = tilePosition
       .minus(chunkTilePosition)
 

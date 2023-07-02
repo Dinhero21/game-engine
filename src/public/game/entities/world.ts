@@ -1,14 +1,11 @@
 import { type IClientSocket as Socket } from '../../../socket.io.js'
 import type Tile from '../../engine/util/tilemap/tile.js'
-import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../../engine/util/tilemap/position-conversion.js'
+import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition, chunkPositionToTilePosition } from '../../engine/util/tilemap/position-conversion.js'
 import { createTile } from '../tile.js'
-import { Chunk } from '../../engine/util/tilemap/chunk.js'
 import { loader } from '../../assets/loader.js'
 import Vec2, { stringToVec2 } from '../../engine/util/vec2.js'
 import TileMapEntity from '../../engine/entities/tilemap.js'
 import Loop from '../../engine/util/loop.js'
-
-const chunkSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
 export class WorldEntity extends TileMapEntity<Tile> {
   private readonly socket
@@ -23,19 +20,18 @@ export class WorldEntity extends TileMapEntity<Tile> {
     const socket = this.socket
 
     socket.on('chunk.set', async (rawChunk, rawChunkPosition) => {
-      const chunkPosition = new Vec2(...rawChunkPosition)
-
-      const chunk = new Chunk<Tile>(chunkPosition, chunkSize)
+      const chunkChunkPosition = new Vec2(...rawChunkPosition)
+      const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
       for (const [tileId, tileType] of rawChunk) {
-        const tilePosition = stringToVec2(tileId)
+        const relativeTileTilePosition = stringToVec2(tileId)
+
+        const tileTilePosition = relativeTileTilePosition.plus(chunkTilePosition)
 
         const tile = await createTile(tileType)
 
-        chunk.setTile(tile, tilePosition)
+        this.setTile(tile, tileTilePosition)
       }
-
-      this.setChunk(chunk, chunkPosition)
     })
 
     socket.on('tile.set', async (rawTilePosition, type) => {

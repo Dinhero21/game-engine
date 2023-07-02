@@ -1,6 +1,6 @@
 import type Tile from './tile.js'
 import { TILE_SIZE, chunkPositionToTilePosition, tilePositionToPosition } from './position-conversion.js'
-import Vec2, { vec2ToString, stringToVec2 } from '../vec2.js'
+import Vec2 from '../vec2.js'
 import RectangularCollider from '../collision/rectangular.js'
 
 const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
@@ -13,8 +13,29 @@ export interface TileRendererTile {
 // TODO: "Global" Chunk Cache
 
 export class Chunk<ValidTile extends Tile = Tile> {
-  public tiles = new Map<string, ValidTile>()
+  public tiles = new Map<number, Map<number, ValidTile>>()
   public boundingBox: RectangularCollider
+
+  protected getTiles (): Map<Vec2, ValidTile> {
+    const map = new Map<Vec2, ValidTile>()
+
+    const boundingBox = this.boundingBox
+    const size = boundingBox.getSize()
+
+    const chunkSize = size.divided(TILE_SIZE)
+
+    for (let x = 0; x < chunkSize.x; x++) {
+      for (let y = 0; y < chunkSize.y; y++) {
+        const tile = this.getTile(x, y)
+
+        if (tile === undefined) continue
+
+        map.set(new Vec2(x, y), tile)
+      }
+    }
+
+    return map
+  }
 
   // TODO: Multiple Cache Versions
   private cache?: ImageBitmap
@@ -39,15 +60,14 @@ export class Chunk<ValidTile extends Tile = Tile> {
 
     context.imageSmoothingEnabled = false
 
-    for (const [tileId, tile] of this.tiles) {
-      const tileTilePosition = stringToVec2(tileId)
-
+    for (const [tileTilePosition, tile] of this.getTiles()) {
       const tilePosition = tilePositionToPosition(tileTilePosition)
 
       // ? Should I make translating and resizing the tile's responsibility?
       tile.render(context, {
         position: tilePosition,
-        size: tileSize
+        size: tileSize,
+        nearby: this.getNearby(tileTilePosition.x, tileTilePosition.y)
       })
     }
 
@@ -56,6 +76,22 @@ export class Chunk<ValidTile extends Tile = Tile> {
     if (cache) this.cache = image
 
     return image
+  }
+
+  protected getNearby (x: number, y: number): [boolean, boolean, boolean, boolean] {
+    const tile = this.getTile(x, y)
+
+    const rightTile = this.getTile(x + 1, y)
+    const downTile = this.getTile(x, y + 1)
+    const leftTile = this.getTile(x - 1, y)
+    const upTile = this.getTile(x, y - 1)
+
+    const right = rightTile?.type === tile?.type
+    const down = downTile?.type === tile?.type
+    const left = leftTile?.type === tile?.type
+    const up = upTile?.type === tile?.type
+
+    return [right, down, left, up]
   }
 
   constructor (chunkPosition: Vec2, chunkTileSize: Vec2) {
@@ -67,16 +103,17 @@ export class Chunk<ValidTile extends Tile = Tile> {
     this.boundingBox = new RectangularCollider(position, size)
   }
 
-  public getTile (tilePosition: Vec2): ValidTile | undefined {
-    const id = vec2ToString(tilePosition)
-
-    return this.tiles.get(id)
+  public getTile (x: number, y: number): ValidTile | undefined {
+    return this.tiles.get(x)?.get(y)
   }
 
   public setTile (tile: ValidTile, tilePosition: Vec2): void {
-    const id = vec2ToString(tilePosition)
+    const tiles = this.tiles
 
-    this.tiles.set(id, tile)
+    const row = tiles.get(tilePosition.x) ?? new Map()
+    tiles.set(tilePosition.x, row)
+
+    row.set(tilePosition.y, tile)
   }
 
   // Collision Detection
@@ -90,11 +127,11 @@ export class Chunk<ValidTile extends Tile = Tile> {
 
     other = other.offset(position.scaled(-1))
 
-    return Array.from(this.tiles)
-      .filter(([tileId, tile]) => tile.collidable)
-      .map(([tileId, tile]) => stringToVec2(tileId))
-      .map(tilePositionToPosition)
-      .some(position => (new RectangularCollider(position, tileSize)).touching(other))
+    return Array.from(this.getTiles())
+      .filter(([tileTilePosition, tile]) => tile.collidable)
+      .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
+      .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
+      .some(collider => collider.touching(other))
   }
 
   public overlapping (other: RectangularCollider): boolean {
@@ -106,11 +143,11 @@ export class Chunk<ValidTile extends Tile = Tile> {
 
     other = other.offset(position.scaled(-1))
 
-    return Array.from(this.tiles)
-      .filter(([tileId, tile]) => tile.collidable)
-      .map(([tileId, tile]) => stringToVec2(tileId))
-      .map(tilePositionToPosition)
-      .some(position => (new RectangularCollider(position, tileSize)).overlapping(other))
+    return Array.from(this.getTiles())
+      .filter(([tileTilePosition, tile]) => tile.collidable)
+      .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
+      .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
+      .some(collider => collider.overlapping(other))
   }
 
   public colliding (other: RectangularCollider): boolean {
@@ -122,10 +159,10 @@ export class Chunk<ValidTile extends Tile = Tile> {
 
     other = other.offset(position.scaled(-1))
 
-    return Array.from(this.tiles)
-      .filter(([tileId, tile]) => tile.collidable)
-      .map(([tileId, tile]) => stringToVec2(tileId))
-      .map(tilePositionToPosition)
-      .some(position => (new RectangularCollider(position, tileSize)).colliding(other))
+    return Array.from(this.getTiles())
+      .filter(([tileTilePosition, tile]) => tile.collidable)
+      .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
+      .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
+      .some(collider => collider.touching(other))
   }
 }
