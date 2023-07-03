@@ -106,15 +106,18 @@ io.on('connection', socket => {
 
         const chunk = world.getChunk(chunkPosition)
 
+        const chunkTilePosition = chunk.getTilePosition()
+
         const tiles = chunk.getTiles()
 
-        const rawTiles = new Map<string, string>()
+        for (const [relativeX, row] of tiles.entries()) {
+          for (const [relativeY, tile] of row.entries()) {
+            const x = relativeX + chunkTilePosition.x
+            const y = relativeY + chunkTilePosition.y
 
-        for (const [tileId, tile] of tiles) {
-          rawTiles.set(tileId, tile.type)
+            socket.emit('tile.set', [x, y], tile.type)
+          }
         }
-
-        socket.emit('chunk.set', Array.from(rawTiles), chunkPosition.toArray())
 
         player.chunks.add(chunkId)
       }

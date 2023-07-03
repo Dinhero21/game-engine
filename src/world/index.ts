@@ -57,7 +57,7 @@ export class World extends TypedEmitter<WorldEvents> {
     const chunkTilePosition = chunk.getTilePosition()
     const relativeTilePosition = tilePosition.minus(chunkTilePosition)
 
-    return chunk.getTile(relativeTilePosition)
+    return chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
   }
 
   public setChunk (chunk: Chunk, chunkPosition: Vec2): void {

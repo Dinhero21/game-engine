@@ -1,9 +1,8 @@
-import { type World, type TileUpdateCondition } from './index.js'
+import { type World } from './index.js'
+import { type TileProperties, type TileInstance } from './tiles/base.js'
 import type Vec2 from '../public/engine/util/vec2.js'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion.js'
-import { vec2ToString } from '../public/engine/util/vec2.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
-import { type TileInstance, type TileProperties } from './tiles/stone.js'
 
 export interface ChunkData {
   position: Vec2
@@ -73,34 +72,26 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
 
   // Tile
 
-  private readonly tiles = new Map<string, TileInstance>()
+  private readonly tiles = new Map<number, Map<number, TileInstance>>()
 
-  public setTile (Instance: (properties: TileProperties) => TileInstance, relativeTilePosition: Vec2, emit: TileUpdateCondition = 'change'): void {
+  public setTile (Instance: (properties: TileProperties) => TileInstance, relativeTilePosition: Vec2, emit: boolean = true): void {
+    const tiles = this.tiles
+
+    const row = tiles.get(relativeTilePosition.x) ?? new Map()
+    tiles.set(relativeTilePosition.x, row)
+
     const tile = Instance({ chunk: this, position: relativeTilePosition })
-    const type = tile.type
 
-    const tileId = vec2ToString(relativeTilePosition)
+    row.set(relativeTilePosition.y, tile)
 
-    const oldTile = this.getTile(relativeTilePosition)
-
-    this.tiles.set(tileId, tile)
-
-    if (oldTile === undefined) return
-
-    const oldTileType = oldTile.type
-
-    const shouldEmit = emit === true || (emit === 'change' && oldTileType !== type)
-
-    if (shouldEmit) this.emit('tile.set', tile)
+    if (emit) this.emit('tile.set', tile)
   }
 
-  public getTile (tilePosition: Vec2): TileInstance | undefined {
-    const tileId = vec2ToString(tilePosition)
-
-    return this.tiles.get(tileId)
+  public getTile (x: number, y: number): TileInstance | undefined {
+    return this.tiles.get(x)?.get(y)
   }
 
-  public getTiles (): Map<string, TileInstance> {
+  public getTiles (): Map<number, Map<number, TileInstance>> {
     return this.tiles
   }
 }

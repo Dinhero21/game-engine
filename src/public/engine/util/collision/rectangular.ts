@@ -138,11 +138,7 @@ export class RectangularCollider extends RectangularlyApproximatableCollider {
     return position.minus(oldPosition)
 
     function overlapping (): boolean {
-      const overlapping = _overlapping
-
-      if (overlapping === undefined) return false
-
-      return overlapping(new RectangularCollider(position, size))
+      return _overlapping(new RectangularCollider(position, size))
     }
 
     function positionUnchanged (oldPosition: Vec2, newPosition: Vec2): boolean {

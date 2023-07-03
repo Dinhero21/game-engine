@@ -22,7 +22,6 @@ export interface ServerToClientEvents {
   'player.add': (player: Player) => void
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
-  'chunk.set': (chunk: Chunk, chunkPosition: Vec2) => void
   'tile.set': (tilePosition: Vec2, type: string) => void
   'slot.set': (id: number, type: SlotType) => void
 }

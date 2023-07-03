@@ -12,8 +12,8 @@ import WorldEntity from './entities/world.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
-  let averageUpdateDelta = 0
-  let averageDrawDelta = 0
+  (window as any).averageUpdateDelta = 0;
+  (window as any).averageDrawDelta = 0
 
   let running = true
 
@@ -38,7 +38,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
-    averageUpdateDelta = lerp(averageUpdateDelta, delta, 0.1)
+    (window as any).averageUpdateDelta = lerp((window as any).averageUpdateDelta, delta, 0.1)
 
     if (!running) return
 
@@ -61,7 +61,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
-    averageDrawDelta = lerp(averageDrawDelta, delta, 0.1)
+    (window as any).averageDrawDelta = lerp((window as any).averageDrawDelta, delta, 0.1)
 
     if (!running) return
 
@@ -77,14 +77,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
       throw error
     }
   })
-
-  // Loop.interval(1000 / 6)(() => {
-  //   console.clear()
-  //   console.table({
-  //     update: Math.floor(1 / averageUpdateDelta),
-  //     draw: Math.floor(1 / averageDrawDelta)
-  //   })
-  // })
 
   const mouseDebug = new DebugEntity('Mouse')
 

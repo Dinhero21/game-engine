@@ -81,17 +81,17 @@ export class Chunk<ValidTile extends Tile = Tile> {
   protected getNearby (x: number, y: number): [boolean, boolean, boolean, boolean] {
     const tile = this.getTile(x, y)
 
+    const upTile = this.getTile(x, y - 1)
+    const leftTile = this.getTile(x - 1, y)
     const rightTile = this.getTile(x + 1, y)
     const downTile = this.getTile(x, y + 1)
-    const leftTile = this.getTile(x - 1, y)
-    const upTile = this.getTile(x, y - 1)
 
+    const up = upTile?.type === tile?.type
+    const left = leftTile?.type === tile?.type
     const right = rightTile?.type === tile?.type
     const down = downTile?.type === tile?.type
-    const left = leftTile?.type === tile?.type
-    const up = upTile?.type === tile?.type
 
-    return [right, down, left, up]
+    return [up, left, right, down]
   }
 
   constructor (chunkPosition: Vec2, chunkTileSize: Vec2) {
@@ -163,6 +163,6 @@ export class Chunk<ValidTile extends Tile = Tile> {
       .filter(([tileTilePosition, tile]) => tile.collidable)
       .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
       .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
-      .some(collider => collider.touching(other))
+      .some(collider => collider.colliding(other))
   }
 }

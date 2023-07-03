@@ -138,7 +138,9 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
       const maximumPositionDeltaX = collider.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), overlapping)
       const maximumPositionDeltaY = collider.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), overlapping)
 
-      const maximumPositionDelta = maximumPositionDeltaX.length() > maximumPositionDeltaY.length() ? maximumPositionDeltaX : maximumPositionDeltaY
+      const maximumPositionDelta = Math.abs(maximumPositionDeltaX.x) > Math.abs(maximumPositionDeltaY.y)
+        ? maximumPositionDeltaX
+        : maximumPositionDeltaY
 
       position.add(maximumPositionDelta)
     }

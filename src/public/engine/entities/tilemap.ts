@@ -3,17 +3,20 @@ import type RectangularCollider from '../util/collision/rectangular.js'
 import type Tile from '../util/tilemap/tile.js'
 import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion.js'
 import { Chunk } from '../util/tilemap/chunk.js'
-import Vec2, { stringToVec2, vec2ToString } from '../util/vec2.js'
+import Vec2 from '../util/vec2.js'
 import Entity from './index.js'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
-const chunkPositionSize = chunkPositionToTilePosition(chunkTileSize)
 
 export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> {
-  private readonly chunks = new Map<string, Chunk<ValidTile>>()
+  private readonly chunks = new Map<number, Map<number, Chunk<ValidTile>>>()
 
   public clearCache (): void {
-    for (const chunk of this.chunks.values()) chunk.clearCache()
+    for (const row of this.getChunks().values()) {
+      for (const chunk of row.values()) {
+        chunk.clearCache()
+      }
+    }
   }
 
   public draw (frame: Frame): void {
@@ -26,39 +29,42 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     const camera = scene.camera
     const viewport = camera.getViewport()
 
-    for (const [chunkId, chunk] of this.chunks) {
-      if (!chunk.boundingBox.overlapping(viewport)) continue
+    for (const [x, row] of this.getChunks()) {
+      for (const [y, chunk] of row) {
+        if (!chunk.boundingBox.overlapping(viewport)) continue
 
-      const chunkChunkPosition = stringToVec2(chunkId)
-      const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
-      const chunkPosition = tilePositionToPosition(chunkTilePosition)
+        const chunkChunkPosition = new Vec2(x, y)
+        const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
+        const chunkPosition = tilePositionToPosition(chunkTilePosition)
 
-      const chunkImage = chunk.getImage()
+        const chunkImage = chunk.getImage()
 
-      if (chunkImage === undefined) continue
+        if (chunkImage === undefined) continue
 
-      // ? Should I resize the image?
-      frame._drawImage(chunkImage, chunkPosition.x, chunkPosition.y)
+        // ? Should I resize the image?
+        frame._drawImage(chunkImage, chunkPosition.x, chunkPosition.y)
+      }
     }
   }
 
-  public getChunk (chunkPosition: Vec2): Chunk<ValidTile> | undefined {
-    const chunkId = vec2ToString(chunkPosition)
-
-    return this.chunks.get(chunkId)
+  public getChunk (x: number, y: number): Chunk<ValidTile> | undefined {
+    return this.chunks.get(x)?.get(y)
   }
 
-  public getChunks (): Set<Chunk<ValidTile>> {
-    return new Set(this.chunks.values())
+  public getChunks (): Map<number, Map<number, Chunk<ValidTile>>> {
+    return this.chunks
   }
 
-  public setChunk (chunk: Chunk<ValidTile>, chunkPosition: Vec2): void {
-    const chunkId = vec2ToString(chunkPosition)
+  public setChunk (chunk: Chunk<ValidTile>, x: number, y: number): void {
+    const chunks = this.chunks
 
-    this.chunks.set(chunkId, chunk)
+    const row = chunks.get(x) ?? new Map()
+    chunks.set(x, row)
+
+    row.set(y, chunk)
   }
 
-  public removeChunk (chunk: Chunk<ValidTile> | Vec2 | string): void {
+  public removeChunk (chunk: Chunk<ValidTile> | Vec2): void {
     if (chunk instanceof Chunk) {
       const chunkPosition = chunk.boundingBox.getPosition()
       const chunkTilePosition = positionToTilePosition(chunkPosition)
@@ -67,9 +73,7 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
       chunk = chunkChunkPosition
     }
 
-    if (chunk instanceof Vec2) chunk = vec2ToString(chunk)
-
-    this.chunks.delete(chunk)
+    this.chunks.get(chunk.x)?.delete(chunk.y)
   }
 
   public setTile (tile: ValidTile, tilePosition: Vec2): void {
@@ -95,11 +99,11 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     tilePosition = tilePosition
       .minus(chunkTilePosition)
 
-    let chunk = this.getChunk(chunkChunkPosition)
+    let chunk = this.getChunk(chunkChunkPosition.x, chunkChunkPosition.y)
 
     if (chunk === undefined) {
-      chunk = new Chunk(chunkChunkPosition, chunkPositionSize)
-      this.setChunk(chunk, chunkChunkPosition)
+      chunk = new Chunk(chunkChunkPosition, chunkTileSize)
+      this.setChunk(chunk, chunkChunkPosition.x, chunkChunkPosition.y)
     }
 
     chunk.setTile(tile, tilePosition)
@@ -107,29 +111,48 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     chunk.clearCache()
   }
 
+  // TODO: Use x, y instead of Vec2
   public getTile (tilePosition: Vec2): ValidTile | undefined {
     const chunkPosition = tilePositionToChunkPosition(tilePosition)
-    const chunk = this.getChunk(chunkPosition)
+    const chunk = this.getChunk(chunkPosition.x, chunkPosition.y)
 
     if (chunk === undefined) return
 
     const relativeTilePosition = tilePosition.mod(CHUNK_SIZE)
 
-    return chunk.getTile(relativeTilePosition)
+    return chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
   }
 
   // Collision Detection
 
   public touching (other: RectangularCollider): boolean {
-    return Array.from(this.chunks.values()).some(chunk => chunk.overlapping(other))
+    for (const row of this.getChunks().values()) {
+      for (const chunk of row.values()) {
+        if (chunk.touching(other)) return true
+      }
+    }
+
+    return false
   }
 
   public overlapping (other: RectangularCollider): boolean {
-    return Array.from(this.chunks.values()).some(chunk => chunk.overlapping(other))
+    for (const row of this.getChunks().values()) {
+      for (const chunk of row.values()) {
+        if (chunk.overlapping(other)) return true
+      }
+    }
+
+    return false
   }
 
   public colliding (other: RectangularCollider): boolean {
-    return Array.from(this.chunks.values()).some(chunk => chunk.colliding(other))
+    for (const row of this.getChunks().values()) {
+      for (const chunk of row.values()) {
+        if (chunk.colliding(other)) return true
+      }
+    }
+
+    return false
   }
 }
 
