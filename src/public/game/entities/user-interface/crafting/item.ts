@@ -19,7 +19,7 @@ export class ItemEntity<ValidChild extends Entity> extends ButtonEntity<ValidChi
     const item = this.item
     const size = this.size
 
-    const texture = loader.getTexture(item)
+    const texture = loader.getItemTexture(item)
 
     frame._drawImage(texture, 0, 0, size.x, size.y, false)
 

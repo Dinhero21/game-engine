@@ -124,7 +124,7 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
 
     if (mousePosition === undefined) return
 
-    const image = loader.getTexture(type)
+    const image = loader.getItemTexture(type)
 
     const itemSize = this.itemSize
 

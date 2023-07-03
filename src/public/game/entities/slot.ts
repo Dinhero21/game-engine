@@ -1,4 +1,4 @@
-import { type SlotType, type Slot } from '../util/inventory.js'
+import { type SlotType } from '../util/inventory.js'
 import type Frame from '../../engine/util/frame.js'
 import { loader } from '../../assets/loader.js'
 import ButtonEntity from '../../engine/entities/button.js'
@@ -46,7 +46,7 @@ export class SlotEntity extends ButtonEntity {
 
     if (type === null) return
 
-    const image = loader.getTexture(type)
+    const image = loader.getItemTexture(type)
 
     frame._drawImage(image, padding.x, padding.y, size.x, size.y, false)
   }

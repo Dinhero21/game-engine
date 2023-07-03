@@ -15,7 +15,7 @@ export async function createTile (type: string): Promise<Tile> {
     const x = tileX * TILE_TEXTURE_SIZE
     const y = tileY * TILE_TEXTURE_SIZE
 
-    const texture = loader.getTexture(tileData.texture)
+    const texture = loader.getTileTexture(tileData.texture)
 
     const position = data.position
     const size = data.size

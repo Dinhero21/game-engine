@@ -37,21 +37,29 @@ export class AssetLoader extends EventTarget {
     return image
   }
 
+  public getTileTexture (type: string): HTMLImageElement {
+    return this.getTexture(`tile/${type}`)
+  }
+
+  public getItemTexture (type: string): HTMLImageElement {
+    return this.getTexture(`item/${type}`)
+  }
+
   private readonly rawTileDataCache = new Map<string, Promise<RawTileData>>()
-  public async getRawTileData (name: string): Promise<RawTileData> {
+  public async getRawTileData (type: string): Promise<RawTileData> {
     const cache = this.rawTileDataCache
 
-    let tile = cache.get(name)
+    let tile = cache.get(type)
 
     if (tile !== undefined) return await tile
 
     tile = (async () => {
-      const response = await fetch(`assets/tiles/${name}.json`)
+      const response = await fetch(`assets/tiles/${type}.json`)
 
       return await response.json()
     })()
 
-    cache.set(name, tile)
+    cache.set(type, tile)
 
     return await tile
   }
