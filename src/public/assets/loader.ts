@@ -1,6 +1,7 @@
 export interface RawTileData {
   texture: string
   collidable: boolean
+  connects: string[]
 }
 
 // TODO: Add texture as HTMLImageElement or OffscreenCanvas (or something else)
@@ -8,6 +9,7 @@ export interface TileData {
   type: string
   collidable: boolean
   texture: string
+  connects: string[]
 }
 
 export class AssetLoader extends EventTarget {
@@ -64,14 +66,40 @@ export class AssetLoader extends EventTarget {
     return await tile
   }
 
+  private readonly tileDataCache = new Map<string, TileData>()
   public async getTileData (type: string): Promise<TileData> {
+    const cache = this.tileDataCache
+
+    const cached = cache.get(type)
+
+    if (cached !== undefined) return cached
+
     const rawTileData = await this.getRawTileData(type)
 
-    return {
+    const data = {
       type,
       collidable: rawTileData.collidable,
-      texture: rawTileData.texture
+      texture: rawTileData.texture,
+      connects: rawTileData.connects
     }
+
+    cache.set(type, data)
+
+    return data
+  }
+
+  public getConnects (type: string): string[] {
+    const cache = this.tileDataCache
+
+    const data = cache.get(type)
+
+    if (data === undefined) {
+      void this.getTileData(type)
+
+      return []
+    }
+
+    return data.connects
   }
 }
 

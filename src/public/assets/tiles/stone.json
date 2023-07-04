@@ -1,4 +1,5 @@
 {
   "texture": "stone",
-  "collidable": true
+  "collidable": true,
+  "connects": ["stone"]
 }

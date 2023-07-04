@@ -2,6 +2,7 @@ import type Tile from './tile.js'
 import { TILE_SIZE, chunkPositionToTilePosition, tilePositionToPosition } from './position-conversion.js'
 import Vec2 from '../vec2.js'
 import RectangularCollider from '../collision/rectangular.js'
+import { loader } from '../../../assets/loader.js'
 
 const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
 
@@ -79,17 +80,23 @@ export class Chunk<ValidTile extends Tile = Tile> {
   }
 
   protected getNearby (x: number, y: number): [boolean, boolean, boolean, boolean] {
+    const FALSE: [boolean, boolean, boolean, boolean] = [false, false, false, false]
+
     const tile = this.getTile(x, y)
+
+    if (tile === undefined) return FALSE
+
+    const connects = loader.getConnects(tile?.type)
 
     const upTile = this.getTile(x, y - 1)
     const leftTile = this.getTile(x - 1, y)
     const rightTile = this.getTile(x + 1, y)
     const downTile = this.getTile(x, y + 1)
 
-    const up = upTile?.type === tile?.type
-    const left = leftTile?.type === tile?.type
-    const right = rightTile?.type === tile?.type
-    const down = downTile?.type === tile?.type
+    const up = connects.includes(String(upTile?.type))
+    const left = connects.includes(String(leftTile?.type))
+    const right = connects.includes(String(rightTile?.type))
+    const down = connects.includes(String(downTile?.type))
 
     return [up, left, right, down]
   }

@@ -32,6 +32,10 @@ export class WorldGen {
   }
 
   protected getFloorTile (tilePosition: Vec2): Tile {
+    if (this.getDensity(tilePosition.offset(0, -1)) < 0) {
+      return Tiles.grass
+    }
+
     return (tilePosition.y + (Math.random() - 1) * 2 * 5) > 16 ? Tiles.stone : Tiles.dirt
   }
 

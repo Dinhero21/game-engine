@@ -1,9 +1,9 @@
 import { type TileInstance, type TileProperties } from './tiles/base.js'
 import { type WorldGen } from './gen/index.js'
 import Vec2, { vec2ToString } from '../public/engine/util/vec2.js'
-import Chunk from './chunk.js'
 import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
+import Chunk from './chunk.js'
 
 export type Tick = () => void
 
@@ -18,6 +18,8 @@ export class World extends TypedEmitter<WorldEvents> {
   private readonly chunks = new Map<string, Chunk>()
 
   private readonly gen
+
+  public currentTick: symbol = Symbol('load')
 
   constructor (gen: WorldGen) {
     super()
@@ -115,6 +117,8 @@ export class World extends TypedEmitter<WorldEvents> {
   private readonly queue = new Set<Tick>()
 
   public tick (): void {
+    this.currentTick = Symbol('tick')
+
     const queue = new Set(this.queue)
 
     this.queue.clear()

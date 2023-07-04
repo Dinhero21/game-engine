@@ -1,4 +1,5 @@
 {
   "texture": "dirt",
-  "collidable": true
+  "collidable": true,
+  "connects": ["dirt", "grass"]
 }

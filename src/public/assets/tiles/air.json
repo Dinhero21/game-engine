@@ -1,4 +1,5 @@
 {
   "texture": "air",
-  "collidable": false
+  "collidable": false,
+  "connects": []
 }
