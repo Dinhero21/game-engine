@@ -40,12 +40,12 @@ export class World extends TypedEmitter<WorldEvents> {
       for (let y = -1; y <= 1; y++) {
         for (let x = -1; x <= 1; x++) {
           this.queueTick(() => {
-            const newTilePosition = tilePosition.offset(x, y)
-            const newTile = this.getTile(newTilePosition)
+            const offsetedPosition = tilePosition.offset(x, y)
+            const tile = this.getTile(offsetedPosition)
 
-            if (newTile === undefined) return
+            if (tile === undefined) return
 
-            newTile.update()
+            tile.update()
           })
         }
       }

@@ -3,9 +3,9 @@ import { positionToTilePosition, tilePositionToChunkPosition } from './public/en
 import { World } from './world/index.js'
 import { Server } from 'socket.io'
 import { WorldGen } from './world/gen/index.js'
+import { sleep } from './public/engine/util/sleep.js'
 import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
 import Player from './player.js'
-import Loop from './public/engine/util/loop.js'
 import http from 'http'
 import path from 'path'
 import url from 'url'
@@ -37,7 +37,23 @@ const players = new Set<Player>()
 const gen = new WorldGen()
 const world = new World(gen)
 
-Loop.interval(1000 / 12)(() => { world.tick() })
+void (async () => {
+  while (true) {
+    const start = performance.now()
+
+    world.tick()
+
+    const end = performance.now()
+
+    const duration = end - start
+
+    const sleepTime = (1000 / 12) - duration
+
+    if (sleepTime < 0) console.warn(`Tick took too long! ${(-sleepTime).toPrecision(3)}ms behind`)
+
+    await sleep(sleepTime)
+  }
+})()
 
 io.on('connection', socket => {
   const player: Player = new Player(socket.id)
