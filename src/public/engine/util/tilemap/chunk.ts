@@ -1,5 +1,5 @@
 import type Tile from './tile.js'
-import { TILE_SIZE, chunkPositionToTilePosition, tilePositionToPosition } from './position-conversion.js'
+import { TILE_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion.js'
 import Vec2 from '../vec2.js'
 import RectangularCollider from '../collision/rectangular.js'
 import { loader } from '../../../assets/loader.js'
@@ -80,18 +80,16 @@ export class Chunk<ValidTile extends Tile = Tile> {
   }
 
   protected getNearby (x: number, y: number): [boolean, boolean, boolean, boolean] {
-    const FALSE: [boolean, boolean, boolean, boolean] = [false, false, false, false]
-
     const tile = this.getTile(x, y)
 
-    if (tile === undefined) return FALSE
+    if (tile === undefined) return [false, false, false, false]
 
-    const connects = loader.getConnects(tile?.type)
+    const connects = loader.getConnects(tile.type)
 
-    const upTile = this.getTile(x, y - 1)
-    const leftTile = this.getTile(x - 1, y)
-    const rightTile = this.getTile(x + 1, y)
-    const downTile = this.getTile(x, y + 1)
+    const upTile = this.requestTile(x, y - 1)
+    const leftTile = this.requestTile(x - 1, y)
+    const rightTile = this.requestTile(x + 1, y)
+    const downTile = this.requestTile(x, y + 1)
 
     const up = connects.includes(String(upTile?.type))
     const left = connects.includes(String(leftTile?.type))
@@ -101,13 +99,29 @@ export class Chunk<ValidTile extends Tile = Tile> {
     return [up, left, right, down]
   }
 
-  constructor (chunkPosition: Vec2, chunkTileSize: Vec2) {
+  protected _requestTile
+
+  constructor (chunkPosition: Vec2, chunkTileSize: Vec2, requestTile: (x: number, y: number) => ValidTile | undefined) {
     const tilePosition = chunkPositionToTilePosition(chunkPosition)
     const position = tilePositionToPosition(tilePosition)
 
     const size = tilePositionToPosition(chunkTileSize)
 
     this.boundingBox = new RectangularCollider(position, size)
+
+    this._requestTile = requestTile
+  }
+
+  protected _requestRelativeTile (x: number, y: number): ValidTile | undefined {
+    const boundingBox = this.boundingBox
+    const position = boundingBox.getPosition()
+    const tilePosition = positionToTilePosition(position)
+
+    return this._requestTile(tilePosition.x + x, tilePosition.y + y)
+  }
+
+  protected requestTile (x: number, y: number): ValidTile | undefined {
+    return this.getTile(x, y) ?? this._requestRelativeTile(x, y)
   }
 
   public getTile (x: number, y: number): ValidTile | undefined {

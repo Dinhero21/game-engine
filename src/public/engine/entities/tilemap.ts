@@ -76,24 +76,17 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     this.chunks.get(chunk.x)?.delete(chunk.y)
   }
 
-  public setTile (tile: ValidTile, tilePosition: Vec2): void {
-    const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
-    const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
+  protected _clearChunkCache (x: number, y: number): void {
+    const chunk = this.getChunk(x, y)
 
-    this._setTile(tile, tilePosition, chunkChunkPosition)
+    if (chunk === undefined) return
 
-    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
-
-    if (relativeTilePosition.x === 0) this._setTile(tile, tilePosition, chunkChunkPosition.offset(-1, 0))
-
-    if (relativeTilePosition.x === CHUNK_SIZE - 1) this._setTile(tile, tilePosition, chunkChunkPosition.offset(1, 0))
-
-    if (relativeTilePosition.y === 0) this._setTile(tile, tilePosition, chunkChunkPosition.offset(0, -1))
-
-    if (relativeTilePosition.y === CHUNK_SIZE - 1) this._setTile(tile, tilePosition, chunkChunkPosition.offset(0, 1))
+    chunk.clearCache()
   }
 
-  protected _setTile (tile: ValidTile, tilePosition: Vec2, chunkChunkPosition: Vec2): void {
+  public setTile (tile: ValidTile, tilePosition: Vec2): void {
+    const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
+
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
     tilePosition = tilePosition
@@ -102,13 +95,21 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     let chunk = this.getChunk(chunkChunkPosition.x, chunkChunkPosition.y)
 
     if (chunk === undefined) {
-      chunk = new Chunk(chunkChunkPosition, chunkTileSize)
+      chunk = new Chunk<ValidTile>(chunkChunkPosition, chunkTileSize, (x: number, y: number) => this.getTile(new Vec2(x, y)))
       this.setChunk(chunk, chunkChunkPosition.x, chunkChunkPosition.y)
     }
 
     chunk.setTile(tile, tilePosition)
 
     chunk.clearCache()
+
+    if (tilePosition.x === 0) this._clearChunkCache(chunkChunkPosition.x - 1, chunkChunkPosition.y)
+
+    if (tilePosition.x === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x + 1, chunkChunkPosition.y)
+
+    if (tilePosition.y === 0) this._clearChunkCache(chunkChunkPosition.x + 0, chunkChunkPosition.y - 1)
+
+    if (tilePosition.y === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x + 0, chunkChunkPosition.y + 1)
   }
 
   // TODO: Use x, y instead of Vec2
