@@ -2,9 +2,9 @@ export type Callback = (delta: number) => void
 
 // TODO: Add an option to use performance instead of Date
 export const Loop = {
-  interval (ms?: number, lastTime = Date.now()) {
+  interval (ms?: number, lastTime = performance.now()) {
     return (callback: Callback) => {
-      const now = Date.now()
+      const now = performance.now()
       const delta = (now - lastTime) / 1000
 
       if (delta !== 0) callback(delta)
