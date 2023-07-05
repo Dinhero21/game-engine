@@ -9,13 +9,11 @@ export interface PlayerEvents {
 }
 
 export class Player extends TypedEmitter<PlayerEvents> {
-  public id
-  public inventory
+  public readonly id
+  public readonly inventory
 
   public position: Vec2 = new Vec2(0, 0)
   public velocity: Vec2 = new Vec2(0, 0)
-
-  public chunks = new Set<string>()
 
   constructor (id: string) {
     super()

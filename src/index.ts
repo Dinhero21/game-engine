@@ -4,7 +4,7 @@ import { World } from './world/index.js'
 import { Server } from 'socket.io'
 import { WorldGen } from './world/gen/index.js'
 import { sleep } from './public/engine/util/sleep.js'
-import Vec2, { vec2ToString } from './public/engine/util/vec2.js'
+import Vec2 from './public/engine/util/vec2.js'
 import Player from './player.js'
 import http from 'http'
 import path from 'path'
@@ -116,11 +116,10 @@ io.on('connection', socket => {
     for (let chunkY = topLeftScreenChunkPosition.y; chunkY <= bottomRightScreenChunkPosition.y; chunkY++) {
       for (let chunkX = topLeftScreenChunkPosition.x; chunkX <= bottomRightScreenChunkPosition.x; chunkX++) {
         const chunkPosition = new Vec2(chunkX, chunkY)
-        const chunkId = vec2ToString(chunkPosition)
-
-        if (player.chunks.has(chunkId)) continue
 
         const chunk = world.getChunk(chunkPosition)
+
+        if (chunk.references.has(player)) continue
 
         const chunkTilePosition = chunk.getTilePosition()
 
@@ -135,16 +134,19 @@ io.on('connection', socket => {
           }
         }
 
-        player.chunks.add(chunkId)
+        chunk.references.add(player)
       }
     }
   })
 
   socket.on('chunk.remove', rawPosition => {
     const position = new Vec2(...rawPosition)
-    const chunkId = vec2ToString(position)
 
-    player.chunks.delete(chunkId)
+    const chunk = world.getChunk(position)
+
+    chunk.references.delete(player)
+
+    // TODO: Somehow delete the chunk while storing its data somewhere (file system?)
   })
 
   socket.on('tile.click', rawTilePosition => {

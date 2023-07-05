@@ -1,6 +1,6 @@
 import { type TileInstance, type TileProperties } from './tiles/base.js'
 import { type WorldGen } from './gen/index.js'
-import Vec2, { vec2ToString } from '../public/engine/util/vec2.js'
+import Vec2 from '../public/engine/util/vec2.js'
 import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
 import Chunk from './chunk.js'
@@ -15,7 +15,7 @@ export interface WorldEvents {
 export class World extends TypedEmitter<WorldEvents> {
   // Chunk
 
-  private readonly chunks = new Map<string, Chunk>()
+  private readonly chunks = new Map<number, Map<number, Chunk>>()
 
   private readonly gen
 
@@ -62,34 +62,39 @@ export class World extends TypedEmitter<WorldEvents> {
     return chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
   }
 
-  public setChunk (chunk: Chunk, chunkPosition: Vec2): void {
+  public setChunk (chunk: Chunk, x: number, y: number): void {
     // TODO: Remove events from old chunk
 
     chunk.on('tile.set', tile => {
       this.emit('tile.set', tile)
     })
 
-    const chunkId = vec2ToString(chunkPosition)
-
-    this.chunks.set(chunkId, chunk)
-  }
-
-  public getChunk (chunkPosition: Vec2): Chunk {
     const chunks = this.chunks
 
-    const chunkId = vec2ToString(chunkPosition)
+    const row = chunks.get(x) ?? new Map()
+    chunks.set(x, row)
 
-    let chunk = chunks.get(chunkId)
+    row.set(y, chunk)
+  }
+
+  protected _getChunk (x: number, y: number): Chunk | undefined {
+    return this.chunks.get(x)?.get(y)
+  }
+
+  // TODO: Use x, y
+  public getChunk (chunkPosition: Vec2): Chunk {
+    let chunk = this._getChunk(chunkPosition.x, chunkPosition.y)
 
     if (chunk !== undefined) return chunk
 
     chunk = this.generateChunk(chunkPosition)
 
-    this.setChunk(chunk, chunkPosition)
+    this.setChunk(chunk, chunkPosition.x, chunkPosition.y)
 
     return chunk
   }
 
+  // TODO: Use x, y
   public generateChunk (chunkChunkPosition: Vec2): Chunk {
     const gen = this.gen
 

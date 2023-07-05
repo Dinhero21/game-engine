@@ -3,6 +3,7 @@ import { type TileProperties, type TileInstance } from './tiles/base.js'
 import type Vec2 from '../public/engine/util/vec2.js'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
+import type Player from '../player.js'
 
 export interface ChunkData {
   position: Vec2
@@ -14,6 +15,8 @@ export interface ChunkEvents {
 
 export class Chunk extends TypedEmitter<ChunkEvents> {
   private readonly world: World
+
+  public references = new Set<Player>()
 
   public getWorld (): World {
     return this.world
