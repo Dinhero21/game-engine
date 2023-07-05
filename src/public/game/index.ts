@@ -11,9 +11,15 @@ import UserInterfaceEntity from './entities/user-interface/index.js'
 import WorldEntity from './entities/world.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 
+window.GamePerformance = {
+  averageUpdateDelta: 0,
+  averageDrawDelta: 0,
+  averageUpdateTime: 0,
+  averageDrawTime: 0
+}
+
 export default function createScene (context: CanvasRenderingContext2D): Scene {
-  (window as any).averageUpdateDelta = 0;
-  (window as any).averageDrawDelta = 0
+  const GamePerformance = window.GamePerformance
 
   let running = true
 
@@ -38,12 +44,22 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
-    (window as any).averageUpdateDelta = lerp((window as any).averageUpdateDelta, delta, 0.1)
+    const averageUpdateDelta = GamePerformance.averageUpdateDelta
+    GamePerformance.averageUpdateDelta = lerp(averageUpdateDelta, delta, 0.1)
 
     if (!running) return
 
     try {
+      const start = performance.now()
+
       scene.update(delta)
+
+      const end = performance.now()
+
+      const updateTime = end - start
+
+      const averageUpdateTime = GamePerformance.averageUpdateTime
+      GamePerformance.averageUpdateTime = lerp(averageUpdateTime, updateTime, 0.1)
     } catch (error) {
       if (!(error instanceof Error)) throw error as any
 
@@ -61,12 +77,22 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
-    (window as any).averageDrawDelta = lerp((window as any).averageDrawDelta, delta, 0.1)
+    const averageDrawDelta = GamePerformance.averageDrawDelta
+    GamePerformance.averageDrawDelta = lerp(averageDrawDelta, delta, 0.1)
 
     if (!running) return
 
     try {
+      const start = performance.now()
+
       camera.render()
+
+      const end = performance.now()
+
+      const drawTime = end - start
+
+      const averageDrawTime = GamePerformance.averageDrawTime
+      GamePerformance.averageDrawTime = lerp(averageDrawTime, drawTime, 0.1)
     } catch (error) {
       if (!(error instanceof Error)) throw error as any
 
