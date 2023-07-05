@@ -12,8 +12,6 @@ export interface NoiseSettings {
 }
 
 export class Noise {
-  private readonly cache = new Map<string, number>()
-
   protected readonly noise
 
   protected readonly scale
@@ -26,10 +24,25 @@ export class Noise {
     this.strength = settings.strength ?? 1
   }
 
-  public get (position: Vec2): number {
-    const key = `${position.x}|${position.y}`
+  protected readonly cache = new Map<number, Map<number, number>>()
 
-    const cached = this.cache.get(key)
+  protected getCached (x: number, y: number): number | undefined {
+    const cache = this.cache
+
+    return cache.get(x)?.get(y)
+  }
+
+  protected setCached (value: number, x: number, y: number): void {
+    const cache = this.cache
+
+    const row = cache.get(x) ?? new Map()
+    cache.set(x, row)
+
+    row.set(y, value)
+  }
+
+  public get (position: Vec2): number {
+    const cached = this.getCached(position.x, position.y)
 
     if (cached !== undefined) return cached
 
@@ -39,7 +52,7 @@ export class Noise {
 
     const output = noise * this.strength
 
-    this.cache.set(key, output)
+    this.setCached(output, position.x, position.y)
 
     return output
   }

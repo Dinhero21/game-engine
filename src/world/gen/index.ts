@@ -8,9 +8,8 @@ const DISTORTION_STRENGTH = 10
 const NOISE_SCALE = 0.03
 const NOISE_STRENGTH = 10
 
+// TODO: Use x, y
 export class WorldGen {
-  protected readonly cache = new Map<string, Tile>()
-
   protected readonly distortion = new Noise2D({
     scale: DISTORTION_SCALE,
     strength: DISTORTION_STRENGTH
@@ -39,10 +38,25 @@ export class WorldGen {
     return (tilePosition.y + (Math.random() - 1) * 2 * 5) > 16 ? Tiles.stone : Tiles.dirt
   }
 
-  public getTile (tileTilePosition: Vec2): Tile {
-    const id = `${tileTilePosition.x}|${tileTilePosition.y}`
+  protected readonly cache = new Map<number, Map<number, Tile>>()
 
-    const cached = this.cache.get(id)
+  protected getCachedTile (x: number, y: number): Tile | undefined {
+    const cache = this.cache
+
+    return cache.get(x)?.get(y)
+  }
+
+  protected setCachedTile (tile: Tile, x: number, y: number): void {
+    const cache = this.cache
+
+    const row = cache.get(x) ?? new Map()
+    cache.set(x, row)
+
+    row.set(y, tile)
+  }
+
+  public getTile (tileTilePosition: Vec2): Tile {
+    const cached = this.getCachedTile(tileTilePosition.x, tileTilePosition.y)
 
     if (cached !== undefined) return cached
 
@@ -50,11 +64,9 @@ export class WorldGen {
 
     let tile: Tile = Tiles.air
 
-    if (density > 0) {
-      tile = this.getFloorTile(tileTilePosition)
-    }
+    if (density > 0) tile = this.getFloorTile(tileTilePosition)
 
-    this.cache.set(id, tile)
+    this.setCachedTile(tile, tileTilePosition.x, tileTilePosition.y)
 
     return tile
   }
