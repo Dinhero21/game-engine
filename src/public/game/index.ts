@@ -62,7 +62,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
       const end = performance.now()
 
-      const updateTime = end - start
+      const updateTime = (end - start) / 1000
 
       const averageUpdateTime = GamePerformance.averageUpdateTime
       GamePerformance.averageUpdateTime = lerp(averageUpdateTime, updateTime, 0.1)
@@ -95,7 +95,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
       const end = performance.now()
 
-      const drawTime = end - start
+      const drawTime = (end - start) / 1000
 
       const averageDrawTime = GamePerformance.averageDrawTime
       GamePerformance.averageDrawTime = lerp(averageDrawTime, drawTime, 0.1)
