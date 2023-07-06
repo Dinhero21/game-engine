@@ -35,8 +35,6 @@ export class UserInterfaceEntity extends ViewportEntity {
     this.inventory = inventoryEntity
 
     inventory.manager.addEventListener('slot.update', event => {
-      if (event.before === event.after) return
-
       this.updateRecipes()
     })
   }

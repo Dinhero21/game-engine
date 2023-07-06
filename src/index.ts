@@ -70,15 +70,30 @@ io.on('connection', socket => {
   socket.on('slot.click', id => {
     const inventory = player.inventory
 
-    const cursorType = inventory.getSlot(-1)?.getType() ?? null
-    const slotType = inventory.getSlot(id)?.getType() ?? null
+    const cursorSlot = inventory.getSlot(-1)
 
-    inventory.setItem(id, cursorType)
-    inventory.setItem(-1, slotType)
+    const cursorType = cursorSlot?.getType() ?? null
+    const cursorAmount = cursorSlot?.getAmount() ?? 0
+
+    const slot = inventory.getSlot(id)
+
+    const slotType = slot?.getType() ?? null
+    const slotAmount = slot?.getAmount() ?? 0
+
+    if (slotType === cursorType) {
+      slot?.setAmount(slotAmount + cursorAmount)
+      cursorSlot?.setAmount(0)
+    }
+
+    cursorSlot?.setType(slotType)
+    cursorSlot?.setAmount(slotAmount)
+
+    slot?.setType(cursorType)
+    slot?.setAmount(cursorAmount)
   })
 
-  player.on('inventory.update', (id, after, before) => {
-    socket.emit('slot.set', id, after)
+  player.on('inventory.update', (id, stack) => {
+    socket.emit('slot.set', id, stack.type, stack.amount)
   })
 
   socket.on('recipe.crafted', recipe => {
@@ -86,16 +101,12 @@ io.on('connection', socket => {
     const inputs = recipe.inputs
 
     for (const input of inputs) {
-      for (let i = 0; i < input.amount; i++) {
-        inventory.removeItem(input.type)
-      }
+      inventory.removeItem(input.type, input.amount)
     }
 
     const output = recipe.output
 
-    for (let i = 0; i < output.amount; i++) {
-      inventory.addItem(output.type)
-    }
+    inventory.addItem(output.type, output.amount)
   })
 
   socket.on('physics.update', (rawPosition, rawVelocity) => {
@@ -168,12 +179,12 @@ io.on('connection', socket => {
 
       world.setTile(newTile.instance(), tilePosition, true, true)
 
-      player.inventory.setItem(-1, null)
+      player.inventory.removeAmount(-1, 1)
 
       return
     }
 
-    if (player.inventory.addItem(tile.type)) world.setTile(Tiles.air.instance(), tilePosition, true, true)
+    if (player.inventory.addItem(tile.type, 1)) world.setTile(Tiles.air.instance(), tilePosition, true, true)
   })
 
   socket.on('disconnect', () => {

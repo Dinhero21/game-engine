@@ -1,10 +1,31 @@
-import { Inventory as BaseInventory, Slot, type SlotId, type SlotType } from './public/game/util/inventory.js'
+import { Inventory as BaseInventory, Slot, type Stack, type SlotId, type SlotType, type SlotAmount } from './public/game/util/inventory.js'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
-// TODO: Managed Slots (instead of InventoryManager firing when Inventory.setItem is called, InventoryManager firing when SlotManger fires and SlotManager firing when Slot.setType is called)
+export interface SlotEvents {
+  'type.update': (type: SlotType) => void
+  'amount.update': (amount: SlotAmount) => void
+}
+
+export class SlotManger extends TypedEmitter<SlotEvents> {}
+
+export class ManagedSlot extends Slot {
+  public manager = new SlotManger()
+
+  public setType (type: SlotType): void {
+    super.setType(type)
+
+    this.manager.emit('type.update', type)
+  }
+
+  public setAmount (amount: SlotAmount): void {
+    super.setAmount(amount)
+
+    this.manager.emit('amount.update', amount)
+  }
+}
 
 export interface InventoryEvents {
-  'slot.update': (id: SlotId, after: SlotType, before: SlotType | undefined) => void
+  'slot.update': (id: SlotId, stack: Stack) => void
 }
 
 export class InventoryManager extends TypedEmitter<InventoryEvents> {}
@@ -15,25 +36,24 @@ export class Inventory extends BaseInventory {
   constructor (size: number) {
     super()
 
-    const slots = this.slots
-
-    for (let i = 0; i < size; i++) slots.set(i, new Slot())
+    for (let i = 0; i < size; i++) this._createSlot(i)
 
     // Cursor Slot
-    slots.set(-1, new Slot())
+    this._createSlot(-1)
   }
 
-  public setItem (id: SlotId, type: SlotType): boolean {
-    const slot = this.getSlot(id)
-    const before = slot?.getType()
+  protected _createSlot (id: SlotId): void {
+    const slot = new ManagedSlot()
 
-    const after = type
+    slot.manager.on('type.update', () => {
+      this.manager.emit('slot.update', id, slot.getStack())
+    })
 
-    const result = super.setItem(id, type)
+    slot.manager.on('amount.update', () => {
+      this.manager.emit('slot.update', id, slot.getStack())
+    })
 
-    this.manager.emit('slot.update', id, after, before)
-
-    return result
+    this.slots.set(id, slot)
   }
 }
 

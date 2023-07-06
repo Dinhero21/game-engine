@@ -1,6 +1,6 @@
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
-import { type SlotType } from './public/game/util/inventory.js'
+import { type SlotAmount, type SlotType } from './public/game/util/inventory.js'
 import { type Recipe } from './public/assets/recipes.js'
 
 // Engine.ioified methods
@@ -23,7 +23,7 @@ export interface ServerToClientEvents {
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
   'tile.set': (tilePosition: Vec2, type: string) => void
-  'slot.set': (id: number, type: SlotType) => void
+  'slot.set': (id: number, type: SlotType, amount: SlotAmount) => void
 }
 
 // Client -> Server

@@ -2,17 +2,48 @@
 // null      = nothing
 // undefined = does not exist
 export type SlotType = string | null
+export type SlotAmount = number
 export type SlotId = number
 
+export interface Stack {
+  type: SlotType
+  amount: SlotAmount
+}
+
+// TODO: Max amount
+
 export class Slot {
-  protected type: SlotType = null
+  protected stack: Stack = {
+    type: null,
+    amount: 0
+  }
+
+  public getStack (): Stack {
+    return this.stack
+  }
 
   public setType (type: SlotType): void {
-    this.type = type
+    const stack = this.getStack()
+
+    stack.type = type
   }
 
   public getType (): SlotType {
-    return this.type
+    const stack = this.getStack()
+
+    return stack.type
+  }
+
+  public setAmount (amount: SlotAmount): void {
+    const stack = this.getStack()
+
+    stack.amount = amount
+  }
+
+  public getAmount (): SlotAmount {
+    const stack = this.getStack()
+
+    return stack.amount
   }
 }
 
@@ -66,25 +97,26 @@ export class Inventory {
     return slotAndId[1]
   }
 
-  public amountOf (predicate: SlotPredicate): number {
+  public amountOf (predicate: SlotPredicate): SlotAmount {
     predicate = normalizeSlotPredicate(predicate)
 
     let total = 0
 
     for (const slot of this.getSlots()) {
-      if (predicate(slot)) total++
+      if (predicate(slot)) total += slot.getAmount()
     }
 
     return total
   }
 
-  public list (): Map<SlotType, number> {
-    const list = new Map<SlotType, number>()
+  public list (): Map<SlotType, SlotAmount> {
+    const list = new Map<SlotType, SlotAmount>()
 
     for (const slot of this.getSlots()) {
       const type = slot.getType()
+      const amount = slot.getAmount()
 
-      list.set(type, (list.get(type) ?? 0) + 1)
+      list.set(type, (list.get(type) ?? 0) + amount)
     }
 
     return list
@@ -124,34 +156,46 @@ export class Inventory {
     return !this.some(null)
   }
 
-  public setItem (id: SlotId, type: SlotType): boolean {
+  public removeAmount (id: SlotId, amount: SlotAmount): number {
     const slot = this.getSlot(id)
 
-    if (slot === undefined) return false
+    if (slot === undefined) return 0
 
-    slot.setType(type)
+    const maxAmount = slot.getAmount()
+
+    let removedAmount = maxAmount
+
+    if (removedAmount > amount) removedAmount = amount
+
+    slot.setAmount(maxAmount - removedAmount)
+
+    if (slot.getAmount() === 0) slot.setType(null)
+
+    return removedAmount
+  }
+
+  public addItem (type: SlotType, amount: SlotAmount): boolean {
+    const nonFullSlot = this.findSlot(type) ?? this.findSlot(null)
+
+    if (nonFullSlot === undefined) return false
+
+    nonFullSlot.setType(type)
+
+    const oldAmount = nonFullSlot.getAmount()
+
+    nonFullSlot.setAmount(oldAmount + amount)
 
     return true
   }
 
-  public addItem (type: SlotType): boolean {
-    const emptyId = this.findSlotId(null)
+  public removeItem (type: SlotType, amount: SlotAmount): void {
+    while (amount > 0) {
+      const id = this.findSlotId(type)
 
-    if (emptyId === undefined) return false
+      if (id === undefined) throw new Error('removeItem called with more items than there are')
 
-    this.setItem(emptyId, type)
-
-    return true
-  }
-
-  public removeItem (type: SlotType): boolean {
-    const id = this.findSlotId(type)
-
-    if (id === undefined) return false
-
-    this.setItem(id, null)
-
-    return true
+      amount -= this.removeAmount(id, amount)
+    }
   }
 }
 

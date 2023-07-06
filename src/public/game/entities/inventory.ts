@@ -1,24 +1,63 @@
 import type Frame from '../../engine/util/frame.js'
 import Vec2 from '../../engine/util/vec2.js'
 import SlotEntity from './slot.js'
-import { Inventory, Slot, type SlotId, type SlotType } from '../util/inventory.js'
+import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../util/inventory.js'
 import { TypedEventTarget } from '../../engine/util/typed-event-target.js'
 import { loader } from '../../assets/loader.js'
 import GridContainerEntity from '../../engine/entities/grid-container.js'
 
-// TODO: Managed Slots (instead of InventoryManager firing when Inventory.setItem is called, InventoryManager firing when SlotManger fires and SlotManager firing when Slot.setType is called)
+export class TypeUpdateEvent extends Event {
+  public readonly data
+
+  constructor (type: SlotType) {
+    super('type.update')
+
+    this.data = type
+  }
+}
+
+export class AmountUpdateEvent extends Event {
+  public readonly data
+
+  constructor (amount: SlotAmount) {
+    super('amount.update')
+
+    this.data = amount
+  }
+}
+
+export interface SlotManagerEventMap {
+  'type.update': TypeUpdateEvent
+  'amount.update': AmountUpdateEvent
+}
+
+export class SlotManager extends TypedEventTarget<SlotManagerEventMap> {}
+
+export class ManagedSlot extends Slot {
+  public readonly manager = new SlotManager()
+
+  public setType (type: SlotType): void {
+    super.setType(type)
+
+    this.manager.dispatchTypedEvent('type.update', new TypeUpdateEvent(type))
+  }
+
+  public setAmount (amount: SlotAmount): void {
+    super.setAmount(amount)
+
+    this.manager.dispatchTypedEvent('amount.update', new AmountUpdateEvent(amount))
+  }
+}
 
 export class SlotUpdateEvent extends Event {
-  public readonly before
-  public readonly after
+  public readonly stack
   public readonly id
   public readonly slot
 
-  constructor ({ before, after, id, slot }: { before: SlotType | undefined, after: SlotType, id: number, slot: Slot | undefined }) {
+  constructor ({ stack, id, slot }: { stack: Stack, id: number, slot: Slot | undefined }) {
     super('slot.update')
 
-    this.before = before
-    this.after = after
+    this.stack = stack
     this.id = id
     this.slot = slot
   }
@@ -36,30 +75,24 @@ export class ManagedInventory extends Inventory {
   constructor (size: number) {
     super()
 
-    const slots = this.slots
-
-    for (let i = 0; i < size; i++) slots.set(i, new Slot())
+    for (let i = 0; i < size; i++) this._createSlot(i)
 
     // Cursor Slot
-    slots.set(-1, new Slot())
+    this._createSlot(-1)
   }
 
-  public setItem (id: SlotId, type: SlotType): boolean {
-    const slot = this.getSlot(id)
+  protected _createSlot (id: number): void {
+    const slot = new ManagedSlot()
 
-    const before = slot?.getType()
-    const after = type
+    this.slots.set(id, slot)
 
-    const result = super.setItem(id, type)
+    slot.manager.addEventListener('type.update', () => {
+      this.manager.dispatchTypedEvent('slot.update', new SlotUpdateEvent({ stack: slot.getStack(), id, slot }))
+    })
 
-    this.manager.dispatchTypedEvent('slot.update', new SlotUpdateEvent({
-      before,
-      after,
-      id,
-      slot
-    }))
-
-    return result
+    slot.manager.addEventListener('amount.update', () => {
+      this.manager.dispatchTypedEvent('slot.update', new SlotUpdateEvent({ stack: slot.getStack(), id, slot }))
+    })
   }
 }
 
@@ -94,7 +127,10 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
       // ? Should I throw an error
       if (slot === undefined) throw new Error(`slot.update emitted with invalid id (${id}) (${x}, ${y})`)
 
-      slot.type = event.after
+      const stack = event.stack
+
+      slot.type = stack.type
+      slot.amount = stack.amount
     })
   }
 

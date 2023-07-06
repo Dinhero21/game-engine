@@ -11,6 +11,7 @@ export class SlotEntity extends ButtonEntity {
   public readonly padding
 
   public type: SlotType = null
+  public amount: number = 0
 
   constructor (size: Vec2, padding: Vec2) {
     super(size)
@@ -40,6 +41,11 @@ export class SlotEntity extends ButtonEntity {
   }
 
   protected drawItem (frame: Frame): void {
+    this.drawItemType(frame)
+    this.drawItemAmount(frame)
+  }
+
+  protected drawItemType (frame: Frame): void {
     const size = this.size
     const padding = this.padding
     const type = this.type
@@ -49,6 +55,16 @@ export class SlotEntity extends ButtonEntity {
     const image = loader.getItemTexture(type)
 
     frame._drawImage(image, padding.x, padding.y, size.x, size.y, false)
+  }
+
+  protected drawItemAmount (frame: Frame): void {
+    const size = this.size
+    const padding = this.padding
+    const amount = this.amount
+
+    if (amount === 0 || amount === 1) return
+
+    frame.drawText(`${amount}`, padding.x, padding.y + size.y, 'white', '32px monospace')
   }
 
   public getConstantCollider (): RectangularCollider {

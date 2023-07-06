@@ -36,8 +36,11 @@ export class PlayerInventoryEntity extends InventoryEntity {
       })
     }
 
-    socket.on('slot.set', (id, type) => {
-      inventory.setItem(id, type)
+    socket.on('slot.set', (id, type, amount) => {
+      const slot = inventory.getSlot(id)
+
+      slot?.setType(type)
+      slot?.setAmount(amount)
     })
 
     const position = this.getOpenPosition()
