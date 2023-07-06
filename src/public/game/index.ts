@@ -11,16 +11,22 @@ import UserInterfaceEntity from './entities/user-interface/index.js'
 import WorldEntity from './entities/world.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
 
-window.GamePerformance = {
+const GamePerformance = {
   averageUpdateDelta: 0,
   averageDrawDelta: 0,
   averageUpdateTime: 0,
   averageDrawTime: 0
 }
 
-export default function createScene (context: CanvasRenderingContext2D): Scene {
-  const GamePerformance = window.GamePerformance
+declare global {
+  interface Window {
+    GamePerformance: typeof GamePerformance
+  }
+}
 
+window.GamePerformance = GamePerformance
+
+export default function createScene (context: CanvasRenderingContext2D): Scene {
   let running = true
 
   const socket: Socket = io()

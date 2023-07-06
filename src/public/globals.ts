@@ -30,6 +30,12 @@ export const globals = {
   debug: Debug
 }
 
-export default globals;
+declare global {
+  interface Window {
+    globals: typeof globals
+  }
+}
 
-(window as any).globals = globals
+window.globals = globals
+
+export default globals
