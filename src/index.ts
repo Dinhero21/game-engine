@@ -58,6 +58,9 @@ void (async () => {
 io.on('connection', socket => {
   const player: Player = new Player(socket.id)
 
+  //                     Approximate position of where simplex noise breaks
+  // player.position.x = 0b11000011001101101010101100100000000000000
+
   io.emit('player.add', player.getClientPlayer())
 
   for (const player of players) socket.emit('player.add', player.getClientPlayer())
