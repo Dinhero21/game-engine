@@ -1,1 +1,1 @@
-./scripts/run-once.sh $@
+scripts/run-once.sh $@

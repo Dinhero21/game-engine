@@ -1,1 +1,3 @@
-scripts/build-ts.sh && scripts/bundle.sh
+scripts/build-ts.sh
+
+scripts/bundle.sh

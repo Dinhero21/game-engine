@@ -1,1 +1,1 @@
-./scripts/bundle.sh -w $@
+scripts/bundle.sh -w $@
