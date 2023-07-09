@@ -1,0 +1,43 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/babelrc.json",
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "loose": true,
+        "modules": false
+      }
+    ],
+    [
+      "@babel/preset-typescript",
+      {}
+    ]
+  ],
+  "targets": {
+    "node": 20
+  },
+  "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "version": "legacy"
+      }
+    ],
+    [
+      "babel-plugin-add-import-extension",
+      {}
+    ],
+    [
+      "@babel/plugin-proposal-class-properties",
+      {}
+    ],
+    [
+      "@babel/plugin-proposal-object-rest-spread",
+      {}
+    ],
+    [
+      "@babel/plugin-transform-class-static-block",
+      {}
+    ]
+  ]
+}
