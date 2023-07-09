@@ -1,0 +1,374 @@
+
+> game-engine@1.0.0 watch
+> bash scripts/watch.sh
+
+[Node] [33m[nodemon] 2.0.21[39m
+[Node] [33m[nodemon] to restart at any time, enter `rs`[39m
+[Node] [33m[nodemon] watching path(s): dist/**/*[39m
+[Node] [33m[nodemon] watching extensions: js[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Browserify] [33m[nodemon] 2.0.21[39m
+[Browserify] [33m[nodemon] to restart at any time, enter `rs`[39m
+[Browserify] [33m[nodemon] watching path(s): dist/public/**/*[39m
+[Browserify] [33m[nodemon] watching extensions: bash,scripts/bundle.sh[39m
+[Browserify] [32m[nodemon] starting `bash scripts/start.sh`[39m
+[Browserify] Server listening on port 8080
+[Node] node:events:491
+[Node]       throw er; // Unhandled 'error' event
+[Node]       ^
+[Node] 
+[Node] Error: listen EADDRINUSE: address already in use :::8080
+[Node]     at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+[Node]     at listenInCluster (node:net:1788:12)
+[Node]     at Server.listen (node:net:1876:7)
+[Node]     at file:///home/dinhero21/Documents/GitHub/game-engine/dist/index.js:140:8
+[Node]     at ModuleJob.run (node:internal/modules/esm/module_job:194:25)
+[Node] Emitted 'error' event on Server instance at:
+[Node]     at emitErrorNT (node:net:1767:8)
+[Node]     at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+[Node]   code: 'EADDRINUSE',
+[Node]   errno: -98,
+[Node]   syscall: 'listen',
+[Node]   address: '::',
+[Node]   port: 8080
+[Node] }
+[Node] 
+[Node] Node.js v18.16.0
+[Node] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[TypeScript] [Nodemon] [33m[nodemon] 2.0.21[39m
+[TypeScript] [Nodemon] [33m[nodemon] to restart at any time, enter `rs`[39m
+[TypeScript] [Nodemon] [33m[nodemon] watching path(s): src/public/**/*[39m
+[TypeScript] [Nodemon] [33m[nodemon] watching extensions: (all)[39m
+[TypeScript] [Nodemon] [32m[nodemon] starting `bash scripts/copy-public-files.sh`[39m
+[TypeScript] [Nodemon] sending incremental file list
+[TypeScript] [Nodemon] globals.ts
+[TypeScript] [Nodemon]             558 100%    0.00kB/s    0:00:00              558 100%    0.00kB/s    0:00:00 (xfr#1, to-chk=102/104)
+[TypeScript] [Nodemon] index.ts
+[TypeScript] [Nodemon]           3,725 100%    3.55MB/s    0:00:00            3,725 100%    3.55MB/s    0:00:00 (xfr#2, to-chk=100/104)
+[TypeScript] [Nodemon] none.ts
+[TypeScript] [Nodemon]             143 100%  139.65kB/s    0:00:00              143 100%  139.65kB/s    0:00:00 (xfr#3, to-chk=99/104)
+[TypeScript] [Nodemon] styles.css
+[TypeScript] [Nodemon]             102 100%   99.61kB/s    0:00:00              102 100%   99.61kB/s    0:00:00 (xfr#4, to-chk=98/104)
+[TypeScript] [Nodemon] assets/loader.ts
+[TypeScript] [Nodemon]           2,453 100%    2.34MB/s    0:00:00            2,453 100%    2.34MB/s    0:00:00 (xfr#5, to-chk=94/104)
+[TypeScript] [Nodemon] assets/recipes.ts
+[TypeScript] [Nodemon]             329 100%  321.29kB/s    0:00:00              329 100%  321.29kB/s    0:00:00 (xfr#6, to-chk=93/104)
+[TypeScript] [Nodemon] assets/textures/missing.png
+[TypeScript] [Nodemon]             186 100%  181.64kB/s    0:00:00              186 100%  181.64kB/s    0:00:00 (xfr#7, to-chk=90/104)
+[TypeScript] [Nodemon] assets/textures/inventory/background.png
+[TypeScript] [Nodemon]              99 100%   96.68kB/s    0:00:00               99 100%   96.68kB/s    0:00:00 (xfr#8, to-chk=86/104)
+[TypeScript] [Nodemon] assets/textures/inventory/slot-debug.png
+[TypeScript] [Nodemon]             186 100%  181.64kB/s    0:00:00              186 100%  181.64kB/s    0:00:00 (xfr#9, to-chk=85/104)
+[TypeScript] [Nodemon] assets/textures/inventory/slot.false.png
+[TypeScript] [Nodemon]             123 100%  120.12kB/s    0:00:00              123 100%  120.12kB/s    0:00:00 (xfr#10, to-chk=84/104)
+[TypeScript] [Nodemon] assets/textures/inventory/slot.true.png
+[TypeScript] [Nodemon]             119 100%  116.21kB/s    0:00:00              119 100%  116.21kB/s    0:00:00 (xfr#11, to-chk=83/104)
+[TypeScript] [Nodemon] assets/textures/item/dirt.png
+[TypeScript] [Nodemon]             198 100%  193.36kB/s    0:00:00              198 100%  193.36kB/s    0:00:00 (xfr#12, to-chk=82/104)
+[TypeScript] [Nodemon] assets/textures/item/grass.png
+[TypeScript] [Nodemon]             180 100%  175.78kB/s    0:00:00              180 100%  175.78kB/s    0:00:00 (xfr#13, to-chk=81/104)
+[TypeScript] [Nodemon] assets/textures/item/hyperstone.png
+[TypeScript] [Nodemon]             201 100%  196.29kB/s    0:00:00              201 100%  196.29kB/s    0:00:00 (xfr#14, to-chk=80/104)
+[TypeScript] [Nodemon] assets/textures/item/stone.png
+[TypeScript] [Nodemon]             195 100%  190.43kB/s    0:00:00              195 100%  190.43kB/s    0:00:00 (xfr#15, to-chk=79/104)
+[TypeScript] [Nodemon] assets/textures/tile/air.png
+[TypeScript] [Nodemon]              72 100%   70.31kB/s    0:00:00               72 100%   70.31kB/s    0:00:00 (xfr#16, to-chk=78/104)
+[TypeScript] [Nodemon] assets/textures/tile/air.visible.png
+[TypeScript] [Nodemon]             112 100%  109.38kB/s    0:00:00              112 100%  109.38kB/s    0:00:00 (xfr#17, to-chk=77/104)
+[TypeScript] [Nodemon] assets/textures/tile/debug.highlight.png
+          1,146 100%    1.09MB/s    0:00:00            1,146 100%    1.09MB/s    0:00:00 (xfr#18, to-chk=76/104)
+[TypeScript] [Nodemon] assets/textures/tile/debug.png
+[TypeScript] [Nodemon]           1,164 100%    1.11MB/s    0:00:00            1,164 100%    1.11MB/s    0:00:00 (xfr#19, to-chk=75/104)
+[TypeScript] [Nodemon] assets/textures/tile/dirt.png
+[TypeScript] [Nodemon]             738 100%  720.70kB/s    0:00:00              738 100%  720.70kB/s    0:00:00 (xfr#20, to-chk=74/104)
+[TypeScript] [Nodemon] assets/textures/tile/grass.png
+[TypeScript] [Nodemon]             750 100%  732.42kB/s    0:00:00              750 100%  732.42kB/s    0:00:00 (xfr#21, to-chk=73/104)
+[TypeScript] [Nodemon] assets/textures/tile/hyperstone.png
+[TypeScript] [Nodemon]           1,320 100%    1.26MB/s    0:00:00            1,320 100%    1.26MB/s    0:00:00 (xfr#22, to-chk=72/104)
+[TypeScript] [Nodemon] assets/textures/tile/stone.png
+[TypeScript] [Nodemon]             744 100%  726.56kB/s    0:00:00              744 100%  726.56kB/s    0:00:00 (xfr#23, to-chk=71/104)
+[TypeScript] [Nodemon] assets/tiles/air.json
+[TypeScript] [Nodemon]              63 100%   61.52kB/s    0:00:00               63 100%   61.52kB/s    0:00:00 (xfr#24, to-chk=70/104)
+[TypeScript] [Nodemon] assets/tiles/dirt.json
+[TypeScript] [Nodemon]              78 100%   76.17kB/s    0:00:00               78 100%   76.17kB/s    0:00:00 (xfr#25, to-chk=69/104)
+[TypeScript] [Nodemon] assets/tiles/grass.json
+[TypeScript] [Nodemon]              79 100%   77.15kB/s    0:00:00               79 100%   77.15kB/s    0:00:00 (xfr#26, to-chk=68/104)
+[TypeScript] [Nodemon] assets/tiles/hyperstone.json
+[TypeScript] [Nodemon]              81 100%   79.10kB/s    0:00:00               81 100%   79.10kB/s    0:00:00 (xfr#27, to-chk=67/104)
+[TypeScript] [Nodemon] assets/tiles/stone.json
+[TypeScript] [Nodemon]              71 100%   69.34kB/s    0:00:00               71 100%   69.34kB/s    0:00:00 (xfr#28, to-chk=66/104)
+[TypeScript] [Nodemon] engine/camera.ts
+[TypeScript] [Nodemon]           2,817 100%    2.69MB/s    0:00:00            2,817 100%    2.69MB/s    0:00:00 (xfr#29, to-chk=65/104)
+[TypeScript] [Nodemon] engine/scene.ts
+[TypeScript] [Nodemon]           1,605 100%    1.53MB/s    0:00:00            1,605 100%    1.53MB/s    0:00:00 (xfr#30, to-chk=64/104)
+[TypeScript] [Nodemon] engine/entities/anchor.ts
+[TypeScript] [Nodemon]             773 100%  754.88kB/s    0:00:00              773 100%  754.88kB/s    0:00:00 (xfr#31, to-chk=60/104)
+[TypeScript] [Nodemon] engine/entities/button.ts
+[TypeScript] [Nodemon]           1,468 100%    1.40MB/s    0:00:00            1,468 100%    1.40MB/s    0:00:00 (xfr#32, to-chk=59/104)
+[TypeScript] [Nodemon] engine/entities/clipper.ts
+[TypeScript] [Nodemon]             942 100%  919.92kB/s    0:00:00              942 100%  919.92kB/s    0:00:00 (xfr#33, to-chk=58/104)
+[TypeScript] [Nodemon] engine/entities/container.ts
+[TypeScript] [Nodemon]             518 100%  505.86kB/s    0:00:00              518 100%  505.86kB/s    0:00:00 (xfr#34, to-chk=57/104)
+[TypeScript] [Nodemon] engine/entities/grid-container.ts
+[TypeScript] [Nodemon]           1,545 100%    1.47MB/s    0:00:00            1,545 100%    1.47MB/s    0:00:00 (xfr#35, to-chk=56/104)
+[TypeScript] [Nodemon] engine/entities/horizontal-container.ts
+[TypeScript] [Nodemon]           1,690 100%    1.61MB/s    0:00:00            1,690 100%    1.61MB/s    0:00:00 (xfr#36, to-chk=55/104)
+[TypeScript] [Nodemon] engine/entities/index.ts
+[TypeScript] [Nodemon]           5,439 100%    5.19MB/s    0:00:00            5,439 100%    5.19MB/s    0:00:00 (xfr#37, to-chk=54/104)
+[TypeScript] [Nodemon] engine/entities/tilemap.ts
+[TypeScript] [Nodemon]           4,875 100%    4.65MB/s    0:00:00            4,875 100%    4.65MB/s    0:00:00 (xfr#38, to-chk=53/104)
+[TypeScript] [Nodemon] engine/entities/vertical-container.ts
+[TypeScript] [Nodemon]           1,685 100%    1.61MB/s    0:00:00            1,685 100%    1.61MB/s    0:00:00 (xfr#39, to-chk=52/104)
+[TypeScript] [Nodemon] engine/entities/viewport.ts
+[TypeScript] [Nodemon]             829 100%  809.57kB/s    0:00:00              829 100%  809.57kB/s    0:00:00 (xfr#40, to-chk=51/104)
+[TypeScript] [Nodemon] engine/patches/align.ts
+[TypeScript] [Nodemon]           1,662 100%    1.59MB/s    0:00:00            1,662 100%    1.59MB/s    0:00:00 (xfr#41, to-chk=50/104)
+[TypeScript] [Nodemon] engine/patches/animate.ts
+[TypeScript] [Nodemon]           2,502 100%    2.39MB/s    0:00:00            2,502 100%    2.39MB/s    0:00:00 (xfr#42, to-chk=49/104)
+[TypeScript] [Nodemon] engine/patches/center.ts
+[TypeScript] [Nodemon]             273 100%  266.60kB/s    0:00:00              273 100%  266.60kB/s    0:00:00 (xfr#43, to-chk=48/104)
+[TypeScript] [Nodemon] engine/patches/index.ts
+[TypeScript] [Nodemon]           5,330 100%    5.08MB/s    0:00:00            5,330 100%    5.08MB/s    0:00:00 (xfr#44, to-chk=47/104)
+[TypeScript] [Nodemon] engine/util/event.ts
+[TypeScript] [Nodemon]           1,334 100%    1.27MB/s    0:00:00            1,334 100%    1.27MB/s    0:00:00 (xfr#45, to-chk=46/104)
+[TypeScript] [Nodemon] engine/util/frame.ts
+[TypeScript] [Nodemon]          10,534 100%   10.05MB/s    0:00:00           10,534 100%   10.05MB/s    0:00:00 (xfr#46, to-chk=45/104)
+[TypeScript] [Nodemon] engine/util/loop.ts
+[TypeScript] [Nodemon]             742 100%  724.61kB/s    0:00:00              742 100%  724.61kB/s    0:00:00 (xfr#47, to-chk=44/104)
+[TypeScript] [Nodemon] engine/util/math.ts
+[TypeScript] [Nodemon]           1,243 100%    1.19MB/s    0:00:00            1,243 100%    1.19MB/s    0:00:00 (xfr#48, to-chk=43/104)
+[TypeScript] [Nodemon] engine/util/sleep.ts
+[TypeScript] [Nodemon]             116 100%  113.28kB/s    0:00:00              116 100%  113.28kB/s    0:00:00 (xfr#49, to-chk=42/104)
+[TypeScript] [Nodemon] engine/util/typed-event-target.ts
+[TypeScript] [Nodemon]           3,140 100%    2.99MB/s    0:00:00            3,140 100%    2.99MB/s    0:00:00 (xfr#50, to-chk=41/104)
+[TypeScript] [Nodemon] engine/util/types.ts
+[TypeScript] [Nodemon]             409 100%  399.41kB/s    0:00:00              409 100%  399.41kB/s    0:00:00 (xfr#51, to-chk=40/104)
+[TypeScript] [Nodemon] engine/util/vec2.ts
+[TypeScript] [Nodemon]           4,276 100%    4.08MB/s    0:00:00            4,276 100%    4.08MB/s    0:00:00 (xfr#52, to-chk=39/104)
+[TypeScript] [Nodemon] engine/util/collision/collider.ts
+[TypeScript] [Nodemon]           1,914 100%    1.83MB/s    0:00:00            1,914 100%    1.83MB/s    0:00:00 (xfr#53, to-chk=35/104)
+[TypeScript] [Nodemon] engine/util/collision/multi-rectangular.ts
+[TypeScript] [Nodemon]           1,530 100%    1.46MB/s    0:00:00            1,530 100%    1.46MB/s    0:00:00 (xfr#54, to-chk=34/104)
+[TypeScript] [Nodemon] engine/util/collision/point.ts
+[TypeScript] [Nodemon]             244 100%  238.28kB/s    0:00:00              244 100%  238.28kB/s    0:00:00 (xfr#55, to-chk=33/104)
+[TypeScript] [Nodemon] engine/util/collision/rectangular.ts
+          4,574 100%    4.36MB/s    0:00:00            4,574 100%    4.36MB/s    0:00:00 (xfr#56, to-chk=32/104)
+[TypeScript] [Nodemon] engine/util/input/keyboard.ts
+[TypeScript] [Nodemon]             731 100%  713.87kB/s    0:00:00              731 100%  713.87kB/s    0:00:00 (xfr#57, to-chk=31/104)
+[TypeScript] [Nodemon] engine/util/input/mouse/click-handler.ts
+[TypeScript] [Nodemon]           3,104 100%    2.96MB/s    0:00:00            3,104 100%    2.96MB/s    0:00:00 (xfr#58, to-chk=29/104)
+[TypeScript] [Nodemon] engine/util/input/mouse/index.ts
+[TypeScript] [Nodemon]           5,584 100%    5.33MB/s    0:00:00            5,584 100%    5.33MB/s    0:00:00 (xfr#59, to-chk=28/104)
+[TypeScript] [Nodemon] engine/util/input/mouse/prioritization.ts
+[TypeScript] [Nodemon]           4,045 100%    3.86MB/s    0:00:00            4,045 100%    3.86MB/s    0:00:00 (xfr#60, to-chk=27/104)
+[TypeScript] [Nodemon] engine/util/tilemap/chunk.ts
+[TypeScript] [Nodemon]           5,783 100%    5.52MB/s    0:00:00            5,783 100%    5.52MB/s    0:00:00 (xfr#61, to-chk=26/104)
+[TypeScript] [Nodemon] engine/util/tilemap/position-conversion.ts
+[TypeScript] [Nodemon]             645 100%  629.88kB/s    0:00:00              645 100%  629.88kB/s    0:00:00 (xfr#62, to-chk=25/104)
+[TypeScript] [Nodemon] engine/util/tilemap/tile.ts
+[TypeScript] [Nodemon]             549 100%  536.13kB/s    0:00:00              549 100%  536.13kB/s    0:00:00 (xfr#63, to-chk=24/104)
+[TypeScript] [Nodemon] game/index.ts
+[TypeScript] [Nodemon]           4,359 100%    4.16MB/s    0:00:00            4,359 100%    4.16MB/s    0:00:00 (xfr#64, to-chk=23/104)
+[TypeScript] [Nodemon] game/tile.ts
+[TypeScript] [Nodemon]             807 100%  788.09kB/s    0:00:00              807 100%  788.09kB/s    0:00:00 (xfr#65, to-chk=22/104)
+[TypeScript] [Nodemon] game/entities/debug.ts
+[TypeScript] [Nodemon]           3,550 100%    3.39MB/s    0:00:00            3,550 100%    3.39MB/s    0:00:00 (xfr#66, to-chk=19/104)
+[TypeScript] [Nodemon] game/entities/inventory.ts
+[TypeScript] [Nodemon]           4,543 100%    4.33MB/s    0:00:00            4,543 100%    4.33MB/s    0:00:00 (xfr#67, to-chk=18/104)
+[TypeScript] [Nodemon] game/entities/multiplayer-container.ts
+[TypeScript] [Nodemon]           2,156 100%    2.06MB/s    0:00:00            2,156 100%    2.06MB/s    0:00:00 (xfr#68, to-chk=17/104)
+[TypeScript] [Nodemon] game/entities/player.ts
+[TypeScript] [Nodemon]           4,087 100%    3.90MB/s    0:00:00            4,087 100%    3.90MB/s    0:00:00 (xfr#69, to-chk=16/104)
+[TypeScript] [Nodemon] game/entities/progress-bar.ts
+[TypeScript] [Nodemon]           1,426 100%    1.36MB/s    0:00:00            1,426 100%    1.36MB/s    0:00:00 (xfr#70, to-chk=15/104)
+[TypeScript] [Nodemon] game/entities/slot.ts
+[TypeScript] [Nodemon]           2,205 100%    2.10MB/s    0:00:00            2,205 100%    2.10MB/s    0:00:00 (xfr#71, to-chk=14/104)
+[TypeScript] [Nodemon] game/entities/world.ts
+[TypeScript] [Nodemon]           1,780 100%    1.70MB/s    0:00:00            1,780 100%    1.70MB/s    0:00:00 (xfr#72, to-chk=13/104)
+[TypeScript] [Nodemon] game/entities/user-interface/index.ts
+[TypeScript] [Nodemon]           2,424 100%    2.31MB/s    0:00:00            2,424 100%    2.31MB/s    0:00:00 (xfr#73, to-chk=11/104)
+[TypeScript] [Nodemon] game/entities/user-interface/inventory.ts
+[TypeScript] [Nodemon]           2,847 100%    2.72MB/s    0:00:00            2,847 100%    2.72MB/s    0:00:00 (xfr#74, to-chk=10/104)
+[TypeScript] [Nodemon] game/entities/user-interface/crafting/display.ts
+[TypeScript] [Nodemon]             231 100%  225.59kB/s    0:00:00              231 100%  225.59kB/s    0:00:00 (xfr#75, to-chk=8/104)
+[TypeScript] [Nodemon] game/entities/user-interface/crafting/index.ts
+[TypeScript] [Nodemon]           4,467 100%    1.42MB/s    0:00:00            4,467 100%    1.42MB/s    0:00:00 (xfr#76, to-chk=7/104)
+[Nodemon] game/entities/user-interface/crafting/item.ts
+[TypeScript] [Nodemon]             808 100%  263.02kB/s    0:00:00              808 100%  263.02kB/s    0:00:00 (xfr#77, to-chk=6/104)
+[TypeScript] [Nodemon] game/entities/user-interface/crafting/list.ts
+[TypeScript] [Nodemon]           1,738 100%  565.76kB/s    0:00:00            1,738 100%  565.76kB/s    0:00:00 (xfr#78, to-chk=5/104)
+[TypeScript] [Nodemon] game/entities/user-interface/crafting/manager.ts
+[TypeScript] [Nodemon]             608 100%  197.92kB/s    0:00:00              608 100%  197.92kB/s    0:00:00 (xfr#79, to-chk=4/104)
+[TypeScript] [Nodemon] game/entities/user-interface/crafting/progress.ts
+[TypeScript] [Nodemon]             886 100%  288.41kB/s    0:00:00              886 100%  288.41kB/s    0:00:00 (xfr#80, to-chk=3/104)
+[TypeScript] [Nodemon] game/util/inventory.ts
+[TypeScript] [Nodemon]           4,419 100%    1.40MB/s    0:00:00            4,419 100%    1.40MB/s    0:00:00 (xfr#81, to-chk=2/104)
+[TypeScript] [Nodemon] game/util/string.ts
+[TypeScript] [Nodemon]             282 100%   91.80kB/s    0:00:00              282 100%   91.80kB/s    0:00:00 (xfr#82, to-chk=1/104)
+[TypeScript] [Nodemon] game/util/types.ts
+[TypeScript] [Nodemon]             148 100%   48.18kB/s    0:00:00              148 100%   48.18kB/s    0:00:00 (xfr#83, to-chk=0/104)
+[TypeScript] [Nodemon] [32m[nodemon] clean exit - waiting for changes before restart[39m
+[TypeScript] [TSC] c8:37:52 PM - Starting compilation in watch mode...
+[TypeScript] [TSC] 
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] restarting due to changes...[39m
+[TypeScript] [TSC] src/public/engine/camera.ts(84,16): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'RenderingContext2D'.
+[TypeScript] [TSC]     Type 'ImageBitmapRenderingContext' is missing the following properties from type 'OffscreenCanvasRenderingContext2D': commit, globalAlpha, globalCompositeOperation, drawImage, and 59 more.
+[TypeScript] [TSC] src/public/engine/entities/clipper.ts(34,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(62,13): error TS2339: Property 'imageSmoothingEnabled' does not exist on type 'OffscreenRenderingContext'.
+[TypeScript] [TSC]   Property 'imageSmoothingEnabled' does not exist on type 'ImageBitmapRenderingContext'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(68,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC] 
+[TypeScript] [TSC] 8:37:54 PM - Found 4 errors. Watching for file changes.
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Node] node:events:491
+[Node]       throw er; // Unhandled 'error' event
+[Node]       ^
+[Node] 
+[Node] Error: listen EADDRINUSE: address already in use :::8080
+[Node]     at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+[Node]     at listenInCluster (node:net:1788:12)
+[Node]     at Server.listen (node:net:1876:7)
+[Node]     at file:///home/dinhero21/Documents/GitHub/game-engine/dist/index.js:140:8
+[Node]     at ModuleJob.run (node:internal/modules/esm/module_job:194:25)
+[Node] Emitted 'error' event on Server instance at:
+[Node]     at emitErrorNT (node:net:1767:8)
+[Node]     at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+[Node]   code: 'EADDRINUSE',
+[Node]   errno: -98,
+[Node]   syscall: 'listen',
+[Node]   address: '::',
+[Node]   port: 8080
+[Node] }
+[Node] 
+[Node] Node.js v18.16.0
+[Node] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[TypeScript] [TSC] c8:38:39 PM - File change detected. Starting incremental compilation...
+[TypeScript] [TSC] 
+[TypeScript] [TSC] src/public/engine/camera.ts(84,16): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'RenderingContext2D'.
+[TypeScript] [TSC]     Type 'ImageBitmapRenderingContext' is missing the following properties from type 'OffscreenCanvasRenderingContext2D': commit, globalAlpha, globalCompositeOperation, drawImage, and 59 more.
+[TypeScript] [TSC] src/public/engine/entities/clipper.ts(34,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(62,13): error TS2339: Property 'imageSmoothingEnabled' does not exist on type 'OffscreenRenderingContext'.
+[TypeScript] [TSC]   Property 'imageSmoothingEnabled' does not exist on type 'ImageBitmapRenderingContext'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(68,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC] 
+[TypeScript] [TSC] 8:38:39 PM - Found 4 errors. Watching for file changes.
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Node] Server listening on port 3000
+[TypeScript] [TSC] c8:38:47 PM - File change detected. Starting incremental compilation...
+[TypeScript] [TSC] 
+[TypeScript] [TSC] src/public/engine/camera.ts(84,16): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'RenderingContext2D'.
+[TypeScript] [TSC]     Type 'ImageBitmapRenderingContext' is missing the following properties from type 'OffscreenCanvasRenderingContext2D': commit, globalAlpha, globalCompositeOperation, drawImage, and 59 more.
+[TypeScript] [TSC] src/public/engine/entities/clipper.ts(34,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(62,13): error TS2339: Property 'imageSmoothingEnabled' does not exist on type 'OffscreenRenderingContext'.
+[TypeScript] [TSC]   Property 'imageSmoothingEnabled' does not exist on type 'ImageBitmapRenderingContext'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(68,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC] 
+[TypeScript] [TSC] 8:38:47 PM - Found 4 errors. Watching for file changes.
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Node] node:events:491
+[Node]       throw er; // Unhandled 'error' event
+[Node]       ^
+[Node] 
+[Node] Error: listen EADDRINUSE: address already in use :::8080
+[Node]     at Server.setupListenHandle [as _listen2] (node:net:1740:16)
+[Node]     at listenInCluster (node:net:1788:12)
+[Node]     at Server.listen (node:net:1876:7)
+[Node]     at file:///home/dinhero21/Documents/GitHub/game-engine/dist/index.js:140:8
+[Node]     at ModuleJob.run (node:internal/modules/esm/module_job:194:25)
+[Node] Emitted 'error' event on Server instance at:
+[Node]     at emitErrorNT (node:net:1767:8)
+[Node]     at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+[Node]   code: 'EADDRINUSE',
+[Node]   errno: -98,
+[Node]   syscall: 'listen',
+[Node]   address: '::',
+[Node]   port: 8080
+[Node] }
+[Node] 
+[Node] Node.js v18.16.0
+[Node] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[TypeScript] [TSC] c8:38:55 PM - File change detected. Starting incremental compilation...
+[TypeScript] [TSC] 
+[TypeScript] [TSC] src/public/engine/camera.ts(84,16): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'RenderingContext2D'.
+[TypeScript] [TSC]     Type 'ImageBitmapRenderingContext' is missing the following properties from type 'OffscreenCanvasRenderingContext2D': commit, globalAlpha, globalCompositeOperation, drawImage, and 59 more.
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[TypeScript] [TSC] src/public/engine/entities/clipper.ts(34,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(62,13): error TS2339: Property 'imageSmoothingEnabled' does not exist on type 'OffscreenRenderingContext'.
+[TypeScript] [TSC]   Property 'imageSmoothingEnabled' does not exist on type 'ImageBitmapRenderingContext'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(68,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC] 
+[TypeScript] [TSC] 8:38:55 PM - Found 4 errors. Watching for file changes.
+[Node] node:events:491
+[Node]       throw er; // Unhandled 'error' event
+[Node]       ^
+[Node] 
+[Node] Error: listen EACCES: permission denied 0.0.0.0:300
+[Node]     at Server.setupListenHandle [as _listen2] (node:net:1723:21)
+[Node]     at listenInCluster (node:net:1788:12)
+[Node]     at Server.listen (node:net:1876:7)
+[Node]     at file:///home/dinhero21/Documents/GitHub/game-engine/dist/index.js:140:8
+[Node]     at ModuleJob.run (node:internal/modules/esm/module_job:194:25)
+[Node] Emitted 'error' event on Server instance at:
+[Node]     at emitErrorNT (node:net:1767:8)
+[Node]     at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+[Node]   code: 'EACCES',
+[Node]   errno: -13,
+[Node]   syscall: 'listen',
+[Node]   address: '0.0.0.0',
+[Node]   port: 300
+[Node] }
+[Node] 
+[Node] Node.js v18.16.0
+[Node] [31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[TypeScript] [TSC] c8:38:56 PM - File change detected. Starting incremental compilation...
+[TypeScript] [TSC] 
+[TypeScript] [TSC] src/public/engine/camera.ts(84,16): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'RenderingContext2D'.
+[TypeScript] [TSC]     Type 'ImageBitmapRenderingContext' is missing the following properties from type 'OffscreenCanvasRenderingContext2D': commit, globalAlpha, globalCompositeOperation, drawImage, and 59 more.
+[TypeScript] [TSC] src/public/engine/entities/clipper.ts(34,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'RenderingContext2D'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(62,13): error TS2339: Property 'imageSmoothingEnabled' does not exist on type 'OffscreenRenderingContext'.
+[TypeScript] [TSC]   Property 'imageSmoothingEnabled' does not exist on type 'ImageBitmapRenderingContext'.
+[TypeScript] [TSC] src/public/engine/util/tilemap/chunk.ts(68,19): error TS2345: Argument of type 'OffscreenRenderingContext' is not assignable to parameter of type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC]   Type 'ImageBitmapRenderingContext' is not assignable to type 'OffscreenCanvasRenderingContext2D'.
+[TypeScript] [TSC] 
+[TypeScript] [TSC] 8:38:56 PM - Found 4 errors. Watching for file changes.
+[Node] [32m[nodemon] restarting due to changes...[39m
+[Node] [32m[nodemon] starting `node dist/index.js`[39m
+[Node] Server listening on port 3000
+[TypeScript] [Nodemon] scripts/copy-public-files-watch.sh exited with code 130
+[TypeScript] --> Sending SIGTERM to other processes..
+[Node] bash scripts/watch-node.sh exited with code 130
+--> Sending SIGTERM to other processes..
+[TypeScript] [TSC] tsc -w exited with code SIGINT
+[Browserify] bash scripts/bundle-watch.sh exited with code 130
+--> Sending SIGTERM to other processes..
+[TypeScript] bash scripts/watch-ts.sh exited with code 0

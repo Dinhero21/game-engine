@@ -1,4 +1,4 @@
-import type Vec2 from '../../util/vec2.js'
+import type Vec2 from '../vec2.js'
 
 // TODO: Make TileMapEntity get these values on construction
 export const TILE_SIZE = 32

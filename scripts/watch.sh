@@ -1,1 +1,1 @@
-concurrently -k -p "[{name}]" -n "TypeScript,Node" -c "cyan.bold,green.bold,yellow.bold" "bash scripts/watch-ts.sh" "bash scripts/watch-node.sh"
+concurrently -k -p "[{name}]" -n "TypeScript,Node,Browserify" -c "cyan.bold,green.bold,yellow.bold,red.bold" "bash scripts/watch-ts.sh" "bash scripts/watch-node.sh" "bash scripts/bundle-watch.sh"

@@ -1,1 +1,1 @@
-scripts/build-ts.sh && scripts/lint.sh
+scripts/build-ts.sh && scripts/bundle.sh

@@ -1,0 +1,1 @@
+nodemon --watch dist/public --ext js --ignore dist/public/bundle.js --exec "bash scripts/bundle.sh"

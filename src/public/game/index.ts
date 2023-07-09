@@ -4,12 +4,12 @@ import { lerp } from '../engine/util/math.js'
 import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization.js'
 import { positionToTilePosition } from '../engine/util/tilemap/position-conversion.js'
 import Scene from '../engine/scene.js'
-import io from '../socket.io/socket.io.esm.min.js'
 import Loop from '../engine/util/loop.js'
 import DebugEntity from './entities/debug.js'
 import UserInterfaceEntity from './entities/user-interface/index.js'
 import WorldEntity from './entities/world.js'
 import MultiplayerContainerEntity from './entities/multiplayer-container.js'
+import io from 'socket.io-client'
 
 const GamePerformance = {
   averageUpdateDelta: 0,
