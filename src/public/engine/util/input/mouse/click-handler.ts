@@ -1,6 +1,6 @@
-import mouse, { type MouseButtonId, type MouseButtonName, MouseButtonMap, type MouseGlobalEventMap, type MouseMoveEvent, type MouseDownEvent, type MouseUpEvent } from './index.js'
-import { TypedEventTarget } from '../../typed-event-target.js'
-import { EventFrame } from '../../event.js'
+import mouse, { type MouseButtonId, type MouseButtonName, MouseButtonMap, type MouseGlobalEventMap, type MouseMoveEvent, type MouseDownEvent, type MouseUpEvent } from '.'
+import { TypedEventTarget } from '../../typed-event-target'
+import { EventFrame } from '../../event'
 
 export type MouseEvent = MouseMoveEvent | MouseDownEvent | MouseUpEvent
 

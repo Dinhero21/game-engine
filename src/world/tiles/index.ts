@@ -1,8 +1,8 @@
-import { AirTile } from './air.js'
-import { DirtTile } from './dirt.js'
-import { GrassTile } from './grass.js'
-import { HyperStoneTile } from './hyperstone.js'
-import { StoneTile } from './stone.js'
+import { AirTile } from './air'
+import { DirtTile } from './dirt'
+import { GrassTile } from './grass'
+import { HyperStoneTile } from './hyperstone'
+import { StoneTile } from './stone'
 
 export const Tiles = {
   air: new AirTile({}),

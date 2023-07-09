@@ -1,8 +1,8 @@
-import type Frame from '../../engine/util/frame.js'
-import Vec2 from '../../engine/util/vec2.js'
-import Entity from '../../engine/entities/index.js'
-import RectangularCollider from '../../engine/util/collision/rectangular.js'
-import PointCollider from '../../engine/util/collision/point.js'
+import type Frame from '../../engine/util/frame'
+import Vec2 from '../../engine/util/vec2'
+import Entity from '../../engine/entities'
+import RectangularCollider from '../../engine/util/collision/rectangular'
+import PointCollider from '../../engine/util/collision/point'
 
 export interface ConstantRectangularCollidable {
   getConstantCollider: () => RectangularCollider

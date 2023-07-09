@@ -1,8 +1,8 @@
-import type Tile from './tile.js'
-import { TILE_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion.js'
-import Vec2 from '../vec2.js'
-import RectangularCollider from '../collision/rectangular.js'
-import { loader } from '../../../assets/loader.js'
+import type Tile from './tile'
+import { TILE_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion'
+import Vec2 from '../vec2'
+import RectangularCollider from '../collision/rectangular'
+import { loader } from '../../../assets/loader'
 
 const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
 

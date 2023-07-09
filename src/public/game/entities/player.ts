@@ -1,9 +1,9 @@
-import type Frame from '../../engine/util/frame.js'
-import { TILE_SIZE } from '../../engine/util/tilemap/position-conversion.js'
-import Entity from '../../engine/entities/index.js'
-import Vec2 from '../../engine/util/vec2.js'
-import keyboard from '../../engine/util/input/keyboard.js'
-import RectangularCollider from '../../engine/util/collision/rectangular.js'
+import type Frame from '../../engine/util/frame'
+import { TILE_SIZE } from '../../engine/util/tilemap/position-conversion'
+import Entity from '../../engine/entities'
+import Vec2 from '../../engine/util/vec2'
+import keyboard from '../../engine/util/input/keyboard'
+import RectangularCollider from '../../engine/util/collision/rectangular'
 
 const FRICTION = new Vec2(50, 5)
 

@@ -11,8 +11,5 @@
     "ecmaVersion": "latest",
     "sourceType": "module",
     "project": "tsconfig.json"
-  },
-  "rules": {
-    "import/extensions": ["error", "ignorePackages"]
   }
 }

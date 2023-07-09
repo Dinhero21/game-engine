@@ -1,5 +1,5 @@
-import RectangularCollider, { type RectangularlyApproximatableCollider } from './rectangular.js'
-import Vec2 from '../vec2.js'
+import RectangularCollider, { type RectangularlyApproximatableCollider } from './rectangular'
+import Vec2 from '../vec2'
 
 export class MultiRectangularCollider extends RectangularCollider {
   public colliders: RectangularCollider[]

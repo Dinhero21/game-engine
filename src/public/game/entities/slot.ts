@@ -1,9 +1,9 @@
-import { type SlotType } from '../util/inventory.js'
-import type Frame from '../../engine/util/frame.js'
-import { loader } from '../../assets/loader.js'
-import ButtonEntity from '../../engine/entities/button.js'
-import Vec2 from '../../engine/util/vec2.js'
-import RectangularCollider from '../../engine/util/collision/rectangular.js'
+import { type SlotType } from '../util/inventory'
+import type Frame from '../../engine/util/frame'
+import { loader } from '../../assets/loader'
+import ButtonEntity from '../../engine/entities/button'
+import Vec2 from '../../engine/util/vec2'
+import RectangularCollider from '../../engine/util/collision/rectangular'
 
 // ? Should I make rendering the "backplate" of the Slot the SlotEntity's responsibility?
 export class SlotEntity extends ButtonEntity {

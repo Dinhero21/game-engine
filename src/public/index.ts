@@ -1,6 +1,6 @@
-import type Entity from './engine/entities/index.js'
-import type Scene from './engine/scene.js'
-import createScene from './game/index.js'
+import type Entity from './engine/entities'
+import type Scene from './engine/scene'
+import createScene from './game'
 
 const view = document.getElementById('view')
 

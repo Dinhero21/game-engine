@@ -1,16 +1,16 @@
 import type { IServerServer as IServer } from './socket.io'
-import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion.js'
-import { World } from './world/index.js'
+import { positionToTilePosition, tilePositionToChunkPosition } from './public/engine/util/tilemap/position-conversion'
+import { World } from './world'
 import { Server } from 'socket.io'
-import { WorldGen } from './world/gen/index.js'
-import { sleep } from './public/engine/util/sleep.js'
-import Vec2 from './public/engine/util/vec2.js'
-import Player from './player.js'
+import { WorldGen } from './world/gen'
+import { sleep } from './public/engine/util/sleep'
+import Vec2 from './public/engine/util/vec2'
+import Player from './player'
 import http from 'http'
 import path from 'path'
 import url from 'url'
 import express from 'express'
-import Tiles from './world/tiles/index.js'
+import Tiles from './world/tiles'
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __filename = url.fileURLToPath(import.meta.url)

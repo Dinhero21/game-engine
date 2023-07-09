@@ -1,8 +1,8 @@
-import type Entity from './entities/index.js'
-import Camera from './camera.js'
-import Frame from './util/frame.js'
-import Vec2 from './util/vec2.js'
-import mouse from './util/input/mouse/index.js'
+import type Entity from './entities'
+import Camera from './camera'
+import Frame from './util/frame'
+import Vec2 from './util/vec2'
+import mouse from './util/input/mouse'
 
 // TODO: Make canvas accessible from Entity
 export class Scene {

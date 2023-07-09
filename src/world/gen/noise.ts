@@ -1,5 +1,5 @@
 import { type RandomFn, createNoise2D } from 'simplex-noise'
-import Vec2 from '../../public/engine/util/vec2.js'
+import Vec2 from '../../public/engine/util/vec2'
 
 export function random (random: RandomFn, seed: number): RandomFn {
   return () => (random() + seed) % 1

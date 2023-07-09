@@ -1,4 +1,4 @@
-import Vec2 from './vec2.js'
+import Vec2 from './vec2'
 
 // x from (is, ie) to (os, oe)
 export function range (x: number, is: number, ie: number, os: number, oe: number): number {

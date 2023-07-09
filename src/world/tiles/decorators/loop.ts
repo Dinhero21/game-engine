@@ -1,4 +1,4 @@
-import { TileInstance } from '../base.js'
+import { TileInstance } from '../base'
 
 export function loop (checkTile: boolean): (target: TileInstance, propertyKey: string | symbol, descriptor: PropertyDescriptor) => void {
   return function (target, propertyKey, descriptor) {

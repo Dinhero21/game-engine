@@ -1,5 +1,5 @@
-import { type ExtractKeys } from '../util/types.js'
-import type Entity from '../entities/index.js'
+import { type ExtractKeys } from '../util/types'
+import type Entity from '../entities'
 
 export type AnyFunction = (...args: any[]) => any
 

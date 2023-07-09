@@ -1,7 +1,7 @@
-import type Vec2 from '../util/vec2.js'
-import Entity from './index.js'
-import RectangularCollider from '../util/collision/rectangular.js'
-import Frame from '../util/frame.js'
+import type Vec2 from '../util/vec2'
+import Entity from '.'
+import RectangularCollider from '../util/collision/rectangular'
+import Frame from '../util/frame'
 
 export class ClippingEntity extends Entity {
   protected offset

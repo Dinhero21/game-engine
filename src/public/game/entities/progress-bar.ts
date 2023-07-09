@@ -1,8 +1,8 @@
-import { type Color } from '../util/types.js'
-import type Frame from '../../engine/util/frame.js'
-import Vec2 from '../../engine/util/vec2.js'
-import Entity from '../../engine/entities/index.js'
-import RectangularCollider from '../../engine/util/collision/rectangular.js'
+import { type Color } from '../util/types'
+import type Frame from '../../engine/util/frame'
+import Vec2 from '../../engine/util/vec2'
+import Entity from '../../engine/entities'
+import RectangularCollider from '../../engine/util/collision/rectangular'
 
 export interface Colors {
   background: Color

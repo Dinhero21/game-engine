@@ -1,10 +1,10 @@
-import type Frame from '../../engine/util/frame.js'
-import Vec2 from '../../engine/util/vec2.js'
-import SlotEntity from './slot.js'
-import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../util/inventory.js'
-import { TypedEventTarget } from '../../engine/util/typed-event-target.js'
-import { loader } from '../../assets/loader.js'
-import GridContainerEntity from '../../engine/entities/grid-container.js'
+import type Frame from '../../engine/util/frame'
+import Vec2 from '../../engine/util/vec2'
+import SlotEntity from './slot'
+import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../util/inventory'
+import { TypedEventTarget } from '../../engine/util/typed-event-target'
+import { loader } from '../../assets/loader'
+import GridContainerEntity from '../../engine/entities/grid-container'
 
 export class TypeUpdateEvent extends Event {
   public readonly data

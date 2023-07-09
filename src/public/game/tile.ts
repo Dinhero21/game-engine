@@ -1,5 +1,5 @@
-import Tile from '../engine/util/tilemap/tile.js'
-import { loader } from '../assets/loader.js'
+import Tile from '../engine/util/tilemap/tile'
+import { loader } from '../assets/loader'
 
 const TILE_TEXTURE_SIZE = 8
 

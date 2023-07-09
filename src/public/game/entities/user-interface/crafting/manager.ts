@@ -1,5 +1,5 @@
-import { type Recipe } from '../../../../assets/recipes.js'
-import { TypedEventTarget } from '../../../../engine/util/typed-event-target.js'
+import { type Recipe } from '../../../../assets/recipes'
+import { TypedEventTarget } from '../../../../engine/util/typed-event-target'
 
 export class CraftingEvent extends Event {
   public readonly recipe: Recipe

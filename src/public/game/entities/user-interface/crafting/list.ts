@@ -1,9 +1,9 @@
-import { type Color } from '../../../util/types.js'
-import type Entity from '../../../../engine/entities/index.js'
-import type Frame from '../../../../engine/util/frame.js'
-import VerticalContainerEntity from '../../../../engine/entities/vertical-container.js'
-import Vec2 from '../../../../engine/util/vec2.js'
-import ClippingEntity from '../../../../engine/entities/clipper.js'
+import { type Color } from '../../../util/types'
+import type Entity from '../../../../engine/entities'
+import type Frame from '../../../../engine/util/frame'
+import VerticalContainerEntity from '../../../../engine/entities/vertical-container'
+import Vec2 from '../../../../engine/util/vec2'
+import ClippingEntity from '../../../../engine/entities/clipper'
 
 export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
   protected container

@@ -1,7 +1,7 @@
-import type Entity from './index.js'
-import RectangularCollider from '../util/collision/rectangular.js'
-import Vec2 from '../util/vec2.js'
-import ContainerEntity from './container.js'
+import type Entity from '.'
+import RectangularCollider from '../util/collision/rectangular'
+import Vec2 from '../util/vec2'
+import ContainerEntity from './container'
 
 export class HorizontalContainerEntity<ValidChild extends Entity = Entity> extends ContainerEntity<ValidChild> {
   public getConstantCollider (): RectangularCollider {

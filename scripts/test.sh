@@ -1,1 +1,1 @@
-jest --forceExit --coverage --verbose
+jest --forceExit --coverage --verbose $@

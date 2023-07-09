@@ -1,4 +1,4 @@
-import { TileInstance } from '../base.js'
+import { TileInstance } from '../base'
 
 const ticks = new WeakMap<TileInstance, symbol>()
 

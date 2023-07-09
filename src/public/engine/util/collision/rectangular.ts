@@ -1,5 +1,5 @@
-import Vec2 from '../vec2.js'
-import { Collider } from './collider.js'
+import Vec2 from '../vec2'
+import { Collider } from './collider'
 
 export type OverlapDetector = (collider: RectangularCollider) => boolean
 

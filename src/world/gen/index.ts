@@ -1,7 +1,7 @@
-import { type Tile } from '../tiles/base.js'
-import type Vec2 from '../../public/engine/util/vec2.js'
-import { Noise2D, DistortedNoise } from './noise.js'
-import Tiles from '../tiles/index.js'
+import { type Tile } from '../tiles/base'
+import type Vec2 from '../../public/engine/util/vec2'
+import { Noise2D, DistortedNoise } from './noise'
+import Tiles from '../tiles'
 
 const DISTORTION_SCALE = 0.001
 const DISTORTION_STRENGTH = 10

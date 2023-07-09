@@ -1,8 +1,8 @@
-import type Entity from '../../../../engine/entities/index.js'
-import ButtonEntity from '../../../../engine/entities/button.js'
-import type Vec2 from '../../../../engine/util/vec2.js'
-import type Frame from '../../../../engine/util/frame.js'
-import { loader } from '../../../../assets/loader.js'
+import type Entity from '../../../../engine/entities'
+import ButtonEntity from '../../../../engine/entities/button'
+import type Vec2 from '../../../../engine/util/vec2'
+import type Frame from '../../../../engine/util/frame'
+import { loader } from '../../../../assets/loader'
 
 export class ItemEntity<ValidChild extends Entity> extends ButtonEntity<ValidChild> {
   protected item

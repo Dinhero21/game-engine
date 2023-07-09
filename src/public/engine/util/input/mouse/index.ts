@@ -1,6 +1,6 @@
-import { EventFrame } from '../../event.js'
-import { TypedEventTarget } from '../../typed-event-target.js'
-import Vec2 from '../../vec2.js'
+import { EventFrame } from '../../event'
+import { TypedEventTarget } from '../../typed-event-target'
+import Vec2 from '../../vec2'
 
 export const MouseButtonMap = {
   primary: 0,

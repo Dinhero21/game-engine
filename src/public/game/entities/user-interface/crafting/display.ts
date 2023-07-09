@@ -1,4 +1,4 @@
-import DebugEntity, { type DebugCollider } from '../../debug.js'
+import DebugEntity, { type DebugCollider } from '../../debug'
 
 export class DisplayEntity extends DebugEntity {
   constructor (collider: DebugCollider) {

@@ -1,9 +1,9 @@
-import ProgressBarEntity, { type Colors } from '../../progress-bar.js'
-import Vec2 from '../../../../engine/util/vec2.js'
-import ButtonEntity from '../../../../engine/entities/button.js'
-import center from '../../../../engine/patches/center.js'
-import AnchorEntity from '../../../../engine/entities/anchor.js'
-import DebugEntity from '../../debug.js'
+import ProgressBarEntity, { type Colors } from '../../progress-bar'
+import Vec2 from '../../../../engine/util/vec2'
+import ButtonEntity from '../../../../engine/entities/button'
+import center from '../../../../engine/patches/center'
+import AnchorEntity from '../../../../engine/entities/anchor'
+import DebugEntity from '../../debug'
 
 export class CraftingProgressEntity extends ProgressBarEntity {
   public readonly button

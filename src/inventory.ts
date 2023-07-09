@@ -1,4 +1,4 @@
-import { Inventory as BaseInventory, Slot, type Stack, type SlotId, type SlotType, type SlotAmount } from './public/game/util/inventory.js'
+import { Inventory as BaseInventory, Slot, type Stack, type SlotId, type SlotType, type SlotAmount } from './public/game/util/inventory'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 export interface SlotEvents {

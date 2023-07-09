@@ -1,7 +1,7 @@
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
-import { type SlotAmount, type SlotType } from './public/game/util/inventory.js'
-import { type Recipe } from './public/assets/recipes.js'
+import { type SlotAmount, type SlotType } from './public/game/util/inventory'
+import { type Recipe } from './public/assets/recipes'
 
 // Engine.ioified methods
 

@@ -1,6 +1,6 @@
-import RectangularCollider from '../util/collision/rectangular.js'
-import Vec2 from '../util/vec2.js'
-import Entity from './index.js'
+import RectangularCollider from '../util/collision/rectangular'
+import Vec2 from '../util/vec2'
+import Entity from '.'
 
 export class ViewportEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public getConstantCollider (): RectangularCollider {

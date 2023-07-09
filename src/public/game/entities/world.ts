@@ -1,11 +1,11 @@
-import { type IClientSocket as Socket } from '../../../socket.io.js'
-import type Tile from '../../engine/util/tilemap/tile.js'
-import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../../engine/util/tilemap/position-conversion.js'
-import { createTile } from '../tile.js'
-import { loader } from '../../assets/loader.js'
-import Vec2 from '../../engine/util/vec2.js'
-import TileMapEntity from '../../engine/entities/tilemap.js'
-import Loop from '../../engine/util/loop.js'
+import { type IClientSocket as Socket } from '../../../socket.io'
+import type Tile from '../../engine/util/tilemap/tile'
+import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../../engine/util/tilemap/position-conversion'
+import { createTile } from '../tile'
+import { loader } from '../../assets/loader'
+import Vec2 from '../../engine/util/vec2'
+import TileMapEntity from '../../engine/entities/tilemap'
+import Loop from '../../engine/util/loop'
 
 export class WorldEntity extends TileMapEntity<Tile> {
   private readonly socket

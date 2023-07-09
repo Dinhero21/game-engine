@@ -1,9 +1,9 @@
-import { type World } from './index.js'
-import { type TileProperties, type TileInstance } from './tiles/base.js'
-import type Vec2 from '../public/engine/util/vec2.js'
-import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion.js'
+import { type World } from '.'
+import { type TileProperties, type TileInstance } from './tiles/base'
+import type Vec2 from '../public/engine/util/vec2'
+import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion'
 import { TypedEmitter } from 'tiny-typed-emitter'
-import type Player from '../player.js'
+import type Player from '../player'
 
 export interface ChunkData {
   position: Vec2

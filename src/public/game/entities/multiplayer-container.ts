@@ -1,7 +1,7 @@
-import PlayerEntity, { type OverlapDetector } from './player.js'
-import type { IClientSocket as Socket } from '../../../socket.io.js'
-import Entity from '../../engine/entities/index.js'
-import Vec2 from '../../engine/util/vec2.js'
+import PlayerEntity, { type OverlapDetector } from './player'
+import type { IClientSocket as Socket } from '../../../socket.io'
+import Entity from '../../engine/entities'
+import Vec2 from '../../engine/util/vec2'
 
 export class MultiplayerContainerEntity extends Entity<PlayerEntity> {
   private readonly socket

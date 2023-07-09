@@ -1,7 +1,7 @@
-import { patchEntity, OuterPatchHelper, type PatchOptions } from './index.js'
-import type Entity from '../entities/index.js'
-import type Vec2 from '../util/vec2.js'
-import { lerp2D } from '../util/math.js'
+import { patchEntity, OuterPatchHelper, type PatchOptions } from '.'
+import type Entity from '../entities'
+import type Vec2 from '../util/vec2'
+import { lerp2D } from '../util/math'
 
 // TODO: Find a better way of doing this
 export class AnimationHelper extends OuterPatchHelper {

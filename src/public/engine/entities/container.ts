@@ -1,6 +1,6 @@
-import type RectangularCollider from '../util/collision/rectangular.js'
-import type Vec2 from '../util/vec2.js'
-import Entity from './index.js'
+import type RectangularCollider from '../util/collision/rectangular'
+import type Vec2 from '../util/vec2'
+import Entity from '.'
 
 export abstract class ContainerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public readonly spacing

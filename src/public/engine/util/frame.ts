@@ -1,7 +1,7 @@
-import { isNone, type None } from '../../none.js'
-import { Debug, Frame as FrameGlobals } from '../../globals.js'
-import Vec2 from './vec2.js'
-import Loop from './loop.js'
+import { isNone, type None } from '../../none'
+import { Debug, Frame as FrameGlobals } from '../../globals'
+import Vec2 from './vec2'
+import Loop from './loop'
 
 let color = 0
 

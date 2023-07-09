@@ -1,9 +1,9 @@
-import Vec2 from '../util/vec2.js'
-import Entity from './index.js'
-import RectangularCollider from '../util/collision/rectangular.js'
-import PointCollider from '../util/collision/point.js'
-import ClickHandler, { type IButton } from '../util/input/mouse/click-handler.js'
-import { PrioritizedMouse } from '../util/input/mouse/prioritization.js'
+import Vec2 from '../util/vec2'
+import Entity from '.'
+import RectangularCollider from '../util/collision/rectangular'
+import PointCollider from '../util/collision/point'
+import ClickHandler, { type IButton } from '../util/input/mouse/click-handler'
+import { PrioritizedMouse } from '../util/input/mouse/prioritization'
 
 // ? Should I make this a Generic?
 export type IButtonEntity = IButton & Entity

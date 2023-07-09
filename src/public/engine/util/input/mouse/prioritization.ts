@@ -1,6 +1,6 @@
-import { type MouseEventEmitter, type MouseEventEmitterEventMap } from './index.js'
-import { TypedEventTarget } from '../../typed-event-target.js'
-import { Mouse } from './index.js'
+import { type MouseEventEmitter, type MouseEventEmitterEventMap } from '.'
+import { TypedEventTarget } from '../../typed-event-target'
+import { Mouse } from '.'
 
 /*
 a instanceof PrioritizedMouseEventEmitter

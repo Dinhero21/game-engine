@@ -1,5 +1,5 @@
-import Entity from './index.js'
-import Vec2 from '../util/vec2.js'
+import Entity from '.'
+import Vec2 from '../util/vec2'
 
 export class AnchorEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   protected anchor

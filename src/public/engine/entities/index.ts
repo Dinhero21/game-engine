@@ -1,9 +1,9 @@
-import type Scene from '../scene.js'
-import RectangularCollider from '../util/collision/rectangular.js'
-import Frame from '../util/frame.js'
-import { randomArrayFromNumber, randomFromArray } from '../util/math.js'
-import Vec2 from '../util/vec2.js'
-import { Debug as DebugGlobals } from '../../globals.js'
+import type Scene from '../scene'
+import RectangularCollider from '../util/collision/rectangular'
+import Frame from '../util/frame'
+import { randomArrayFromNumber, randomFromArray } from '../util/math'
+import Vec2 from '../util/vec2'
+import { Debug as DebugGlobals } from '../../globals'
 
 const DEBUG = DebugGlobals.entity
 

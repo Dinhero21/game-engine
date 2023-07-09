@@ -1,9 +1,9 @@
-import { type TileInstance, type TileProperties } from './tiles/base.js'
-import { type WorldGen } from './gen/index.js'
-import Vec2 from '../public/engine/util/vec2.js'
-import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion.js'
+import { type TileInstance, type TileProperties } from './tiles/base'
+import { type WorldGen } from './gen'
+import Vec2 from '../public/engine/util/vec2'
+import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
 import { TypedEmitter } from 'tiny-typed-emitter'
-import Chunk from './chunk.js'
+import Chunk from './chunk'
 
 export type Tick = () => void
 

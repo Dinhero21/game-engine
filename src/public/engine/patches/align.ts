@@ -1,6 +1,6 @@
-import { type OuterPatchHelper, patchEntity } from './index.js'
-import type Entity from '../entities/index.js'
-import Vec2 from '../util/vec2.js'
+import { type OuterPatchHelper, patchEntity } from '.'
+import type Entity from '../entities'
+import Vec2 from '../util/vec2'
 
 export function align (entity: Entity, anchor: number | Vec2, relative: boolean = true): OuterPatchHelper {
   return patchEntity(entity)('update', helper => {

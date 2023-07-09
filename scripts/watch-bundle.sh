@@ -1,1 +1,1 @@
-nodemon --watch dist/public --ignore dist/public/bundle.js --ext js --exec "bash scripts/bundle.sh"
+./scripts/bundle.sh -w $@
