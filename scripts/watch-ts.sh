@@ -1,1 +1,1 @@
-concurrently -k -p "[{name}]" -n "TSC,Nodemon" -c "cyan.bold,green.bold,yellow.bold" "tsc -w" "scripts/copy-public-files-watch.sh"
+concurrently -k -p "[{name}]" -n "TSC,Nodemon" -c "cyan.bold,green.bold,yellow.bold" "tsc -w" "scripts/watch-copy-public-files.sh"

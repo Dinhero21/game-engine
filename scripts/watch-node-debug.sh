@@ -1,1 +1,0 @@
-nodemon --watch dist --ext js --ignore dist/public/ --inspect dist/index.js
