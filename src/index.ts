@@ -187,6 +187,12 @@ io.on('connection', socket => {
     if (player.inventory.addItem(tile.type, 1)) world.setTile(Tiles.air.instance(), tilePosition, true, true)
   })
 
+  socket.on('chat.message', message => {
+    console.log('chat.message', message)
+
+    io.emit('chat.message', message)
+  })
+
   socket.on('disconnect', () => {
     players.delete(player)
 

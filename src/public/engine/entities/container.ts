@@ -2,6 +2,7 @@ import type RectangularCollider from '../util/collision/rectangular'
 import type Vec2 from '../util/vec2'
 import Entity from '.'
 
+// TODO: Move all classes that inherit from ContainerEntity be inside engine/entities/container
 export abstract class ContainerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public readonly spacing
   public readonly padding

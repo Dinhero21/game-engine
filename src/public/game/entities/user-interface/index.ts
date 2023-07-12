@@ -7,17 +7,23 @@ import keyboard from '../../../engine/util/input/keyboard'
 import Vec2 from '../../../engine/util/vec2'
 import CraftingEntity from './crafting'
 import PlayerInventoryEntity from './inventory'
+import ChatEntity from './chat'
 
 export type UIState = 'open' | 'closed'
 
+// ? Should I make sending packets the UIEntity's responsibility? That seems like a very bad idea...
 export class UserInterfaceEntity extends ViewportEntity {
   private state: UIState = 'closed'
 
   public readonly inventory
   public readonly crafting
 
+  public readonly chat
+
   constructor (socket: Socket) {
     super()
+
+    // --- Crafting ---
 
     const crafting = new CraftingEntity()
     this.addChild(crafting)
@@ -30,12 +36,55 @@ export class UserInterfaceEntity extends ViewportEntity {
     const inventoryEntity = new PlayerInventoryEntity(socket)
     centeredUi.addChild(inventoryEntity)
 
+    // --- Inventory ---
+
     const inventory = inventoryEntity.inventory
 
     this.inventory = inventoryEntity
 
     inventory.manager.addEventListener('slot.update', event => {
       this.updateRecipes()
+    })
+
+    const bottomUi = new AnchorEntity(new Vec2(0, 1))
+    this.addChild(bottomUi)
+
+    // --- Chat ---
+
+    window.addEventListener('keydown', event => {
+      switch (event.key) {
+        case 'Escape':
+          chat.input.disable()
+          break
+        // Me when copying Terraria be like:
+        case 'Enter':
+          if (input.active) break
+
+          chat.input.enable()
+
+          event.stopImmediatePropagation()
+          event.stopPropagation()
+          break
+      }
+    }, true)
+
+    const chat = new ChatEntity({
+      width: 496,
+      height: 32
+    })
+    bottomUi.addChild(chat)
+
+    this.chat = chat
+
+    const input = chat.input
+    const container = chat.container
+
+    input.manager.addEventListener('input', () => {
+      socket.emit('chat.message', input.text)
+    })
+
+    socket.on('chat.message', message => {
+      container.addMessage(message)
     })
   }
 

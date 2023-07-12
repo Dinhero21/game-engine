@@ -1,4 +1,4 @@
-// TODO: Promises
+// TODO: Promises (Wait for key state)
 export class Keyboard {
   private readonly keys = new Set<string>()
 

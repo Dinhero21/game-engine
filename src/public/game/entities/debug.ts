@@ -13,18 +13,20 @@ export type DebugCollider = Vec2 | RectangularCollider | ConstantRectangularColl
 export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public title
 
-  protected collider
   protected drawText
 
-  constructor (title: string = 'Debug', collider?: DebugCollider, drawText: boolean = true) {
+  constructor (title: string = 'Debug', collider: DebugCollider = new Vec2(0, 0), drawText: boolean = true) {
     super()
 
-    if (collider === undefined) collider = new Vec2(0, 0)
-    if ('getConstantCollider' in collider) collider = collider.getConstantCollider()
-    if (collider instanceof Vec2) collider = new RectangularCollider(new Vec2(0, 0), collider)
+    let getCollider: () => RectangularCollider
+
+    if ('getConstantCollider' in collider) getCollider = () => collider.getConstantCollider()
+    else if (collider instanceof RectangularCollider) getCollider = () => collider
+    // TODO: Stop instantiating a new RectangularCollider every time getCollider is called
+    else getCollider = () => new RectangularCollider(new Vec2(0, 0), collider)
 
     this.title = title
-    this.collider = collider
+    this.getConstantCollider = getCollider
     this.drawText = drawText
   }
 
@@ -36,9 +38,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
 
   // Collision
 
-  public getConstantCollider (): RectangularCollider {
-    return this.collider
-  }
+  public getConstantCollider: () => RectangularCollider
 
   // Game Loop
 

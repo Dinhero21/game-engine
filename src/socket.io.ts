@@ -24,6 +24,7 @@ export interface ServerToClientEvents {
   'player.physics.update': (player: Player) => void
   'tile.set': (tilePosition: Vec2, type: string) => void
   'slot.set': (id: number, type: SlotType, amount: SlotAmount) => void
+  'chat.message': (message: string) => void
 }
 
 // Client -> Server
@@ -34,6 +35,7 @@ export interface ClientToServerEvents {
   'tile.click': (tilePosition: Vec2) => void
   'slot.click': (id: number) => void
   'recipe.crafted': (recipe: Recipe) => void
+  'chat.message': (message: string) => void
 }
 
 // Server -> Server
