@@ -81,6 +81,8 @@ export class UserInterfaceEntity extends ViewportEntity {
 
     input.manager.addEventListener('input', () => {
       socket.emit('chat.message', input.text)
+
+      input.disable()
     })
 
     socket.on('chat.message', message => {

@@ -14,14 +14,22 @@ export interface TextInputManagerEventMap {
 
 export class TextInputManager extends TypedEventTarget<TextInputManagerEventMap> {}
 
+export interface TextInputOptions extends TextOptions {
+  prefix?: string
+}
+
 // TODO: Follow text (when your text is bigger than the canvas, offset the text so the end will be always visible.)
 export class ChatTextInputEntity extends TextEntity {
   public active: boolean = false
 
+  public prefix = '> '
+
   public readonly manager = new TextInputManager()
 
-  constructor (options: TextOptions) {
+  constructor (options: TextInputOptions) {
     super(options)
+
+    if (options.prefix !== undefined) this.prefix = options.prefix
 
     // TODO: Stop using capture instead of actually implementing a way of prepending (keyboard) listeners
 
@@ -186,7 +194,15 @@ export class ChatTextInputEntity extends TextEntity {
       0.25
     )
 
+    const prefix = this.prefix
+
+    const text = this.text
+
+    this.text = `${prefix}${text}`
+
     super.draw(frame)
+
+    this.text = text
   }
 }
 

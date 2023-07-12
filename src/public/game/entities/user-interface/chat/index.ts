@@ -1,5 +1,4 @@
-import { type TextOptions } from '../../../../engine/entities/text'
-import ChatTextInputEntity from './container/text-input'
+import ChatTextInputEntity, { type TextInputOptions } from './container/text-input'
 import ChatMessageContainerEntity from './container'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container'
 import align from '../../../../engine/patches/align'
@@ -9,8 +8,8 @@ export class ChatEntity extends VerticalContainerEntity<ChatMessageContainerEnti
   public readonly container
   public readonly input
 
-  constructor (options: TextOptions) {
-    super(8, new Vec2(32, 32))
+  constructor (options: TextInputOptions) {
+    super(0, new Vec2(0, 0))
 
     align(this, new Vec2(0, 1), true)
 
