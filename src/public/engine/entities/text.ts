@@ -10,6 +10,7 @@ export interface TextOptions {
   style?: string
   width: number
   height: number
+  maxWidth?: number
 }
 
 // TODO: Metrics Caching
@@ -18,13 +19,14 @@ export class TextEntity extends Entity<never> {
   protected canvas = new OffscreenCanvas(0, 0)
 
   public text: string = ''
+  public baseline: CanvasTextBaseline = 'middle'
   public fontSize = 24
   public fontType = 'monospace'
   public fillStyle = 'white'
-  public baseline: CanvasTextBaseline = 'middle'
 
   public width
   public height
+  public maxWidth
 
   constructor (options: TextOptions) {
     super()
@@ -36,6 +38,7 @@ export class TextEntity extends Entity<never> {
 
     this.width = options.width
     this.height = options.height
+    this.maxWidth = options.maxWidth
   }
 
   protected getMetrics (): TextMetrics | undefined {
@@ -51,30 +54,30 @@ export class TextEntity extends Entity<never> {
     return metrics
   }
 
-  // public getTextBoundingBox (): RectangularCollider | undefined {
-  //   const metrics = this.getMetrics()
+  protected getTextBoundingBox (): RectangularCollider | undefined {
+    const metrics = this.getMetrics()
 
-  //   if (metrics === undefined) return
+    if (metrics === undefined) return
 
-  //   const left = metrics.actualBoundingBoxLeft
-  //   const ascend = metrics.actualBoundingBoxAscent
-  //   const right = metrics.actualBoundingBoxRight
-  //   const bottom = metrics.actualBoundingBoxDescent
+    const left = metrics.actualBoundingBoxLeft
+    const ascend = metrics.actualBoundingBoxAscent
+    const right = metrics.actualBoundingBoxRight
+    const bottom = metrics.actualBoundingBoxDescent
 
-  //   const position = new Vec2(
-  //     -left,
-  //     -ascend
-  //   )
+    const position = new Vec2(
+      -left,
+      -ascend
+    )
 
-  //   const size = new Vec2(
-  //     right + left,
-  //     bottom + ascend
-  //   )
+    const size = new Vec2(
+      right + left,
+      bottom + ascend
+    )
 
-  //   return new RectangularCollider(position, size)
-  // }
+    return new RectangularCollider(position, size)
+  }
 
-  public getTextPosition (): Vec2 {
+  protected getTextPosition (): Vec2 {
     // const width = this.width
     const height = this.height
 
@@ -129,8 +132,9 @@ export class TextEntity extends Entity<never> {
     const textPosition = this.getTextPosition()
 
     const text = this.text
+    const maxWidth = this.maxWidth
 
-    context.fillText(text, textPosition.x, textPosition.y)
+    context.fillText(text, textPosition.x, textPosition.y, maxWidth)
 
     // * You can not render a canvas that has 0 width or height
 

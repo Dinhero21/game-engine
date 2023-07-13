@@ -1,4 +1,5 @@
 import type Frame from '../../../../../engine/util/frame'
+import type Vec2 from '../../../../../engine/util/vec2'
 import TextEntity, { type TextOptions } from '../../../../../engine/entities/text'
 import { TypedEventTarget } from '../../../../../engine/util/typed-event-target'
 
@@ -27,7 +28,10 @@ export class ChatTextInputEntity extends TextEntity {
   public readonly manager = new TextInputManager()
 
   constructor (options: TextInputOptions) {
-    super(options)
+    super({
+      ...options,
+      maxWidth: undefined
+    })
 
     if (options.prefix !== undefined) this.prefix = options.prefix
 
@@ -140,6 +144,9 @@ export class ChatTextInputEntity extends TextEntity {
         case 'Escape':
           break
 
+        case 'Dead':
+          break
+
         default:
           this.text += key
           break
@@ -203,6 +210,36 @@ export class ChatTextInputEntity extends TextEntity {
     super.draw(frame)
 
     this.text = text
+  }
+
+  // TODO: Make this not bound to a ChatTextInputEntity
+  // Ideas:
+  //   1. Make this "injectable" via a patch or maybe even something simpler
+  //   2. Make this bound to a TextEntity
+  // ? ^ Bad Idea?
+
+  protected getTextPosition (): Vec2 {
+    const textPosition = super.getTextPosition()
+
+    const boundingBox = this.getTextBoundingBox()
+
+    if (boundingBox === undefined) return textPosition
+
+    const width = this.width
+
+    const boundingBoxPositon = boundingBox.getPosition()
+    const boundingBoxSize = boundingBox.getSize()
+
+    const right = boundingBoxPositon.x + boundingBoxSize.x
+
+    const overflow = width - right
+
+    // For the python people:
+    // if overflowing:
+    //   don't
+    textPosition.x += Math.min(0, overflow)
+
+    return textPosition
   }
 }
 
