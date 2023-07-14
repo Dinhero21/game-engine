@@ -1,7 +1,7 @@
 import type Vec2 from '../vec2'
 
 // TODO: Make TileMapEntity get these values on construction
-export const TILE_SIZE = 32
+export const TILE_SIZE = 8
 export const CHUNK_SIZE = 8
 
 export function positionToTilePosition (position: Vec2): Vec2 {

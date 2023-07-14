@@ -1,5 +1,4 @@
-import { type MouseEventEmitter, type MouseEventEmitterEventMap } from '.'
-import { Mouse } from '.'
+import { type MouseEventEmitter, type MouseEventEmitterEventMap, Mouse } from '.'
 import { TypedEventTarget } from '../../typed-event-target'
 
 /*

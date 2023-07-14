@@ -55,16 +55,26 @@ export class WorldGen {
     row.set(y, tile)
   }
 
+  protected _getTile (tileTilePosition: Vec2): Tile {
+    const density = this.getDensity(tileTilePosition)
+
+    if (tileTilePosition.x === 0 && tileTilePosition.y === 0) {
+      return Tiles.structure
+    }
+
+    if (density > 0) {
+      return this.getFloorTile(tileTilePosition)
+    }
+
+    return Tiles.air
+  }
+
   public getTile (tileTilePosition: Vec2): Tile {
     const cached = this.getCachedTile(tileTilePosition.x, tileTilePosition.y)
 
     if (cached !== undefined) return cached
 
-    const density = this.getDensity(tileTilePosition)
-
-    let tile: Tile = Tiles.air
-
-    if (density > 0) tile = this.getFloorTile(tileTilePosition)
+    const tile = this._getTile(tileTilePosition)
 
     this.setCachedTile(tile, tileTilePosition.x, tileTilePosition.y)
 

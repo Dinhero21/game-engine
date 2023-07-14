@@ -103,7 +103,7 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
   protected updatePosition (positionDelta: Vec2): Vec2 {
     const position = this.position
 
-    const overlapping = this.overlapping
+    const overlapping = undefined // this.overlapping
 
     if (overlapping === undefined) {
       position.add(positionDelta)

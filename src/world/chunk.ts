@@ -88,6 +88,12 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
     row.set(relativeTilePosition.y, tile)
 
     if (emit) this.emit('tile.set', tile)
+
+    const world = this.getWorld()
+
+    world.queueTick(() => {
+      tile.ready()
+    })
   }
 
   public getTile (x: number, y: number): TileInstance | undefined {

@@ -6,6 +6,7 @@ export interface TileProperties {
   chunk: Chunk
   position: Vec2
 }
+
 export abstract class Tile<Properties = any> {
   protected readonly properties
 
@@ -27,6 +28,8 @@ export abstract class TileInstance<Properties = any> {
     this.chunk = tileProperties.chunk
     this.position = tileProperties.position
   }
+
+  public ready (): void {}
 
   public update (): void {}
 

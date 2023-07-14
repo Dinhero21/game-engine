@@ -1,0 +1,23 @@
+{
+	"Create a new server-side Tile": {
+		"scope": "typescript",
+		"prefix": "newtile",
+		"body": [
+			"import { Tile, TileInstance, type TileProperties } from './base'",
+			"",
+			"// eslint-disable-next-line @typescript-eslint/no-empty-interface",
+			"export interface $1TileProperties {}",
+			"",
+			"export class $1Tile extends Tile<$1TileProperties> {",
+			"  public instance () {",
+			"    return (tileProperties: TileProperties) => new $1TileInstance(tileProperties, this.properties)",
+			"  }",
+			"}",
+			"",
+			"export class $1TileInstance extends TileInstance<$1TileProperties> {",
+			"  type = '$2'",
+			"}"
+		],
+		"description": "Log output to console"
+	}
+}
