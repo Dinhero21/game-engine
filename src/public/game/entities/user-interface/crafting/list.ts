@@ -1,6 +1,6 @@
-import { type Color } from '../../../util/types'
-import type Entity from '../../../../engine/entities'
 import type Frame from '../../../../engine/util/frame'
+import type Entity from '../../../../engine/entities'
+import { type Color } from '../../../util/types'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container'
 import Vec2 from '../../../../engine/util/vec2'
 import ClippingEntity from '../../../../engine/entities/clipper'

@@ -1,9 +1,9 @@
-import { lerp } from '../../public/engine/util/math'
+import Tiles from '.'
 import { AirTileInstance } from './air'
 import { Tile, TileInstance, type TileProperties } from './base'
 import loop from './decorators/loop'
 import once from './decorators/once'
-import Tiles from '.'
+import { lerp } from '../../public/engine/util/math'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface HyperStoneTileProperties {}

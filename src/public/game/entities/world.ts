@@ -1,5 +1,5 @@
-import { type IClientSocket as Socket } from '../../../socket.io'
 import type Tile from '../../engine/util/tilemap/tile'
+import { type IClientSocket as Socket } from '../../../socket.io'
 import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../../engine/util/tilemap/position-conversion'
 import { createTile } from '../tile'
 import { loader } from '../../assets/loader'

@@ -1,8 +1,8 @@
 import type Scene from './scene'
-import { Camera as CameraGlobals, Debug as DebugGlobals } from '../globals'
 import Frame from './util/frame'
 import Vec2 from './util/vec2'
 import RectangularCollider from './util/collision/rectangular'
+import { Camera as CameraGlobals, Debug as DebugGlobals } from '../globals'
 
 const INTEGER_APPROXIMATION = CameraGlobals.integer_approximation
 

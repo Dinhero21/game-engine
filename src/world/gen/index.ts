@@ -1,6 +1,6 @@
-import { type Tile } from '../tiles/base'
 import type Vec2 from '../../public/engine/util/vec2'
 import { Noise2D, DistortedNoise } from './noise'
+import { type Tile } from '../tiles/base'
 import Tiles from '../tiles'
 
 const DISTORTION_SCALE = 0.001

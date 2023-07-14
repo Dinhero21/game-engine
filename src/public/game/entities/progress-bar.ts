@@ -1,5 +1,5 @@
-import { type Color } from '../util/types'
 import type Frame from '../../engine/util/frame'
+import { type Color } from '../util/types'
 import Vec2 from '../../engine/util/vec2'
 import Entity from '../../engine/entities'
 import RectangularCollider from '../../engine/util/collision/rectangular'

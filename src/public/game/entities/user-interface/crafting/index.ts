@@ -1,3 +1,8 @@
+import CraftingProgressEntity from './progress'
+import CraftingManager from './manager'
+import ItemEntity from './item'
+import DisplayEntity from './display'
+import ListEntity from './list'
 import { type Recipe } from '../../../../assets/recipes'
 import { TRANSFORMATIONS, animatePosition } from '../../../../engine/patches/animate'
 import { MouseButtonMap } from '../../../../engine/util/input/mouse'
@@ -5,11 +10,6 @@ import { chunk } from '../../../util/string'
 import Vec2 from '../../../../engine/util/vec2'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container'
 import HorizontalContainerEntity from '../../../../engine/entities/horizontal-container'
-import ListEntity from './list'
-import DisplayEntity from './display'
-import ItemEntity from './item'
-import CraftingManager from './manager'
-import CraftingProgressEntity from './progress'
 
 const COLORS = {
   BACKGROUND: [0x1F, 0x1F, 0x1F, 0.75],

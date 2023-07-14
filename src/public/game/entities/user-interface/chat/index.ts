@@ -1,5 +1,5 @@
-import ChatTextInputEntity, { type TextInputOptions } from './container/text-input'
 import ChatMessageContainerEntity from './container'
+import ChatTextInputEntity, { type TextInputOptions } from './container/text-input'
 import VerticalContainerEntity from '../../../../engine/entities/vertical-container'
 import align from '../../../../engine/patches/align'
 import Vec2 from '../../../../engine/util/vec2'

@@ -1,6 +1,6 @@
-import { patchEntity, OuterPatchHelper, type PatchOptions } from '.'
 import type Entity from '../entities'
 import type Vec2 from '../util/vec2'
+import { patchEntity, OuterPatchHelper, type PatchOptions } from '.'
 import { lerp2D } from '../util/math'
 
 // TODO: Find a better way of doing this

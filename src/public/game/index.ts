@@ -1,14 +1,14 @@
 import type { IClientSocket as Socket } from '../../socket.io'
+import MultiplayerContainerEntity from './entities/multiplayer-container'
+import WorldEntity from './entities/world'
+import UserInterfaceEntity from './entities/user-interface'
+import DebugEntity from './entities/debug'
 import { ViewportGenerators } from '../engine/camera'
 import { lerp } from '../engine/util/math'
 import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization'
 import { positionToTilePosition } from '../engine/util/tilemap/position-conversion'
 import Scene from '../engine/scene'
 import Loop from '../engine/util/loop'
-import DebugEntity from './entities/debug'
-import UserInterfaceEntity from './entities/user-interface'
-import WorldEntity from './entities/world'
-import MultiplayerContainerEntity from './entities/multiplayer-container'
 import io from 'socket.io-client'
 
 const GamePerformance = {

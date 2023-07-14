@@ -1,5 +1,5 @@
-import { type OuterPatchHelper, patchEntity } from '.'
 import type Entity from '../entities'
+import { type OuterPatchHelper, patchEntity } from '.'
 import Vec2 from '../util/vec2'
 
 export function align (entity: Entity, anchor: number | Vec2, relative: boolean = true): OuterPatchHelper {

@@ -1,5 +1,5 @@
-import PlayerEntity, { type OverlapDetector } from './player'
 import type { IClientSocket as Socket } from '../../../socket.io'
+import PlayerEntity, { type OverlapDetector } from './player'
 import Entity from '../../engine/entities'
 import Vec2 from '../../engine/util/vec2'
 

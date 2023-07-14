@@ -1,6 +1,6 @@
 import type Frame from '../../engine/util/frame'
-import Vec2 from '../../engine/util/vec2'
 import SlotEntity from './slot'
+import Vec2 from '../../engine/util/vec2'
 import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../util/inventory'
 import { TypedEventTarget } from '../../engine/util/typed-event-target'
 import { loader } from '../../assets/loader'

@@ -1,5 +1,5 @@
-import { type ExtractKeys } from '../util/types'
 import type Entity from '../entities'
+import { type ExtractKeys } from '../util/types'
 
 export type AnyFunction = (...args: any[]) => any
 

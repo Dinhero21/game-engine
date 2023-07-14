@@ -1,10 +1,10 @@
 import type Frame from '../util/frame'
 import type RectangularCollider from '../util/collision/rectangular'
 import type Tile from '../util/tilemap/tile'
-import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion'
-import { Chunk } from '../util/tilemap/chunk'
-import Vec2 from '../util/vec2'
 import Entity from '.'
+import Vec2 from '../util/vec2'
+import { Chunk } from '../util/tilemap/chunk'
+import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 

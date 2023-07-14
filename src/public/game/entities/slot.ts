@@ -1,5 +1,5 @@
-import { type SlotType } from '../util/inventory'
 import type Frame from '../../engine/util/frame'
+import { type SlotType } from '../util/inventory'
 import { loader } from '../../assets/loader'
 import ButtonEntity from '../../engine/entities/button'
 import Vec2 from '../../engine/util/vec2'

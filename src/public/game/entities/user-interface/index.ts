@@ -1,13 +1,13 @@
-import { type IClientSocket as Socket } from '../../../../socket.io'
 import type Entity from '../../../engine/entities'
+import ChatEntity from './chat'
+import PlayerInventoryEntity from './inventory'
+import CraftingEntity from './crafting'
 import recipes from '../../../assets/recipes'
 import AnchorEntity from '../../../engine/entities/anchor'
 import ViewportEntity from '../../../engine/entities/viewport'
 import keyboard from '../../../engine/util/input/keyboard'
 import Vec2 from '../../../engine/util/vec2'
-import CraftingEntity from './crafting'
-import PlayerInventoryEntity from './inventory'
-import ChatEntity from './chat'
+import { type IClientSocket as Socket } from '../../../../socket.io'
 
 export type UIState = 'open' | 'closed'
 

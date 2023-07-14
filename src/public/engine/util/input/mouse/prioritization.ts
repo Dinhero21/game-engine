@@ -1,6 +1,6 @@
 import { type MouseEventEmitter, type MouseEventEmitterEventMap } from '.'
-import { TypedEventTarget } from '../../typed-event-target'
 import { Mouse } from '.'
+import { TypedEventTarget } from '../../typed-event-target'
 
 /*
 a instanceof PrioritizedMouseEventEmitter

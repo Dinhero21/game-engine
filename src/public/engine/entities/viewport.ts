@@ -1,6 +1,6 @@
+import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Vec2 from '../util/vec2'
-import Entity from '.'
 
 export class ViewportEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public getConstantCollider (): RectangularCollider {

@@ -1,5 +1,5 @@
-import TextEntity from '../../../../../engine/entities/text'
 import type Frame from '../../../../../engine/util/frame'
+import TextEntity from '../../../../../engine/entities/text'
 
 const FADE_TIME = 1
 

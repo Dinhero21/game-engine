@@ -1,8 +1,8 @@
-import { type Stack, type SlotId } from './public/game/util/inventory'
 import type { Player as ClientPlayer } from './socket.io'
-import { TypedEmitter } from 'tiny-typed-emitter'
+import { type Stack, type SlotId } from './public/game/util/inventory'
 import Inventory from './inventory'
 import Vec2 from './public/engine/util/vec2'
+import { TypedEmitter } from 'tiny-typed-emitter'
 
 export interface PlayerEvents {
   'inventory.update': (id: SlotId, stack: Stack) => void

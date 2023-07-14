@@ -1,8 +1,8 @@
+import ChatMessageEntity from './message'
 import { type TextOptions } from '../../../../../engine/entities/text'
 import VerticalContainerEntity from '../../../../../engine/entities/vertical-container'
 import align from '../../../../../engine/patches/align'
 import Vec2 from '../../../../../engine/util/vec2'
-import ChatMessageEntity from './message'
 
 export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMessageEntity> {
   private readonly options

@@ -1,5 +1,5 @@
-import { type OuterPatchHelper } from '.'
 import type Entity from '../entities'
+import { type OuterPatchHelper } from '.'
 import align from './align'
 
 export function center (entity: Entity, relative?: boolean): OuterPatchHelper {

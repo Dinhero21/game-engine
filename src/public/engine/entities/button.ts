@@ -1,5 +1,5 @@
-import Vec2 from '../util/vec2'
 import Entity from '.'
+import Vec2 from '../util/vec2'
 import RectangularCollider from '../util/collision/rectangular'
 import PointCollider from '../util/collision/point'
 import ClickHandler, { type IButton } from '../util/input/mouse/click-handler'
