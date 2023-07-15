@@ -4,6 +4,8 @@ import Entity from '../../engine/entities'
 import Vec2 from '../../engine/util/vec2'
 import keyboard from '../../engine/util/input/keyboard'
 import RectangularCollider from '../../engine/util/collision/rectangular'
+import { type Color } from '../util/types'
+import Alea from 'alea'
 
 const FRICTION = new Vec2(50, 5)
 
@@ -18,10 +20,20 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
   public overlapping?: OverlapDetector
 
+  protected color: Color
+
   constructor (id: string) {
     super()
 
     this.id = id
+
+    const prng = Alea(id)
+
+    this.color = [
+      prng() > 0.5 ? 0xFF : 0x00,
+      prng() > 0.5 ? 0xFF : 0x00,
+      prng() > 0.5 ? 0xFF : 0x00
+    ]
   }
 
   public getConstantCollider (): RectangularCollider {
@@ -37,7 +49,13 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     const size = collider.getSize()
     const position = collider.getPosition()
 
-    frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, 0x61, 0xAF, 0xEF)
+    const color = this.color
+
+    frame.drawFancyRectRGBA(
+      position.x, position.y,
+      size.x, size.y,
+      color[0], color[1], color[2]
+    )
 
     const velocity = this.velocity
 
