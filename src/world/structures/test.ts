@@ -1,4 +1,5 @@
-import Structure, { type SetTileFunction } from './base'
+import Structure from './base'
+import { type StructureHelper } from './handler'
 import Tiles from '../tiles'
 import figlet from 'figlet'
 
@@ -58,8 +59,11 @@ const TEXT = figlet.textSync(
   }
 )
 
-export class TestStructure extends Structure {
-  public create (setTile: SetTileFunction): void {
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface TestStructureProperties {}
+
+export class TestStructure extends Structure<TestStructureProperties> {
+  public create (helper: StructureHelper): void {
     const LINES = TEXT.split('\n')
 
     for (let y = 0; y < LINES.length; y++) {
@@ -72,7 +76,7 @@ export class TestStructure extends Structure {
 
         if (character !== ' ') tile = Tiles.stone
 
-        setTile(tile, x, y)
+        helper.setTile(tile, x, y)
       }
     }
   }

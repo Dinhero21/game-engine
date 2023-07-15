@@ -1,5 +1,5 @@
 {
-	"Create a new server-side Tile": {
+	"New Tile": {
 		"scope": "typescript",
 		"prefix": "newtile",
 		"body": [
@@ -18,6 +18,6 @@
 			"  type = '$2'",
 			"}"
 		],
-		"description": "Log output to console"
+		"description": "Create new server-side Tile"
 	}
 }

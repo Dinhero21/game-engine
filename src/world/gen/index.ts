@@ -2,6 +2,7 @@ import type Vec2 from '../../public/engine/util/vec2'
 import { Noise2D, DistortedNoise } from './noise'
 import { type Tile } from '../tiles/base'
 import Tiles from '../tiles'
+import Structures from '../structures'
 
 const DISTORTION_SCALE = 0.001
 const DISTORTION_STRENGTH = 10
@@ -55,18 +56,35 @@ export class WorldGen {
     row.set(y, tile)
   }
 
-  protected _getTile (tileTilePosition: Vec2): Tile {
+  protected getGroundTile (tileTilePosition: Vec2): Tile {
     const density = this.getDensity(tileTilePosition)
-
-    if (tileTilePosition.x === 0 && tileTilePosition.y === 0) {
-      return Tiles.structure
-    }
 
     if (density > 0) {
       return this.getFloorTile(tileTilePosition)
     }
 
     return Tiles.air
+  }
+
+  protected _getTile (tileTilePosition: Vec2): Tile {
+    const groundTile = this.getGroundTile(tileTilePosition)
+
+    if (groundTile !== Tiles.air) return groundTile
+
+    const belowTileTilePosition = tileTilePosition.offset(0, 1)
+    const belowGroundTile = this.getGroundTile(belowTileTilePosition)
+
+    if (belowGroundTile !== Tiles.grass) return groundTile
+
+    if (Math.random() > 0.1) return groundTile
+
+    // Decorations
+
+    const structure = Structures.tree
+    const tile = Tiles.structure
+      .setStructure(structure)
+
+    return tile
   }
 
   public getTile (tileTilePosition: Vec2): Tile {

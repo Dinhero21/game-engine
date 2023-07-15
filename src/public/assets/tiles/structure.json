@@ -1,0 +1,5 @@
+{
+  "texture": "structure",
+  "collidable": false,
+  "connects": ["structure"]
+}

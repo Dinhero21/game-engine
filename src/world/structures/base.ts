@@ -1,9 +1,13 @@
-import { type Tile } from '../tiles/base'
+import { type StructureHelper } from './handler'
 
-export type SetTileFunction = (tile: Tile, x: number, y: number) => void
+export abstract class Structure<Properties = any> {
+  constructor (properties: Properties) {
+    this.properties = properties
+  }
 
-export abstract class Structure {
-  public abstract create (setTile: SetTileFunction): void
+  protected properties: Properties
+
+  public abstract create (helper: StructureHelper): void
 }
 
 export default Structure

@@ -1,0 +1,22 @@
+{
+	"New Structure": {
+		"scope": "typescript",
+		"prefix": "newstructure",
+		"body": [
+			"import Structure from './base'",
+			"import { type StructureHelper } from './handler'",
+			"import Tiles from '../tiles'",
+			"",
+			"export interface $1StructureProperties {}",
+			"",
+			"export class $1Structure extends Structure<$1StructureProperties> {",
+			"  public create (helper: StructureHelper): void {",
+			"    helper.setTile(Tiles.stone, 0, 0)",
+			"  }",
+			"}",
+			"",
+			"export default $1Structure"
+		],
+		"description": "Create new server-side Structure"
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "texture": "trunk",
+  "collidable": false,
+  "connects": [
+    "trunk",
+    "leaves"
+  ]
+}

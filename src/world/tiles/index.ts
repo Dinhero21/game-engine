@@ -2,9 +2,10 @@ import { AirTile } from './air'
 import { DirtTile } from './dirt'
 import { GrassTile } from './grass'
 import { HyperStoneTile } from './hyperstone'
+import { LeavesTile } from './leaves'
 import { StoneTile } from './stone'
 import { StructureTile } from './structure'
-import Structures from '../structures'
+import { TrunkTile } from './trunk'
 
 export const Tiles = {
   air: new AirTile({}),
@@ -13,8 +14,10 @@ export const Tiles = {
   dirt: new DirtTile({}),
   grass: new GrassTile({}),
   structure: new StructureTile({
-    structure: Structures.test
-  })
+    structure: undefined
+  }),
+  leaves: new LeavesTile({}),
+  trunk: new TrunkTile({})
 } as const
 
 export default Tiles
