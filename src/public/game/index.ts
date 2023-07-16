@@ -57,6 +57,8 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   camera.ViewportGenerator = ViewportGenerators.Center
 
+  const mouseDebug = new DebugEntity('Mouse')
+
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
     const averageUpdateDelta = GamePerformance.averageUpdateDelta
@@ -133,8 +135,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
       )
     }
   })
-
-  const mouseDebug = new DebugEntity('Mouse')
 
   const world = new WorldEntity(socket)
   scene.addChild(world)
