@@ -32,7 +32,7 @@ export class WorldGen {
   }
 
   protected getFloorTile (tilePosition: Vec2): Tile {
-    if (this.getDensity(tilePosition.offset(0, -1)) < 0) {
+    if (this.getDensity(tilePosition.offset(0, -1)) <= 0) {
       return Tiles.grass
     }
 
