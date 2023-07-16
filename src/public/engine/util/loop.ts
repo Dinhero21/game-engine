@@ -11,7 +11,7 @@ export const Loop = {
       setTimeout(() => { this.interval(ms, now)(callback) }, ms)
     }
   },
-  draw (lastTimestamp = 0, timestamp = 0) {
+  draw (lastTimestamp = performance.now(), timestamp = performance.now()) {
     return (callback: Callback) => {
       const delta = (timestamp - lastTimestamp) / 1000
 
