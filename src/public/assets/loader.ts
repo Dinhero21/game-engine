@@ -13,6 +13,10 @@ export interface TileData {
 }
 
 export class AssetLoader extends EventTarget {
+  protected getTexturePath (name: string): string {
+    return `assets/textures/${name}.png`
+  }
+
   private readonly textureCache = new Map<string, HTMLImageElement>()
   public getTexture (name: string): HTMLImageElement {
     const cache = this.textureCache
@@ -21,19 +25,37 @@ export class AssetLoader extends EventTarget {
 
     if (image !== undefined) return image
 
+    console.log('Requesting texture:', name)
+
     image = new Image()
-    image.src = `assets/textures/${name}.png`
+    image.src = this.getTexturePath(name)
 
     cache.set(name, image)
 
     image.addEventListener('load', event => {
+      if (name === window.localStorage.getItem('bricked')) location.reload()
+
+      const complete = image?.complete
+
+      console.log(
+        complete === undefined ? '❓' : complete ? '✅' : '❌',
+        'Texture Loaded:', name
+      )
+
       this.dispatchEvent(new Event('load'))
     })
 
     image.addEventListener('error', event => {
+      console.table({
+        Name: name,
+        Event: 'error'
+      })
+
+      console.error(event.error)
+
       if (image === undefined) throw new Error('Failed to get image during missing texture initialization')
 
-      image.src = this.getTexture('missing').src
+      image.src = this.getTexturePath('missing')
     })
 
     return image
@@ -47,6 +69,10 @@ export class AssetLoader extends EventTarget {
     return this.getTexture(`item/${type}`)
   }
 
+  protected getTileDataPath (type: string): string {
+    return `assets/tiles/${type}.json`
+  }
+
   private readonly rawTileDataCache = new Map<string, Promise<RawTileData>>()
   public async getRawTileData (type: string): Promise<RawTileData> {
     const cache = this.rawTileDataCache
@@ -56,7 +82,8 @@ export class AssetLoader extends EventTarget {
     if (tile !== undefined) return await tile
 
     tile = (async () => {
-      const response = await fetch(`assets/tiles/${type}.json`)
+      const path = this.getTileDataPath(type)
+      const response = await fetch(path)
 
       return await response.json()
     })()
