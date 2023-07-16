@@ -1,10 +1,11 @@
 import type Structure from '../structures/base'
 import type Vec2 from '../../public/engine/util/vec2'
-import { Tile, TileInstance, type TileProperties } from './base'
+import { Tile, TileInstance, type TileType, type TileProperties } from './base'
 import { StructureHelper } from '../structures/handler'
 
 export interface StructureTileProperties {
   structure?: Structure
+  safeTiles: Set<TileType>
 }
 
 export class StructureTile extends Tile<StructureTileProperties> {
@@ -12,6 +13,13 @@ export class StructureTile extends Tile<StructureTileProperties> {
     return new StructureTile({
       ...this.properties,
       structure
+    })
+  }
+
+  public setSafeTiles (safeTiles: Set<TileType>): StructureTile {
+    return new StructureTile({
+      ...this.properties,
+      safeTiles
     })
   }
 
@@ -24,6 +32,9 @@ export class StructureTileInstance extends TileInstance<StructureTileProperties>
   type = 'structure'
 
   protected createHelper (position: Vec2): StructureHelper {
+    const properties = this.properties
+    const tiles = properties.safeTiles
+
     const world = this.getWorld()
 
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -34,7 +45,14 @@ export class StructureTileInstance extends TileInstance<StructureTileProperties>
       position.y,
       {
         setTile (tile: Tile, x: number, y: number) {
-          world.setTile(tile.instance(), position.offset(x, y), true, true)
+          const offsetedPosition = position.offset(x, y)
+
+          const offsetedTile = world.getTile(offsetedPosition)
+          const offsetedTileType = offsetedTile?.type
+
+          if (offsetedTileType !== undefined && !tiles.has(offsetedTileType)) return
+
+          world.setTile(tile.instance(), offsetedPosition, true, true)
         },
         // TODO: Set the structure without setting a structure tile
         setStructure (structure: Structure, x: number, y: number) {

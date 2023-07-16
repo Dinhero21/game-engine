@@ -14,7 +14,11 @@ export const Tiles = {
   dirt: new DirtTile({}),
   grass: new GrassTile({}),
   structure: new StructureTile({
-    structure: undefined
+    structure: undefined,
+    safeTiles: new Set([
+      'structure',
+      'air'
+    ])
   }),
   leaves: new LeavesTile({}),
   trunk: new TrunkTile({})

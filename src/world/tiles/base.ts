@@ -2,6 +2,8 @@ import type Vec2 from '../../public/engine/util/vec2'
 import type Chunk from '../chunk'
 import { type World } from '..'
 
+export type TileType = string
+
 export interface TileProperties {
   chunk: Chunk
   position: Vec2
@@ -18,7 +20,7 @@ export abstract class Tile<Properties = any> {
 }
 
 export abstract class TileInstance<Properties = any> {
-  public readonly abstract type: string
+  public readonly abstract type: TileType
 
   protected readonly properties: Properties
 

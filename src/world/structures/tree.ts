@@ -16,10 +16,14 @@ export class TreeStructure extends Structure<TreeStructureProperties> {
   }
 
   public create (helper: StructureHelper): void {
+    this.createTrunk(helper)
+    this.createLeaves(helper)
+  }
+
+  public createLeaves (helper: StructureHelper): void {
     const properties = this.properties
     const height = properties.height
 
-    // Leaves
     const radius = 2
 
     const structure = Structures.disk
@@ -28,8 +32,12 @@ export class TreeStructure extends Structure<TreeStructureProperties> {
       .setTile(Tiles.leaves)
 
     helper.setStructure(structure, 0, -height)
+  }
 
-    // Trunk
+  protected createTrunk (helper: StructureHelper): void {
+    const properties = this.properties
+    const height = properties.height
+
     for (let i = 0; i < height; i++) {
       helper.setTile(Tiles.trunk, 0, -i)
     }

@@ -18,6 +18,18 @@ export function lerp2D (a: Vec2, b: Vec2, t: number): Vec2 {
   )
 }
 
+export function randomRange (start: number, end: number): number {
+  return lerp(start, end, Math.random())
+}
+
+export function randomInt (start: number, end: number): number {
+  return Math.floor(randomRange(start, end))
+}
+
+export function chance (chance: number): boolean {
+  return Math.random() < chance
+}
+
 // PRNG
 export function randomFromNumber (seed: number): number {
   const a = 56041356

@@ -1,8 +1,10 @@
 import type Vec2 from '../../public/engine/util/vec2'
+import type Structure from '../structures/base'
 import { Noise2D, DistortedNoise } from './noise'
 import { type Tile } from '../tiles/base'
 import Tiles from '../tiles'
 import Structures from '../structures'
+import { chance, randomInt } from '../../public/engine/util/math'
 
 const DISTORTION_SCALE = 0.001
 const DISTORTION_STRENGTH = 10
@@ -66,6 +68,17 @@ export class WorldGen {
     return Tiles.air
   }
 
+  protected getDecorator (): Structure {
+    const height = chance(0.3)
+      // Bush
+      ? randomInt(0, 1)
+      // Tree
+      : randomInt(3, 7)
+
+    return Structures.tree
+      .setHeight(height)
+  }
+
   protected _getTile (tileTilePosition: Vec2): Tile {
     const groundTile = this.getGroundTile(tileTilePosition)
 
@@ -78,13 +91,10 @@ export class WorldGen {
 
     if (Math.random() > 0.1) return groundTile
 
-    // Decorations
+    const structure = this.getDecorator()
 
-    const structure = Structures.tree
-    const tile = Tiles.structure
+    return Tiles.structure
       .setStructure(structure)
-
-    return tile
   }
 
   public getTile (tileTilePosition: Vec2): Tile {
