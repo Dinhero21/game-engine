@@ -9,6 +9,7 @@ import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization'
 import { positionToTilePosition } from '../engine/util/tilemap/position-conversion'
 import Scene from '../engine/scene'
 import Loop from '../engine/util/loop'
+import globals from '../globals'
 import io from 'socket.io-client'
 
 const GamePerformance = {
@@ -28,6 +29,14 @@ window.GamePerformance = GamePerformance
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   let running = true
+
+  window.addEventListener('error', event => {
+    running = false
+
+    const error = event.error
+
+    prettyPrintError(error)
+  })
 
   const socket: Socket = io()
 
@@ -55,26 +64,16 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
     if (!running) return
 
-    try {
-      const start = performance.now()
+    const start = performance.now()
 
-      scene.update(delta)
+    scene.update(delta)
 
-      const end = performance.now()
+    const end = performance.now()
 
-      const updateTime = (end - start) / 1000
+    const updateTime = (end - start) / 1000
 
-      const averageUpdateTime = GamePerformance.averageUpdateTime
-      GamePerformance.averageUpdateTime = lerp(averageUpdateTime, updateTime, 0.1)
-    } catch (error) {
-      if (!(error instanceof Error)) throw error as any
-
-      prettyPrintError(error)
-
-      running = false
-
-      throw error
-    }
+    const averageUpdateTime = GamePerformance.averageUpdateTime
+    GamePerformance.averageUpdateTime = lerp(averageUpdateTime, updateTime, 0.1)
 
     const mousePosition = scene.getMouseViewportPosition()
 
@@ -88,25 +87,50 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
     if (!running) return
 
-    try {
-      const start = performance.now()
+    const start = performance.now()
 
-      camera.render()
+    camera.render()
 
-      const end = performance.now()
+    const end = performance.now()
 
-      const drawTime = (end - start) / 1000
+    const drawTime = (end - start) / 1000
 
-      const averageDrawTime = GamePerformance.averageDrawTime
-      GamePerformance.averageDrawTime = lerp(averageDrawTime, drawTime, 0.1)
-    } catch (error) {
-      if (!(error instanceof Error)) throw error as any
+    const averageDrawTime = GamePerformance.averageDrawTime
+    GamePerformance.averageDrawTime = lerp(averageDrawTime, drawTime, 0.1)
 
-      prettyPrintError(error)
+    if (!globals.experiments['3d']) return
 
-      running = false
+    const canvas = context.canvas
 
-      throw error
+    const buffer = new OffscreenCanvas(canvas.width, canvas.height)
+
+    const bufferContext = buffer.getContext('2d')
+
+    if (bufferContext === null) return
+
+    context.strokeStyle = 'red'
+    context.lineWidth = 1
+    context.strokeRect(0, 0, canvas.width, canvas.height)
+
+    bufferContext.drawImage(canvas, 0, 0)
+
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    context.imageSmoothingEnabled = false
+
+    for (let i = -0.1; i < 0; i += 0.001) {
+      const zoom = i
+
+      const x = Math.floor(canvas.width * zoom)
+      const y = Math.floor(canvas.height * zoom)
+
+      context.drawImage(
+        buffer,
+        0, 0,
+        canvas.width, canvas.height,
+        -x, -y,
+        canvas.width + x * 2, canvas.height + y * 2
+      )
     }
   })
 
@@ -142,28 +166,19 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   return scene
 
   function prettyPrintError (error: Error): void {
-    let i = 0
-    let linesDrawn = 0
-
     Loop.draw()(delta => {
-      i += delta * 36
-
-      context.font = '32px cursive'
-      context.fillStyle = `hsl(${i},100%,50%)`
+      context.font = '32px monospace'
+      context.fillStyle = 'red'
 
       const stack = error.stack ?? 'undefined'
       const lines = stack.split('\n')
 
-      for (let i = 0; i < lines.length && i < linesDrawn; i++) {
+      for (let i = 0; i < lines.length; i++) {
         const line = lines[i]
         const y = (i + 1) * 32
 
         context.fillText(line, 0, y)
       }
     })
-
-    setInterval(() => {
-      linesDrawn++
-    }, 10)
   }
 }

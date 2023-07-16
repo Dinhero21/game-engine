@@ -24,10 +24,15 @@ export const Debug = {
   }
 }
 
+export const Experiments = {
+  '3d': false
+}
+
 export const globals = {
   camera: Camera,
   frame: Frame,
-  debug: Debug
+  debug: Debug,
+  experiments: Experiments
 }
 
 declare global {
