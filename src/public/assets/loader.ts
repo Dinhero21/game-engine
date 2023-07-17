@@ -22,7 +22,6 @@ export class AssetLoader extends EventTarget {
     if (image !== undefined) return image
 
     image = new Image()
-    image.src = `assets/textures/${name}.png`
 
     cache.set(name, image)
 
@@ -35,6 +34,8 @@ export class AssetLoader extends EventTarget {
 
       image.src = this.getTexture('missing').src
     })
+
+    image.src = `assets/textures/${name}.png`
 
     return image
   }
