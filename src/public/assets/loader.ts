@@ -28,7 +28,6 @@ export class AssetLoader extends EventTarget {
     console.log('Requesting texture:', name)
 
     image = new Image()
-    image.src = this.getTexturePath(name)
 
     cache.set(name, image)
 
@@ -57,6 +56,8 @@ export class AssetLoader extends EventTarget {
 
       image.src = this.getTexturePath('missing')
     })
+
+    image.src = this.getTexturePath(name)
 
     return image
   }
