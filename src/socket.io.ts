@@ -46,7 +46,7 @@ export interface InterServerEvents {}
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SocketData {}
 
-export type IServerSocket = ServerSocket<ServerToClientEvents, ClientToServerEvents>
+export type IServerSocket = ServerSocket<ClientToServerEvents, ServerToClientEvents>
 
 export type IClientSocket = ClientSocket<ServerToClientEvents, ClientToServerEvents>
 

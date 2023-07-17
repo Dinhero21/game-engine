@@ -1,13 +1,5 @@
 import type Entity from '../entities'
-import { type ExtractKeys } from '../util/types'
-
-export type AnyFunction = (...args: any[]) => any
-
-export type MaybeReturnType<T> = T extends (...args: any[]) => infer R ? R : any
-export type MaybeParameters<T> = T extends AnyFunction ? Parameters<T> : any
-export type MaybeFunction<T> = (...args: MaybeParameters<T>) => MaybeReturnType<T>
-
-export type FunctionKeys<T> = ExtractKeys<T, AnyFunction>
+import { type AnyFunction, type FunctionKeys } from '../util/types'
 
 export function isFunction (value: any): value is AnyFunction {
   return typeof value === 'function'

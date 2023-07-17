@@ -1,0 +1,19 @@
+{
+	"New Plugin": {
+		"scope": "typescript",
+		"prefix": "newplugin",
+		"body": [
+			"import Plugin from './base'",
+			"import { type IServerSocket as ISocket } from '../socket.io'",
+			"",
+			"export class $1Plugin extends Plugin {",
+			"  public onConnection (socket: ISocket): void {",
+			"    socket.emit('chat.message', 'Example Plugin!')",
+			"  }",
+			"}",
+			"",
+			"export default $1Plugin"
+		],
+		"description": "Creates new server-side plugin"
+	}
+}
