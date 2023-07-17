@@ -50,7 +50,15 @@ export class ChatPlugin extends Plugin {
 
     const helper = new CommandHelper(this.manager, args, sender)
 
-    f.call(this, helper)
+    try {
+      f.call(this, helper)
+    } catch (error) {
+      const string = String(error)
+
+      for (const line of string.split('\n')) {
+        this.emitMessage(line)
+      }
+    }
   }
 }
 
