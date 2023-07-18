@@ -191,14 +191,9 @@ export class ChatTextInputEntity extends TextEntity {
     const size = collider.getSize()
 
     frame.drawRectRGBA(
-      position.x,
-      position.y,
-      size.x,
-      size.y,
-      0,
-      0,
-      0,
-      0.25
+      position.x, position.y,
+      size.x, size.y,
+      0, 0, 0, 0.25
     )
 
     const prefix = this.prefix
@@ -226,6 +221,8 @@ export class ChatTextInputEntity extends TextEntity {
     if (boundingBox === undefined) return textPosition
 
     const width = this.width
+
+    if (width === undefined) return textPosition
 
     const boundingBoxPositon = boundingBox.getPosition()
     const boundingBoxSize = boundingBox.getSize()

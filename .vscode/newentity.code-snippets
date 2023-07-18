@@ -1,0 +1,16 @@
+{
+	"New Entity": {
+		"scope": "typescript",
+		"prefix": "newentity",
+		"body": [
+			"import Entity from './engine/entities'",
+			"",
+			"export class $1Entity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {",
+			"",
+			"}",
+			"",
+			"export default $1Entity"
+		],
+		"description": "Creates new client-side entity"
+	}
+}

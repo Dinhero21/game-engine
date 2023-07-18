@@ -28,7 +28,11 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
     const position = collider.getPosition()
     const size = collider.getSize()
 
-    frame.drawRectRGBA(position.x, position.y, size.x, size.y, color[0], color[1], color[2], color[3])
+    frame.drawRectRGBA(
+      position.x, position.y,
+      size.x, size.y,
+      color[0], color[1], color[2], color[3]
+    )
 
     super.draw(frame)
   }

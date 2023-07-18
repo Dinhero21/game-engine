@@ -1,4 +1,4 @@
-import ChatMessageEntity from './message'
+import ChatMessageEntity, { type Overflow } from './message'
 import { type TextOptions } from '../../../../../engine/entities/text'
 import VerticalContainerEntity from '../../../../../engine/entities/vertical-container'
 import align from '../../../../../engine/patches/align'
@@ -18,14 +18,18 @@ export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMess
   public addMessage (text: string): void {
     const options = this.options
 
-    const entity = new ChatMessageEntity(options)
-    this.addChild(entity)
+    let overflow: Overflow = text
 
-    entity.text = text
+    while (overflow !== undefined && overflow.length > 0) {
+      const entity = new ChatMessageEntity(options)
+      this.addChild(entity)
 
-    setTimeout(() => {
-      entity.fadeOut()
-    }, 5000)
+      overflow = entity.addText(overflow)
+
+      setTimeout(() => {
+        entity.fadeOut()
+      }, 5000)
+    }
   }
 }
 

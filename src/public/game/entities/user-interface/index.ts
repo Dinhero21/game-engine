@@ -69,9 +69,9 @@ export class UserInterfaceEntity extends ViewportEntity {
     }, true)
 
     const chat = new ChatEntity({
-      width: 496,
+      width: 480,
       height: 32,
-      maxWidth: 496
+      maxWidth: 480
     })
     bottomUi.addChild(chat)
 

@@ -8,7 +8,7 @@ export interface TextOptions {
   size?: number
   type?: string
   style?: string
-  width: number
+  width?: number
   height: number
   maxWidth?: number
 }
@@ -39,6 +39,17 @@ export class TextEntity extends Entity<never> {
     this.width = options.width
     this.height = options.height
     this.maxWidth = options.maxWidth
+  }
+
+  public configureContext (): void {
+    const canvas = this.canvas
+    const context = canvas.getContext('2d')
+
+    if (context === null) return
+
+    context.font = `${String(this.fontSize)}px ${this.fontType}`
+    context.fillStyle = this.fillStyle
+    context.textBaseline = this.baseline
   }
 
   protected getMetrics (): TextMetrics | undefined {
@@ -102,8 +113,16 @@ export class TextEntity extends Entity<never> {
 
   // TODO: Make collider adjust with options
   public getConstantCollider (): RectangularCollider {
-    const width = this.width
+    let width = this.width
     const height = this.height
+
+    if (width === undefined) {
+      const metrics = this.getMetrics()
+
+      if (metrics === undefined) throw new Error('metrics undefined')
+
+      width = metrics.width
+    }
 
     return new RectangularCollider(
       new Vec2(0, 0),
@@ -120,27 +139,38 @@ export class TextEntity extends Entity<never> {
     // ? Should I throw an error here?
     if (context === null) return
 
-    canvas.width = this.width
-    canvas.height = this.height
+    this.configureContext()
 
-    context.font = `${String(this.fontSize)}px ${this.fontType}`
-    context.fillStyle = this.fillStyle
-    context.textBaseline = this.baseline
+    const textBoundingBox = this.getTextBoundingBox()
+
+    if (textBoundingBox === undefined) return
+
+    const textBoundingBoxPosition = textBoundingBox.getPosition()
+    const textBoundingBoxSize = textBoundingBox.getSize()
+
+    canvas.width = textBoundingBoxSize.x
+    canvas.height = textBoundingBoxSize.y
+
+    this.configureContext()
 
     context.clearRect(0, 0, canvas.width, canvas.height)
-
-    const textPosition = this.getTextPosition()
 
     const text = this.text
     const maxWidth = this.maxWidth
 
-    context.fillText(text, textPosition.x, textPosition.y, maxWidth)
+    context.fillText(text, -textBoundingBoxPosition.x, -textBoundingBoxPosition.y, maxWidth)
 
     // * You can not render a canvas that has 0 width or height
 
     if (canvas.height === 0 || canvas.width === 0) return
 
-    frame._drawImage(canvas, 0, 0)
+    const textPosition = this.getTextPosition()
+
+    frame._drawImage(
+      canvas,
+      textPosition.x + textBoundingBoxPosition.x,
+      textPosition.y + textBoundingBoxPosition.y
+    )
   }
 }
 
