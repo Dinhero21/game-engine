@@ -3,6 +3,7 @@ import ChatMessageTextEntity from './text'
 import HorizontalContainerEntity from '../../../../../../engine/entities/horizontal-container'
 import { type TextOptions } from '../../../../../../engine/entities/text'
 import Vec2 from '../../../../../../engine/util/vec2'
+import { merge } from 'lodash'
 
 const FADE_TIME = 1
 
@@ -34,11 +35,13 @@ export class ChatMessageEntity extends HorizontalContainerEntity<ChatMessageText
     return width > maxWidth
   }
 
-  public addText (text: Text): Overflow {
-    const options = this.options
+  public addText (text: Text, options?: Partial<TextOptions>): Overflow {
+    const fullOptions = structuredClone(this.options)
+
+    if (options !== undefined) merge(fullOptions, options)
 
     const entity = new ChatMessageTextEntity({
-      ...options,
+      ...fullOptions,
       maxWidth: undefined
     })
     this.addChild(entity)

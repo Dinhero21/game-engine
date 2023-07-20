@@ -1,8 +1,27 @@
-import ChatMessageEntity, { type Overflow } from './message'
+import ChatMessageEntity, { type Text, type Overflow } from './message'
 import { type TextOptions } from '../../../../../engine/entities/text'
 import VerticalContainerEntity from '../../../../../engine/entities/vertical-container'
 import align from '../../../../../engine/patches/align'
 import Vec2 from '../../../../../engine/util/vec2'
+import { MarkupParser } from '../../../../util/chat'
+
+const parser = new MarkupParser({
+  dataParser (data) {
+    const sections = data.split(':')
+
+    const sectionCount = sections.length
+    if (sectionCount !== 2) throw new SyntaxError(`Malformed chat message : Expected 2 sections, got ${sectionCount}`)
+
+    const key = sections[0]
+    let value: string | number = sections[1]
+
+    const numberValue = Number(value)
+
+    if (!isNaN(numberValue)) value = numberValue
+
+    return { key, value }
+  }
+})
 
 export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMessageEntity> {
   private readonly options
@@ -15,20 +34,59 @@ export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMess
     align(this, new Vec2(0, 1), true)
   }
 
-  public addMessage (text: string): void {
-    const options = this.options
+  public appendText (text: string, options?: Partial<TextOptions>): void {
+    let overflow: Overflow = text;
 
-    let overflow: Overflow = text
+    (() => {
+      const children = this.getChildren()
+      const lastChild = children[children.length - 1]
 
-    while (overflow !== undefined && overflow.length > 0) {
-      const entity = new ChatMessageEntity(options)
+      if (lastChild === undefined) return
+
+      overflow = lastChild.addText(overflow, options)
+    })()
+
+    while (overflow !== undefined) {
+      const entity = new ChatMessageEntity(this.options)
       this.addChild(entity)
 
-      overflow = entity.addText(overflow)
+      overflow = entity.addText(overflow, options)
 
       setTimeout(() => {
         entity.fadeOut()
       }, 5000)
+    }
+  }
+
+  public appendLine (options: TextOptions): ChatMessageEntity {
+    const entity = new ChatMessageEntity(options)
+    this.addChild(entity)
+
+    return entity
+  }
+
+  public addMessage (raw: Text): void {
+    const components = parser.getComponents(raw)
+
+    let options = this.options
+
+    this.appendLine(options)
+
+    for (const component of components) {
+      switch (component.type) {
+        case 'data':
+          const data = component.data
+          const { key, value } = data
+
+          options = {
+            ...options,
+            [key]: value
+          }
+          break
+        case 'text':
+          this.appendText(component.text, options)
+          break
+      }
     }
   }
 }

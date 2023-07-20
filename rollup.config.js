@@ -14,7 +14,7 @@ export default {
     }),
     commonjs(),
     babel({
-      include: ['node_modules/**'],
+      // include: ['node_modules/**'],
       babelHelpers: 'bundled',
       presets: ['@babel/preset-env']
     })
