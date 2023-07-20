@@ -71,15 +71,13 @@ export class ChatMessageEntity extends HorizontalContainerEntity<ChatMessageText
 
     if (!this.fadingOut) return
 
-    this.opacity -= delta / FADE_TIME
+    this.alpha -= delta / FADE_TIME
 
-    const opacity = this.opacity
+    const alpha = this.alpha
 
-    for (const child of this.children) {
-      child.fillStyle = `rgba(255,255,255,${opacity})`
-    }
+    for (const child of this.children) child.alpha = alpha
 
-    if (opacity <= 0) this.parent?.removeChild(this)
+    if (alpha <= 0) this.parent?.removeChild(this)
   }
 
   public draw (frame: Frame): void {
@@ -90,19 +88,19 @@ export class ChatMessageEntity extends HorizontalContainerEntity<ChatMessageText
     const options = this.options
     const width = options.width
 
-    const opacity = this.opacity
+    const alpha = this.alpha
 
     frame.drawRectRGBA(
       position.x, position.y,
       width ?? size.x, size.y,
-      0, 0, 0, 0.25 * opacity
+      0, 0, 0, 0.25 * alpha
     )
 
     super.draw(frame)
   }
 
   protected fadingOut: boolean = false
-  protected opacity: number = 1
+  protected alpha: number = 1
 
   public fadeOut (): void {
     this.fadingOut = true

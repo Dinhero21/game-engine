@@ -3,14 +3,20 @@ import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Vec2 from '../util/vec2'
 
+export interface FontOptions {
+  style?: string
+  weight?: string
+  size?: number
+  family?: string
+}
+
 export interface TextOptions {
   baseline?: CanvasTextBaseline
-  size?: number
-  type?: string
   style?: string
   width?: number
   height: number
   maxWidth?: number
+  font?: FontOptions
 }
 
 // TODO: Metrics Caching
@@ -18,11 +24,16 @@ export interface TextOptions {
 export class TextEntity extends Entity<never> {
   protected canvas = new OffscreenCanvas(0, 0)
 
+  public alpha: number = 1
+
   public text: string = ''
   public baseline: CanvasTextBaseline = 'middle'
-  public fontSize = 24
-  public fontType = 'monospace'
   public fillStyle = 'white'
+
+  public fontStyle = 'normal'
+  public fontWeight = 'normal'
+  public fontSize = 24
+  public fontFamily = 'monospace'
 
   public width
   public height
@@ -32,9 +43,16 @@ export class TextEntity extends Entity<never> {
     super()
 
     if (options.baseline !== undefined) this.baseline = options.baseline
-    if (options.size !== undefined) this.fontSize = options.size
-    if (options.type !== undefined) this.fontType = options.type
     if (options.style !== undefined) this.fillStyle = options.style
+
+    const font = options.font
+
+    if (font !== undefined) {
+      if (font.style !== undefined) this.fontStyle = font.style
+      if (font.weight !== undefined) this.fontWeight = font.weight
+      if (font.size !== undefined) this.fontSize = font.size
+      if (font.family !== undefined) this.fontFamily = font.family
+    }
 
     this.width = options.width
     this.height = options.height
@@ -47,7 +65,19 @@ export class TextEntity extends Entity<never> {
 
     if (context === null) return
 
-    context.font = `${String(this.fontSize)}px ${this.fontType}`
+    const fontStyle = this.fontStyle
+    const fontWeight = this.fontWeight
+    const fontSize = String(this.fontSize) + 'px'
+    const fontFamily = this.fontFamily
+
+    const font = [
+      fontStyle,
+      fontWeight,
+      fontSize,
+      fontFamily
+    ].join(' ')
+
+    context.font = font
     context.fillStyle = this.fillStyle
     context.textBaseline = this.baseline
   }
@@ -165,6 +195,10 @@ export class TextEntity extends Entity<never> {
     if (canvas.height === 0 || canvas.width === 0) return
 
     const textPosition = this.getTextPosition()
+
+    const alpha = this.alpha
+
+    frame.setAlpha(alpha)
 
     frame._drawImage(
       canvas,

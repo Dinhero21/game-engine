@@ -4,6 +4,7 @@ import VerticalContainerEntity from '../../../../../engine/entities/vertical-con
 import align from '../../../../../engine/patches/align'
 import Vec2 from '../../../../../engine/util/vec2'
 import { MarkupParser } from '../../../../util/chat'
+import { set } from 'lodash'
 
 const parser = new MarkupParser({
   dataParser (data) {
@@ -12,7 +13,8 @@ const parser = new MarkupParser({
     const sectionCount = sections.length
     if (sectionCount !== 2) throw new SyntaxError(`Malformed chat message : Expected 2 sections, got ${sectionCount}`)
 
-    const key = sections[0]
+    const rawKey = sections[0]
+    const key = rawKey.split('.')
     let value: string | number = sections[1]
 
     const numberValue = Number(value)
@@ -73,6 +75,7 @@ export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMess
     const components = parser.getComponents(raw)
 
     let options = this.options
+    options = structuredClone(options)
 
     this.appendLine(options)
 
@@ -82,10 +85,7 @@ export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMess
           const data = component.data
           const { key, value } = data
 
-          options = {
-            ...options,
-            [key]: value
-          }
+          set(options, key, value)
           break
         case 'text':
           this.appendText(component.text, options)

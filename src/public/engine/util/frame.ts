@@ -83,6 +83,22 @@ export class Frame {
     return this
   }
 
+  public setAlpha (globalAlpha: HTMLRenderingContext2D['globalAlpha']): this {
+    const queue = this.queue
+
+    queue.push(context => {
+      if (context instanceof Frame) {
+        context.setAlpha(globalAlpha)
+
+        return
+      }
+
+      context.globalAlpha = globalAlpha
+    })
+
+    return this
+  }
+
   // Context methods
 
   public _fillRect (x: number, y: number, w: number, h: number): this {
