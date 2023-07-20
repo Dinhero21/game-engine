@@ -62,6 +62,10 @@ export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMess
     const entity = new ChatMessageEntity(options)
     this.addChild(entity)
 
+    setTimeout(() => {
+      entity.fadeOut()
+    }, 5000)
+
     return entity
   }
 
