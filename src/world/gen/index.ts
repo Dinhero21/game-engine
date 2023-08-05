@@ -1,27 +1,27 @@
 import type Vec2 from '../../public/engine/util/vec2'
 import type Structure from '../structures/base'
-import { Noise2D, DistortedNoise } from './noise'
+import { Noise2D, DistortedNoise, Noise } from './noise'
 import { type Tile } from '../tiles/base'
 import Tiles from '../tiles'
 import Structures from '../structures'
 import { chance, randomInt } from '../../public/engine/util/math'
 
-const DISTORTION_SCALE = 0.001
-const DISTORTION_STRENGTH = 10
-const NOISE_SCALE = 0.03
-const NOISE_STRENGTH = 10
-
 // TODO: Use x, y
 export class WorldGen {
   protected readonly distortion = new Noise2D({
-    scale: DISTORTION_SCALE,
-    strength: DISTORTION_STRENGTH
+    scale: 0.001,
+    strength: 10
   })
 
   protected readonly noise = new DistortedNoise({
-    scale: NOISE_SCALE,
-    strength: NOISE_STRENGTH
+    scale: 0.03,
+    strength: 10
   }, this.distortion)
+
+  protected readonly caveNoise = new Noise({
+    scale: 0.01,
+    strength: 1
+  })
 
   protected getNoise (tilePosition: Vec2): number {
     return this.noise.get(tilePosition)
@@ -33,7 +33,21 @@ export class WorldGen {
     return noise + tilePosition.y
   }
 
+  protected getCaveNoise (tilePosition: Vec2): number {
+    return this.caveNoise.get(tilePosition)
+  }
+
+  protected getCaveDensity (tilePosition: Vec2): number {
+    const noise = this.getCaveNoise(tilePosition)
+
+    return Math.abs(noise) - (tilePosition.y / 1000 + 0.1)
+  }
+
   protected getFloorTile (tilePosition: Vec2): Tile {
+    if (this.getCaveDensity(tilePosition) <= 0) {
+      return Tiles.air
+    }
+
     if (this.getDensity(tilePosition.offset(0, -1)) <= 0) {
       return Tiles.grass
     }
