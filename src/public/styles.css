@@ -10,6 +10,6 @@ body {
   z-index: -1;
 }
 
-#stats-container {
-  float: right;
+#stat-container {
+  position: absolute;
 }

@@ -11,8 +11,10 @@ import Loop from '../engine/util/loop'
 import globals from '../globals'
 import io from 'socket.io-client'
 import Stats from 'stats.js'
+import { GUI } from 'dat.gui'
+import _ from 'lodash'
 
-const container = document.getElementById('stats-container')
+const statContainer = document.getElementById('stat-container')
 
 export function createStat (name: string): Stats {
   const stat = new Stats()
@@ -26,12 +28,40 @@ export function createStat (name: string): Stats {
 
   dom.prepend(text)
 
-  container?.appendChild(dom)
+  statContainer?.appendChild(dom)
 
   return stat
 }
 
+export function populateGUI<Parent extends Record<any, any> = Record<any, any>> (gui: GUI, parent: Parent, key?: keyof Parent): void {
+  for (const [parentKey, value] of Object.entries(parent)) {
+    if (typeof value === 'object') {
+      const folder = gui.addFolder(title(parentKey))
+
+      populateGUI(folder, value, parentKey)
+
+      continue
+    }
+
+    gui.add(parent, parentKey)
+      .name(title(parentKey))
+  }
+
+  function title (camel: string): string {
+    return camel
+      .toLowerCase()
+      .replace('_', ' ')
+      .replace(/\b\w/g, _.upperCase)
+  }
+}
+
 export default function createScene (context: CanvasRenderingContext2D): Scene {
+  const gui = new GUI({ name: 'Debug' })
+
+  populateGUI(gui, globals)
+
+  document.body.appendChild(gui.domElement)
+
   let running = true
 
   window.addEventListener('error', event => {
@@ -127,6 +157,25 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
       )
     }
   })
+
+  const stat = gui.addFolder('Stat.js')
+
+  const stats = {
+    Update: false,
+    Draw: false
+  }
+
+  stat.add(stats, 'Update')
+    .onChange(state => {
+      updateStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
+    })
+    .setValue(stats.Update)
+
+  stat.add(stats, 'Draw')
+    .onChange(state => {
+      drawStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
+    })
+    .setValue(stats.Draw)
 
   const world = new WorldEntity(socket)
   scene.addChild(world)
