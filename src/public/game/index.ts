@@ -4,28 +4,32 @@ import WorldEntity from './entities/world'
 import UserInterfaceEntity from './entities/user-interface'
 import DebugEntity from './entities/debug'
 import { ViewportGenerators } from '../engine/camera'
-import { lerp } from '../engine/util/math'
 import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization'
 import { positionToTilePosition } from '../engine/util/tilemap/position-conversion'
 import Scene from '../engine/scene'
 import Loop from '../engine/util/loop'
 import globals from '../globals'
 import io from 'socket.io-client'
+import Stats from 'stats.js'
 
-const GamePerformance = {
-  averageUpdateDelta: 0,
-  averageDrawDelta: 0,
-  averageUpdateTime: 0,
-  averageDrawTime: 0
+const container = document.getElementById('stats-container')
+
+export function createStat (name: string): Stats {
+  const stat = new Stats()
+  const dom = stat.dom
+
+  dom.style.cssText = 'position:relative;'
+
+  const text = document.createElement('p')
+  text.innerText = name
+  text.style.cssText = 'position:absolute;color:white'
+
+  dom.prepend(text)
+
+  container?.appendChild(dom)
+
+  return stat
 }
-
-declare global {
-  interface Window {
-    GamePerformance: typeof GamePerformance
-  }
-}
-
-window.GamePerformance = GamePerformance
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
   let running = true
@@ -59,46 +63,34 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const mouseDebug = new DebugEntity('Mouse')
 
+  const updateStat = createStat('update')
+
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
-    const averageUpdateDelta = GamePerformance.averageUpdateDelta
-    GamePerformance.averageUpdateDelta = lerp(averageUpdateDelta, delta, 0.1)
-
     if (!running) return
 
-    const start = performance.now()
+    updateStat.begin()
 
     scene.update(delta)
 
-    const end = performance.now()
-
-    const updateTime = (end - start) / 1000
-
-    const averageUpdateTime = GamePerformance.averageUpdateTime
-    GamePerformance.averageUpdateTime = lerp(averageUpdateTime, updateTime, 0.1)
+    updateStat.end()
 
     const mousePosition = scene.getMouseViewportPosition()
 
     mouseDebug.setViewportPosition(mousePosition)
   })
 
+  const drawStat = createStat('draw')
+
   // Draw = Animation Frames
   Loop.draw()(delta => {
-    const averageDrawDelta = GamePerformance.averageDrawDelta
-    GamePerformance.averageDrawDelta = lerp(averageDrawDelta, delta, 0.1)
-
     if (!running) return
 
-    const start = performance.now()
+    drawStat.begin()
 
     camera.render()
 
-    const end = performance.now()
-
-    const drawTime = (end - start) / 1000
-
-    const averageDrawTime = GamePerformance.averageDrawTime
-    GamePerformance.averageDrawTime = lerp(averageDrawTime, drawTime, 0.1)
+    drawStat.end()
 
     if (!globals.experiments['3d']) return
 

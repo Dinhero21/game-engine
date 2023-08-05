@@ -5,5 +5,11 @@ body {
 }
 
 #view {
+  position: absolute;
   cursor: crosshair;
+  z-index: -1;
+}
+
+#stats-container {
+  float: right;
 }
