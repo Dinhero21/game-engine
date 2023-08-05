@@ -39,7 +39,8 @@
     "eslint-config-standard-with-typescript": "^34.0.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.1",
-    "eslint-plugin-promise": "^6.1.1"
+    "eslint-plugin-promise": "^6.1.1",
+    "rollup-plugin-sourcemaps": "^0.6.3"
   },
   "dependencies": {
     "@babel/cli": "^7.6.4",
@@ -53,6 +54,7 @@
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^25.0.2",
     "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-terser": "^0.4.3",
     "alea": "^1.0.1",
     "babel": "^6.23.0",
     "babel-plugin-add-import-extension": "^1.6.0",

@@ -70,6 +70,8 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
   public update (delta: number): void {
     this.move(delta)
 
+    if (keyboard.isKeyDown('c')) throw new Error('c was pressed')
+
     super.update(delta)
 
     if (this.controllable) {
