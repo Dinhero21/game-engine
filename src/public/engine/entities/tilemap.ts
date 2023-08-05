@@ -139,11 +139,11 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     const startTileX = Math.floor(startX / TILE_SIZE)
     const startTileY = Math.floor(startY / TILE_SIZE)
 
-    const endTileX = Math.floor(endX / TILE_SIZE)
-    const endTileY = Math.floor(endY / TILE_SIZE)
+    const endTileX = Math.ceil(endX / TILE_SIZE)
+    const endTileY = Math.ceil(endY / TILE_SIZE)
 
-    for (let x = startTileX; x <= endTileX; x++) {
-      for (let y = startTileY; y <= endTileY; y++) {
+    for (let x = startTileX; x < endTileX; x++) {
+      for (let y = startTileY; y < endTileY; y++) {
         const position = new Vec2(x, y)
         const tile = this.getTile(position)
 
