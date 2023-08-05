@@ -15,22 +15,15 @@ export interface TileRendererTile {
 
 export class Chunk<ValidTile extends Tile = Tile> {
   public tiles = new Map<number, Map<number, ValidTile>>()
-  public boundingBox: RectangularCollider
+  public boundingBox
 
   protected getTiles (): Map<Vec2, ValidTile> {
     const map = new Map<Vec2, ValidTile>()
 
-    const boundingBox = this.boundingBox
-    const size = boundingBox.getSize()
+    const tiles = this.tiles
 
-    const chunkSize = size.divided(TILE_SIZE)
-
-    for (let x = 0; x < chunkSize.x; x++) {
-      for (let y = 0; y < chunkSize.y; y++) {
-        const tile = this.getTile(x, y)
-
-        if (tile === undefined) continue
-
+    for (const [x, row] of tiles) {
+      for (const [y, tile] of row) {
         map.set(new Vec2(x, y), tile)
       }
     }
@@ -135,55 +128,5 @@ export class Chunk<ValidTile extends Tile = Tile> {
     tiles.set(tilePosition.x, row)
 
     row.set(tilePosition.y, tile)
-  }
-
-  // Collision Detection
-
-  public touching (other: RectangularCollider): boolean {
-    const boundingBox = this.boundingBox
-
-    if (!boundingBox.overlapping(other)) return false
-
-    const position = boundingBox.getPosition()
-
-    other = other.offset(position.scaled(-1))
-
-    return Array.from(this.getTiles())
-      .filter(([tileTilePosition, tile]) => tile.collidable)
-      .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
-      .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
-      .some(collider => collider.touching(other))
-  }
-
-  public overlapping (other: RectangularCollider): boolean {
-    const boundingBox = this.boundingBox
-
-    if (!boundingBox.overlapping(other)) return false
-
-    const position = boundingBox.getPosition()
-
-    other = other.offset(position.scaled(-1))
-
-    return Array.from(this.getTiles())
-      .filter(([tileTilePosition, tile]) => tile.collidable)
-      .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
-      .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
-      .some(collider => collider.overlapping(other))
-  }
-
-  public colliding (other: RectangularCollider): boolean {
-    const boundingBox = this.boundingBox
-
-    if (!boundingBox.overlapping(other)) return false
-
-    const position = boundingBox.getPosition()
-
-    other = other.offset(position.scaled(-1))
-
-    return Array.from(this.getTiles())
-      .filter(([tileTilePosition, tile]) => tile.collidable)
-      .map(([tileTilePosition, tile]) => tilePositionToPosition(tileTilePosition))
-      .map(tilePosition => new RectangularCollider(tilePosition, tileSize))
-      .some(collider => collider.colliding(other))
   }
 }

@@ -4,7 +4,7 @@ import type Tile from '../util/tilemap/tile'
 import Entity from '.'
 import Vec2 from '../util/vec2'
 import { Chunk } from '../util/tilemap/chunk'
-import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition } from '../util/tilemap/position-conversion'
+import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition, TILE_SIZE } from '../util/tilemap/position-conversion'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -126,30 +126,32 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
 
   // Collision Detection
 
-  public touching (other: RectangularCollider): boolean {
-    for (const row of this.getChunks().values()) {
-      for (const chunk of row.values()) {
-        if (chunk.touching(other)) return true
-      }
-    }
-
-    return false
-  }
-
   public overlapping (other: RectangularCollider): boolean {
-    for (const row of this.getChunks().values()) {
-      for (const chunk of row.values()) {
-        if (chunk.overlapping(other)) return true
-      }
-    }
+    const position = other.getPosition()
+    const size = other.getSize()
 
-    return false
-  }
+    const startX = position.x
+    const startY = position.y
 
-  public colliding (other: RectangularCollider): boolean {
-    for (const row of this.getChunks().values()) {
-      for (const chunk of row.values()) {
-        if (chunk.colliding(other)) return true
+    const endX = position.x + size.x
+    const endY = position.y + size.y
+
+    const startTileX = Math.floor(startX / TILE_SIZE)
+    const startTileY = Math.floor(startY / TILE_SIZE)
+
+    const endTileX = Math.floor(endX / TILE_SIZE)
+    const endTileY = Math.floor(endY / TILE_SIZE)
+
+    for (let x = startTileX; x <= endTileX; x++) {
+      for (let y = startTileY; y <= endTileY; y++) {
+        const position = new Vec2(x, y)
+        const tile = this.getTile(position)
+
+        if (tile === undefined) continue
+
+        if (!tile.collidable) continue
+
+        return true
       }
     }
 
