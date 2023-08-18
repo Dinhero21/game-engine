@@ -1,33 +1,24 @@
-import type { IServerServer as IServer } from './socket.io'
-import { PluginManager } from './plugins/manager'
-import url from 'url'
-import path from 'path'
-import http from 'http'
-import { Server } from 'socket.io'
-import express from 'express'
+import fs from 'fs/promises'
+import path, { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const __filename = url.fileURLToPath(import.meta.url)
-
+const __filename = fileURLToPath(import.meta.url)
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const __dirname = path.dirname(__filename)
+const __dirname = dirname(__filename)
 
-const PORT = process.env.PORT ?? 8080
+const PLUGIN_DIR_PATH = join(__dirname, 'plugin')
 
-const app = express()
+const promises = []
 
-app.use(express.static(path.join(__dirname, 'public')))
+for (const file of await fs.readdir(PLUGIN_DIR_PATH)) {
+  if (path.extname(file) !== '.js') continue
 
-const server = http.createServer(app)
+  promises.push(import(join(PLUGIN_DIR_PATH, file)))
+}
 
-const io: IServer = new Server(server)
+console.time('Loading Plugins')
 
-const manager = new PluginManager(io)
+await Promise.all(promises)
 
-io.on('connection', socket => {
-  manager.emit('onConnection', socket)
-})
-
-server.listen(PORT, () => {
-  console.info(`Server listening on port ${PORT}`)
-})
+console.timeEnd('Loading Plugins')

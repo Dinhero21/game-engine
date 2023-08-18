@@ -1,5 +1,4 @@
-import type Player from '../../../player'
-import { type PluginManager } from '../../manager'
+import type Player from '../player'
 import json5 from 'json5'
 
 export function * parseArgs (data: string): Generator<any, void, unknown> {
@@ -20,12 +19,10 @@ export function * parseArgs (data: string): Generator<any, void, unknown> {
 }
 
 export class CommandHelper {
-  public readonly manager
   public readonly args
   public readonly sender
 
-  constructor (manager: PluginManager, args: unknown[], sender: Player) {
-    this.manager = manager
+  constructor (args: unknown[], sender: Player) {
     this.args = args
     this.sender = sender
   }
