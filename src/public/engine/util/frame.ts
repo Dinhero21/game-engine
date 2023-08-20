@@ -298,7 +298,7 @@ export class Frame {
     return this
   }
 
-  public _drawImage (image: CanvasImageSource | OffscreenCanvas, dx: number, dy: number, dw?: number, dh?: number, imageSmoothingEnabled: boolean = true): this {
+  public _drawImage (image: CanvasImageSource, dx: number, dy: number, dw?: number, dh?: number, imageSmoothingEnabled: boolean = true): this {
     const queue = this.queue
 
     queue.push(context => {

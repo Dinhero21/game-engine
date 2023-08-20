@@ -186,7 +186,10 @@ export class TextEntity extends Entity<never> {
 
     this.configureContext()
 
-    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.clearRect(
+      0, 0,
+      canvas.width, canvas.height
+    )
 
     const text = this.text
     const maxWidth = this.maxWidth

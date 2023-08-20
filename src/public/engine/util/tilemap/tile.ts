@@ -2,7 +2,6 @@ import type Vec2 from '../vec2'
 
 export interface TileRendererData {
   position: Vec2
-  size: Vec2
   nearby: [boolean, boolean, boolean, boolean]
 }
 

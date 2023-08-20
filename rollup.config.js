@@ -22,7 +22,8 @@ PLUGINS.push(
   babel({
     // include: ['node_modules/**'],
     babelHelpers: 'bundled',
-    presets: ['@babel/preset-env']
+    presets: ['@babel/preset-env'],
+    targets: 'last 1 Chrome version'
   })
 )
 

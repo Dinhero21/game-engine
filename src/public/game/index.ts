@@ -100,8 +100,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
-    // performance.mark('update')
-
     AMOUNT_OF_TIMES_UPDATE_WAS_CALLED++
 
     if (!running) return
@@ -135,6 +133,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
     const canvas = context.canvas
 
+    // TODO: Not create a new OffscreenCanvas every frame
     const buffer = new OffscreenCanvas(canvas.width, canvas.height)
 
     const bufferContext = buffer.getContext('2d')
@@ -145,9 +144,15 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     context.lineWidth = 1
     context.strokeRect(0, 0, canvas.width, canvas.height)
 
-    bufferContext.drawImage(canvas, 0, 0)
+    bufferContext.drawImage(
+      canvas,
+      0, 0
+    )
 
-    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.clearRect(
+      0, 0,
+      canvas.width, canvas.height
+    )
 
     context.imageSmoothingEnabled = false
 
@@ -233,12 +238,12 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   }
 }
 
-// setInterval(() => {
-//   console.clear()
+setInterval(() => {
+  console.clear()
 
-//   console.log(`update: ${AMOUNT_OF_TIMES_UPDATE_WAS_CALLED}`)
-//   console.log(`draw: ${AMOUNT_OF_TIMES_DRAW_WAS_CALLED}`)
+  console.log(`update: ${AMOUNT_OF_TIMES_UPDATE_WAS_CALLED}`)
+  console.log(`draw: ${AMOUNT_OF_TIMES_DRAW_WAS_CALLED}`)
 
-//   AMOUNT_OF_TIMES_UPDATE_WAS_CALLED = 0
-//   AMOUNT_OF_TIMES_DRAW_WAS_CALLED = 0
-// }, 1000)
+  AMOUNT_OF_TIMES_UPDATE_WAS_CALLED = 0
+  AMOUNT_OF_TIMES_DRAW_WAS_CALLED = 0
+}, 1000)

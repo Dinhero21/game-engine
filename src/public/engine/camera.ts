@@ -55,6 +55,10 @@ export class Camera {
     this.scene = scene
   }
 
+  // ! See https://stackoverflow.com/questions/63138513/canvas-drawimage-slow-first-time-another-canvas-is-used-as-the-source-argument
+  protected readonly VIEWPORT_CANVAS = new OffscreenCanvas(0, 0)
+  protected readonly VIEWPORT_CONTEXT = this.VIEWPORT_CANVAS.getContext('2d')
+
   public render (): void {
     const scene = this.scene
     const context = scene.context
@@ -75,18 +79,37 @@ export class Camera {
     // Scene -> Frame
     scene.draw(frame)
 
-    const viewportCanvas = new OffscreenCanvas(viewportSize.x, viewportSize.y)
-    const viewportContext = viewportCanvas.getContext('2d')
+    const viewportCanvas = this.VIEWPORT_CANVAS
+    if (viewportCanvas.width !== viewportSize.x) viewportCanvas.width = viewportSize.x
+    if (viewportCanvas.height !== viewportSize.y) viewportCanvas.height = viewportSize.y
 
-    if (viewportContext === null) return
+    const viewportContext = this.VIEWPORT_CONTEXT
+
+    if (viewportContext === null) throw new Error('Failed to get canvas context')
+
+    if (this.clear) {
+      viewportContext.clearRect(
+        0, 0,
+        viewportSize.x, viewportSize.y
+      )
+    }
 
     // Frame -> Camera Context
     frame.draw(viewportContext)
 
-    if (this.clear) context.clearRect(0, 0, canvasSize.x, canvasSize.y)
+    if (this.clear) {
+      context.clearRect(
+        0, 0,
+        canvasSize.x, canvasSize.y
+      )
+    }
 
     // Camera Context -> Context
-    context.drawImage(viewportCanvas, 0, 0, canvasSize.x, canvasSize.y)
+    context.drawImage(
+      viewportCanvas,
+      0, 0,
+      canvasSize.x, canvasSize.y
+    )
   }
 }
 

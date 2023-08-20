@@ -1,11 +1,10 @@
 import type Tile from './tile'
-import { TILE_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion'
+import { CHUNK_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion'
 import Vec2 from '../vec2'
 import RectangularCollider from '../collision/rectangular'
 import { loader } from '../../../assets/loader'
 import { setOrigin } from '../../../game/util/debug'
-
-const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
+import { TILE_TEXTURE_SIZE } from '../../../game/tile'
 
 export interface TileRendererTile {
   position: Vec2
@@ -32,8 +31,8 @@ export class Chunk<ValidTile extends Tile = Tile> {
     return map
   }
 
-  // TODO: Multiple Cache Versions
-  private cache?: ImageBitmap
+  // TODO: Multiple Caches (Animation)
+  private cache?: OffscreenCanvas
 
   public clearCache (): this {
     this.cache = undefined
@@ -41,13 +40,16 @@ export class Chunk<ValidTile extends Tile = Tile> {
     return this
   }
 
-  public getImage (cache: boolean = true): ImageBitmap | undefined {
+  public getImage (cache: boolean = true): OffscreenCanvas | undefined {
     if (cache && this.cache !== undefined) return this.cache
 
-    const boundingBox = this.boundingBox
-    const size = boundingBox.getSize()
+    const CANVAS_SIZE = CHUNK_SIZE * TILE_TEXTURE_SIZE
 
-    const canvas = new OffscreenCanvas(size.x, size.y)
+    const canvas = new OffscreenCanvas(
+      CANVAS_SIZE,
+      CANVAS_SIZE
+    )
+
     const context = canvas.getContext('2d')
 
     // ? Should I warn or throw an Error?
@@ -56,23 +58,40 @@ export class Chunk<ValidTile extends Tile = Tile> {
     context.imageSmoothingEnabled = false
 
     for (const [tileTilePosition, tile] of this.getTiles()) {
-      const tilePosition = tilePositionToPosition(tileTilePosition)
+      const tilePosition = tileTilePosition.scaled(TILE_TEXTURE_SIZE)
 
       // ? Should I make translating and resizing the tile's responsibility?
       tile.render(context, {
         position: tilePosition,
-        size: tileSize,
         nearby: this.getNearby(tileTilePosition.x, tileTilePosition.y)
       })
     }
 
-    const image = canvas.transferToImageBitmap()
+    const boundingBox = this.boundingBox
+    const size = boundingBox.getSize()
 
-    setOrigin(image, `${this.constructor.name}.getImage`)
+    const scaledCanvas = new OffscreenCanvas(
+      size.x,
+      size.y
+    )
 
-    if (cache) this.cache = image
+    setOrigin(scaledCanvas, `${this.constructor.name}.getImage`)
 
-    return image
+    const scaledContext = scaledCanvas.getContext('2d')
+
+    if (scaledContext === null) return
+
+    scaledContext.imageSmoothingEnabled = false
+
+    scaledContext.drawImage(
+      canvas,
+      0, 0,
+      size.x, size.y
+    )
+
+    if (cache) this.cache = scaledCanvas
+
+    return scaledCanvas
   }
 
   protected getNearby (x: number, y: number): [boolean, boolean, boolean, boolean] {

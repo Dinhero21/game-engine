@@ -15,6 +15,10 @@ export class ClippingEntity extends Entity {
     this.size = size
   }
 
+  // ! See https://stackoverflow.com/questions/63138513/canvas-drawimage-slow-first-time-another-canvas-is-used-as-the-source-argument
+  protected readonly CANVAS = setOrigin(new OffscreenCanvas(0, 0), `${this.constructor.name}.draw`)
+  protected readonly CONTEXT = this.CANVAS.getContext('2d')
+
   public getConstantCollider (): RectangularCollider {
     return new RectangularCollider(this.offset, this.size)
   }
@@ -27,16 +31,24 @@ export class ClippingEntity extends Entity {
 
     super.draw(subFrame)
 
-    const canvas = new OffscreenCanvas(size.x, size.y)
+    const canvas = this.CANVAS
+    if (canvas.width !== size.x) canvas.width = size.x
+    if (canvas.height !== size.y) canvas.height = size.y
 
-    setOrigin(canvas, `${this.constructor.name}.draw`)
-
-    const context = canvas.getContext('2d')
+    const context = this.CONTEXT
 
     if (context === null) throw new Error('Failed to get canvas context')
 
+    context.clearRect(
+      0, 0,
+      size.x, size.y
+    )
+
     subFrame.draw(context)
 
+    // This is currently taking over 15 ms to render
+    // slowing the game down to less than 30 ups
+    // TODO: Optimize this
     frame._drawImage(
       canvas,
       0, 0,
