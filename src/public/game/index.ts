@@ -14,6 +14,9 @@ import Stats from 'stats.js'
 import { GUI } from 'dat.gui'
 import _ from 'lodash'
 
+let AMOUNT_OF_TIMES_UPDATE_WAS_CALLED = 0
+let AMOUNT_OF_TIMES_DRAW_WAS_CALLED = 0
+
 const statContainer = document.getElementById('stat-container')
 
 export function createStat (name: string): Stats {
@@ -93,34 +96,40 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const mouseDebug = new DebugEntity('Mouse')
 
-  const updateStat = createStat('update')
+  // const updateStat = createStat('update')
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
+    // performance.mark('update')
+
+    AMOUNT_OF_TIMES_UPDATE_WAS_CALLED++
+
     if (!running) return
 
-    updateStat.begin()
+    // updateStat.begin()
 
     scene.update(delta)
 
-    updateStat.end()
+    // updateStat.end()
 
     const mousePosition = scene.getMouseViewportPosition()
 
     mouseDebug.setViewportPosition(mousePosition)
   })
 
-  const drawStat = createStat('draw')
+  // const drawStat = createStat('draw')
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
+    AMOUNT_OF_TIMES_DRAW_WAS_CALLED++
+
     if (!running) return
 
-    drawStat.begin()
+    // drawStat.begin()
 
     camera.render()
 
-    drawStat.end()
+    // drawStat.end()
 
     if (!globals.experiments['3d']) return
 
@@ -158,24 +167,24 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     }
   })
 
-  const stat = gui.addFolder('Stat.js')
+  // const stat = gui.addFolder('Stat.js')
 
-  const stats = {
-    Update: false,
-    Draw: false
-  }
+  // const stats = {
+  //   Update: false,
+  //   Draw: false
+  // }
 
-  stat.add(stats, 'Update')
-    .onChange(state => {
-      updateStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
-    })
-    .setValue(stats.Update)
+  // stat.add(stats, 'Update')
+  //   .onChange(state => {
+  //     updateStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
+  //   })
+  //   .setValue(stats.Update)
 
-  stat.add(stats, 'Draw')
-    .onChange(state => {
-      drawStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
-    })
-    .setValue(stats.Draw)
+  // stat.add(stats, 'Draw')
+  //   .onChange(state => {
+  //     drawStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
+  //   })
+  //   .setValue(stats.Draw)
 
   const world = new WorldEntity(socket)
   scene.addChild(world)
@@ -223,3 +232,13 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     })
   }
 }
+
+// setInterval(() => {
+//   console.clear()
+
+//   console.log(`update: ${AMOUNT_OF_TIMES_UPDATE_WAS_CALLED}`)
+//   console.log(`draw: ${AMOUNT_OF_TIMES_DRAW_WAS_CALLED}`)
+
+//   AMOUNT_OF_TIMES_UPDATE_WAS_CALLED = 0
+//   AMOUNT_OF_TIMES_DRAW_WAS_CALLED = 0
+// }, 1000)

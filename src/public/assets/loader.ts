@@ -1,3 +1,5 @@
+import { setOrigin } from '../game/util/debug'
+
 export interface RawTileData {
   texture: string
   collidable: boolean
@@ -22,6 +24,8 @@ export class AssetLoader extends EventTarget {
     if (image !== undefined) return image
 
     image = new Image()
+
+    setOrigin(image, `${this.constructor.name}.getTexture(${name})`)
 
     cache.set(name, image)
 

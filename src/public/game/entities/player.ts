@@ -1,15 +1,13 @@
 import type Frame from '../../engine/util/frame'
-import { TILE_SIZE } from '../../engine/util/tilemap/position-conversion'
 import Entity from '../../engine/entities'
 import Vec2 from '../../engine/util/vec2'
 import keyboard from '../../engine/util/input/keyboard'
 import RectangularCollider from '../../engine/util/collision/rectangular'
 import { type Color } from '../util/types'
+import { type OverlapDetector, PhysicsObject } from '../util/physics'
 import Alea from 'alea'
 
 const FRICTION = new Vec2(50, 5)
-
-export type OverlapDetector = (collider: RectangularCollider) => boolean
 
 export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public id
@@ -18,7 +16,7 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
   public controllable: boolean = false
 
-  public overlapping?: OverlapDetector
+  public _overlapping?: OverlapDetector
 
   protected color: Color
 
@@ -35,6 +33,19 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
       prng() > 0.5 ? 0xFF : 0x00
     ]
   }
+
+  protected isOverlapping (collider: RectangularCollider): boolean {
+    const overlapping = this._overlapping
+
+    if (overlapping === undefined) return false
+
+    return overlapping(collider)
+  }
+
+  public readonly physics = new PhysicsObject(
+    collider => this.isOverlapping(collider),
+    () => this.getConstantCollider()
+  )
 
   public getConstantCollider (): RectangularCollider {
     const size = new Vec2(64, 64)
@@ -89,23 +100,25 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     let horizontalDirection = 0
     let verticalDirection = 0
 
-    if (this.controllable) {
-      if (keyboard.isKeyDown('a')) horizontalDirection--
-      if (keyboard.isKeyDown('d')) horizontalDirection++
+    if (keyboard.isKeyDown('a')) horizontalDirection--
+    if (keyboard.isKeyDown('d')) horizontalDirection++
 
-      if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) verticalDirection--
-    }
+    if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) verticalDirection--
 
     return new Vec2(horizontalDirection, verticalDirection)
   }
 
   protected move (delta: number): void {
+    const physics = this.physics
+
     const velocity = this.velocity
 
-    const direction = this.getUserInputDirection()
+    if (this.controllable) {
+      const direction = this.getUserInputDirection()
 
-    // velocity += direction * speed
-    velocity.add(direction.scaled(new Vec2(25000, 12500)).scaled(delta))
+      // velocity += direction * speed
+      velocity.add(direction.scaled(new Vec2(25000, 12500)).scaled(delta))
+    }
 
     // velocity.y += gravity
     velocity.y += 3750 * delta
@@ -114,58 +127,19 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     velocity.x /= 1 + (FRICTION.x * delta)
     velocity.y /= 1 + (FRICTION.y * delta)
 
-    const newVelocity = this.updatePosition(velocity.scaled(delta)).divided(delta)
-
-    // TODO: Make this less convoluted
-    velocity.update(newVelocity)
-  }
-
-  protected updatePosition (positionDelta: Vec2): Vec2 {
-    const position = this.position
-
-    const overlapping = this.overlapping
-
-    if (overlapping === undefined) {
-      position.add(positionDelta)
-
-      return positionDelta
-    }
-
-    // ? Should I ignore collisions or freeze the player?
-    if (overlapping(this.getGlobalCollider())) {
-      position.y -= TILE_SIZE
-
-      return positionDelta
-    }
+    const position = physics.position
 
     const oldPosition = position.clone()
 
-    // Bidirectional Position Delta Calculation
-    {
-      const collider = this.getGlobalCollider()
+    physics.moveSlide(velocity.scaled(delta))
 
-      const maximumPositionDelta = collider.calculateMaximumPositionDelta(positionDelta, overlapping)
+    const positionDelta = position.minus(oldPosition)
 
-      position.add(maximumPositionDelta)
+    const newVelocity = positionDelta.divided(delta)
 
-      positionDelta.subtract(maximumPositionDelta)
-    }
+    velocity.update(newVelocity)
 
-    // Unidirectional Position Delta Calculation
-    {
-      const collider = this.getGlobalCollider()
-
-      const maximumPositionDeltaX = collider.calculateMaximumPositionDelta(new Vec2(positionDelta.x, 0), overlapping)
-      const maximumPositionDeltaY = collider.calculateMaximumPositionDelta(new Vec2(0, positionDelta.y), overlapping)
-
-      const maximumPositionDelta = Math.abs(maximumPositionDeltaX.x) > Math.abs(maximumPositionDeltaY.y)
-        ? maximumPositionDeltaX
-        : maximumPositionDeltaY
-
-      position.add(maximumPositionDelta)
-    }
-
-    return position.minus(oldPosition)
+    this.position.update(position)
   }
 }
 

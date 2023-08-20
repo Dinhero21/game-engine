@@ -139,7 +139,11 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
     const position = collider.getPosition()
     const size = collider.getSize()
 
-    frame._drawImage(loader.getTexture('inventory/background'), position.x, position.y, size.x, size.y)
+    frame._drawImage(
+      loader.getTexture('inventory/background'),
+      position.x, position.y,
+      size.x, size.y
+    )
 
     super.draw(frame)
 
@@ -164,7 +168,12 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
 
     const itemSize = this.itemSize
 
-    frame._drawImage(image, mousePosition.x - itemSize.x / 2, mousePosition.y - itemSize.y / 2, itemSize.x, itemSize.y, false)
+    frame._drawImage(
+      image,
+      mousePosition.x - itemSize.x / 2, mousePosition.y - itemSize.y / 2,
+      itemSize.x, itemSize.y,
+      false
+    )
   }
 }
 

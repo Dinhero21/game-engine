@@ -1,3 +1,5 @@
+// TODO: Have 1D and 2D Colliders, a 1D Collider would be a simple section with distanceNegative and distancePositive, a 2D Collider would be the equivalent of a boolean and operation on two 1D Colliders. This would allow for better performance on Uni-Directional Position Delta Calculation.
+
 // ? Should I use any?
 export abstract class Collider<ValidCollidable extends Collider<any>> {
   public abstract _distanceLeft (other: ValidCollidable): number
@@ -48,16 +50,8 @@ export abstract class Collider<ValidCollidable extends Collider<any>> {
     return Math.max(...distances)
   }
 
-  public touching (other: ValidCollidable): boolean {
-    return this.distance(other) === 0
-  }
-
   public overlapping (other: ValidCollidable): boolean {
     return this.distance(other) < 0
-  }
-
-  public colliding (other: ValidCollidable): boolean {
-    return this.distance(other) <= 0
   }
 }
 

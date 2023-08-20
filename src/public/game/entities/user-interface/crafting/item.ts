@@ -21,7 +21,11 @@ export class ItemEntity<ValidChild extends Entity> extends ButtonEntity<ValidChi
 
     const texture = loader.getItemTexture(item)
 
-    frame._drawImage(texture, 0, 0, size.x, size.y, false)
+    frame._drawImage(
+      texture,
+      0, 0,
+      size.x, size.y,
+      false)
 
     // frame.drawText(item, 0, 32, 'white', '32px cursive', 32)
   }

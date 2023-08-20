@@ -2,6 +2,7 @@ import type Vec2 from '../util/vec2'
 import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Frame from '../util/frame'
+import { setOrigin } from '../../game/util/debug'
 
 export class ClippingEntity extends Entity {
   protected offset
@@ -27,13 +28,21 @@ export class ClippingEntity extends Entity {
     super.draw(subFrame)
 
     const canvas = new OffscreenCanvas(size.x, size.y)
+
+    setOrigin(canvas, `${this.constructor.name}.draw`)
+
     const context = canvas.getContext('2d')
 
     if (context === null) throw new Error('Failed to get canvas context')
 
     subFrame.draw(context)
 
-    frame._drawImage(canvas, 0, 0, size.x, size.y, false)
+    frame._drawImage(
+      canvas,
+      0, 0,
+      undefined, undefined,
+      false
+    )
   }
 }
 

@@ -3,6 +3,7 @@ import { TILE_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePos
 import Vec2 from '../vec2'
 import RectangularCollider from '../collision/rectangular'
 import { loader } from '../../../assets/loader'
+import { setOrigin } from '../../../game/util/debug'
 
 const tileSize = new Vec2(TILE_SIZE, TILE_SIZE)
 
@@ -66,6 +67,8 @@ export class Chunk<ValidTile extends Tile = Tile> {
     }
 
     const image = canvas.transferToImageBitmap()
+
+    setOrigin(image, `${this.constructor.name}.getImage`)
 
     if (cache) this.cache = image
 

@@ -2,6 +2,7 @@ import type Frame from '../util/frame'
 import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Vec2 from '../util/vec2'
+import { setOrigin } from '../../game/util/debug'
 
 export interface FontOptions {
   style?: string
@@ -41,6 +42,8 @@ export class TextEntity extends Entity<never> {
 
   constructor (options: TextOptions) {
     super()
+
+    setOrigin(this.canvas, `${this.constructor.name}.constructor`)
 
     if (options.baseline !== undefined) this.baseline = options.baseline
     if (options.style !== undefined) this.fillStyle = options.style

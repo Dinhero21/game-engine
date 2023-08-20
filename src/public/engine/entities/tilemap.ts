@@ -42,7 +42,10 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
         if (chunkImage === undefined) continue
 
         // ? Should I resize the image?
-        frame._drawImage(chunkImage, chunkPosition.x, chunkPosition.y)
+        frame._drawImage(
+          chunkImage,
+          chunkPosition.x, chunkPosition.y
+        )
       }
     }
   }

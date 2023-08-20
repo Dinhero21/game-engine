@@ -37,7 +37,12 @@ export class SlotEntity extends ButtonEntity {
 
     const slot = loader.getTexture(`inventory/slot.${isHovering ? 'true' : 'false'}`)
 
-    frame._drawImage(slot, colliderPosition.x, colliderPosition.y, colliderSize.x, colliderSize.y, false)
+    frame._drawImage(
+      slot,
+      colliderPosition.x, colliderPosition.y,
+      colliderSize.x, colliderSize.y,
+      false
+    )
   }
 
   protected drawItem (frame: Frame): void {
@@ -54,7 +59,12 @@ export class SlotEntity extends ButtonEntity {
 
     const image = loader.getItemTexture(type)
 
-    frame._drawImage(image, padding.x, padding.y, size.x, size.y, false)
+    frame._drawImage(
+      image,
+      padding.x, padding.y,
+      size.x, size.y,
+      false
+    )
   }
 
   protected drawItemAmount (frame: Frame): void {
