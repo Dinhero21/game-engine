@@ -2,7 +2,6 @@ import Vec2 from './vec2'
 import Loop from './loop'
 import { isNone, type None } from '../../none'
 import { Debug, Frame as FrameGlobals } from '../../globals'
-import { getOrigin } from '../../game/util/debug'
 
 let color = 0
 
@@ -339,18 +338,8 @@ export class Frame {
 
       context.imageSmoothingEnabled = imageSmoothingEnabled
 
-      const start = performance.now()
-
       if (dw === undefined || dh === undefined) context.drawImage(image, dx, dy)
       else context.drawImage(image, dx, dy, dw, dh)
-
-      const end = performance.now()
-
-      const delta = end - start
-
-      if (delta >= 15) {
-        console.log(getOrigin(image), dw, dh, imageSmoothingEnabled)
-      }
 
       context.imageSmoothingEnabled = smoothing
     })
