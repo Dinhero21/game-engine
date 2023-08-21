@@ -5,7 +5,7 @@ import { WorldGen } from '../world/gen'
 import { sleep } from '../public/engine/util/sleep'
 import Vec2 from '../public/engine/util/vec2'
 import { positionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
-import Tiles from '../world/tiles'
+import Tiles from '../world/tile'
 
 const SCREEN_SIZE = new Vec2(1920, 1080)
 const HALF_SCREEN_SIZE = SCREEN_SIZE.divided(2)

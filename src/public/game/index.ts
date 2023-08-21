@@ -1,8 +1,8 @@
 import type { IClientSocket as Socket } from '../../socket.io'
-import MultiplayerContainerEntity from './entities/multiplayer-container'
-import WorldEntity from './entities/world'
-import UserInterfaceEntity from './entities/user-interface'
-import DebugEntity from './entities/debug'
+import MultiplayerContainerEntity from './entity/multiplayer-container'
+import WorldEntity from './entity/world'
+import UserInterfaceEntity from './entity/user-interface'
+import DebugEntity from './entity/debug'
 import { ViewportGenerators } from '../engine/camera'
 import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization'
 import { positionToTilePosition } from '../engine/util/tilemap/position-conversion'
@@ -13,9 +13,6 @@ import io from 'socket.io-client'
 import Stats from 'stats.js'
 import { GUI } from 'dat.gui'
 import _ from 'lodash'
-
-let AMOUNT_OF_TIMES_UPDATE_WAS_CALLED = 0
-let AMOUNT_OF_TIMES_DRAW_WAS_CALLED = 0
 
 const statContainer = document.getElementById('stat-container')
 
@@ -59,12 +56,6 @@ export function populateGUI<Parent extends Record<any, any> = Record<any, any>> 
 }
 
 export default function createScene (context: CanvasRenderingContext2D): Scene {
-  const gui = new GUI({ name: 'Debug' })
-
-  populateGUI(gui, globals)
-
-  document.body.appendChild(gui.domElement)
-
   let running = true
 
   window.addEventListener('error', event => {
@@ -96,38 +87,34 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const mouseDebug = new DebugEntity('Mouse')
 
-  // const updateStat = createStat('update')
+  const updateStat = createStat('update')
 
   // Instant = Fastest Javascript Allows
   Loop.instant()(delta => {
-    AMOUNT_OF_TIMES_UPDATE_WAS_CALLED++
-
     if (!running) return
 
-    // updateStat.begin()
+    updateStat.begin()
 
     scene.update(delta)
 
-    // updateStat.end()
+    updateStat.end()
 
     const mousePosition = scene.getMouseViewportPosition()
 
     mouseDebug.setViewportPosition(mousePosition)
   })
 
-  // const drawStat = createStat('draw')
+  const drawStat = createStat('draw')
 
   // Draw = Animation Frames
   Loop.draw()(delta => {
-    AMOUNT_OF_TIMES_DRAW_WAS_CALLED++
-
     if (!running) return
 
-    // drawStat.begin()
+    drawStat.begin()
 
     camera.render()
 
-    // drawStat.end()
+    drawStat.end()
 
     if (!globals.experiments['3d']) return
 
@@ -172,28 +159,35 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     }
   })
 
-  // const stat = gui.addFolder('Stat.js')
+  const gui = new GUI({ name: 'Debug' })
 
-  // const stats = {
-  //   Update: false,
-  //   Draw: false
-  // }
+  populateGUI(gui, globals)
 
-  // stat.add(stats, 'Update')
-  //   .onChange(state => {
-  //     updateStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
-  //   })
-  //   .setValue(stats.Update)
+  document.body.appendChild(gui.domElement)
 
-  // stat.add(stats, 'Draw')
-  //   .onChange(state => {
-  //     drawStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
-  //   })
-  //   .setValue(stats.Draw)
+  const stat = gui.addFolder('Stat.js')
+
+  const stats = {
+    Update: false,
+    Draw: false
+  }
+
+  stat.add(stats, 'Update')
+    .onChange(state => {
+      updateStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
+    })
+    .setValue(stats.Update)
+
+  stat.add(stats, 'Draw')
+    .onChange(state => {
+      drawStat.dom.style.visibility = state as boolean ? 'visible' : 'hidden'
+    })
+    .setValue(stats.Draw)
 
   const world = new WorldEntity(socket)
   scene.addChild(world)
 
+  // TODO: Make this part of the world
   new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
     const mouseGlobalPosition = world.getMouseGlobalPosition()
 
@@ -237,13 +231,3 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     })
   }
 }
-
-setInterval(() => {
-  console.clear()
-
-  console.log(`update: ${AMOUNT_OF_TIMES_UPDATE_WAS_CALLED}`)
-  console.log(`draw: ${AMOUNT_OF_TIMES_DRAW_WAS_CALLED}`)
-
-  AMOUNT_OF_TIMES_UPDATE_WAS_CALLED = 0
-  AMOUNT_OF_TIMES_DRAW_WAS_CALLED = 0
-}, 1000)

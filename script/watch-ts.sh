@@ -1,0 +1,1 @@
+concurrently -k -p "[{name}]" -n "TypeScript,Nodemon" -c "blue.bold,green.bold,yellow.bold" "script/build-ts.sh --watch" "script/watch-copy-public-files.sh"

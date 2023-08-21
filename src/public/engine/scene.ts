@@ -1,4 +1,4 @@
-import type Entity from './entities'
+import type Entity from './entity'
 import Camera from './camera'
 import Frame from './util/frame'
 import Vec2 from './util/vec2'

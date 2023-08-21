@@ -1,4 +1,4 @@
-import { type TileInstance, type TileProperties } from './tiles/base'
+import { type TileInstance, type TileProperties } from './tile/base'
 import { type WorldGen } from './gen'
 import Chunk from './chunk'
 import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'

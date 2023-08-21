@@ -1,1 +1,0 @@
-nodemon --watch src/public --exec "scripts/copy-public-files.sh" --ext "*"

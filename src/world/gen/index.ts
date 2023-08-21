@@ -1,9 +1,9 @@
 import type Vec2 from '../../public/engine/util/vec2'
-import type Structure from '../structures/base'
+import type Structure from '../structure/base'
 import { Noise2D, DistortedNoise, Noise } from './noise'
-import { type Tile } from '../tiles/base'
-import Tiles from '../tiles'
-import Structures from '../structures'
+import { type Tile } from '../tile/base'
+import Tiles from '../tile'
+import Structures from '../structure'
 import { chance, randomInt } from '../../public/engine/util/math'
 
 // TODO: Use x, y

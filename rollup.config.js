@@ -3,11 +3,17 @@ import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 import terser from '@rollup/plugin-terser'
+import globImport from 'rollup-plugin-glob-import'
 
 const PRODUCTION = process.env.NODE_ENV === 'production'
 const DEVELOPMENT = !PRODUCTION
 
 const PLUGINS = []
+
+// Mods
+PLUGINS.push(
+  globImport()
+)
 
 // Node Modules
 PLUGINS.push(
@@ -17,10 +23,10 @@ PLUGINS.push(
   commonjs()
 )
 
-// TypeScript
+// Bundling
 PLUGINS.push(
   babel({
-    // include: ['node_modules/**'],
+    include: ['node_modules/**'],
     babelHelpers: 'bundled',
     presets: ['@babel/preset-env'],
     targets: 'last 1 Chrome version'
@@ -42,7 +48,7 @@ if (PRODUCTION) {
 }
 
 export default {
-  input: 'dist/public/index.js',
+  input: 'dist/public',
   output: {
     sourcemap: DEVELOPMENT,
     file: 'dist/public/bundle.js',

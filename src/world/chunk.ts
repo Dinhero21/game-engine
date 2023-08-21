@@ -1,7 +1,7 @@
 import type Vec2 from '../public/engine/util/vec2'
 import type Player from '../player'
 import { type World } from '.'
-import { type TileProperties, type TileInstance } from './tiles/base'
+import { type TileProperties, type TileInstance } from './tile/base'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion'
 import { TypedEmitter } from 'tiny-typed-emitter'
 

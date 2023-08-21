@@ -2,7 +2,7 @@ import type Tile from './tile'
 import { CHUNK_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion'
 import Vec2 from '../vec2'
 import RectangularCollider from '../collision/rectangular'
-import { loader } from '../../../assets/loader'
+import { loader } from '../../../asset/loader'
 import { setOrigin } from '../../../game/util/debug'
 import { TILE_TEXTURE_SIZE } from '../../../game/tile'
 

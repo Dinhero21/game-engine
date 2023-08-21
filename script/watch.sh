@@ -1,0 +1,1 @@
+concurrently -k -p "[{name}]" -n "TypeScript,Node,Rollup" -c "blue.bold,green.bold,red.bold" "script/watch-ts.sh" "script/watch-node.sh" "script/watch-bundle.sh"
