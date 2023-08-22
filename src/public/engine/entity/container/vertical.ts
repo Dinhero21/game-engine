@@ -1,9 +1,9 @@
-import type Entity from '.'
-import ContainerEntity from './container'
-import RectangularCollider from '../util/collision/rectangular'
-import Vec2 from '../util/vec2'
+import type Entity from '..'
+import ContainerEntity from '.'
+import RectangularCollider from '../../util/collision/rectangular'
+import Vec2 from '../../util/vec2'
 
-export class HorizontalContainerEntity<ValidChild extends Entity = Entity> extends ContainerEntity<ValidChild> {
+export class VerticalContainerEntity<ValidChild extends Entity = Entity> extends ContainerEntity<ValidChild> {
   public getConstantCollider (): RectangularCollider {
     const children = Array.from(this.children)
 
@@ -18,7 +18,7 @@ export class HorizontalContainerEntity<ValidChild extends Entity = Entity> exten
       const childSize = childCollider.getSize()
       const childWidth = childSize.x
 
-      width += childWidth
+      width = Math.max(width, childWidth)
     }
 
     let height = 0
@@ -29,22 +29,19 @@ export class HorizontalContainerEntity<ValidChild extends Entity = Entity> exten
       const childSize = childCollider.getSize()
       const childHeight = childSize.y
 
-      height = Math.max(height, childHeight)
+      height += childHeight
     }
 
     const size = new Vec2(width, height)
 
-    size.x += spacing * (children.length - 1)
+    size.y += spacing * (children.length - 1)
 
     size.add(padding.scaled(2))
 
     return new RectangularCollider(new Vec2(0, 0), size)
   }
 
-  // ? Should I move the children during the draw or update phase?
-  public update (delta: number): void {
-    super.update(delta)
-
+  protected positionChildren (): void {
     const spacing = this.spacing
     const padding = this.padding
 
@@ -56,11 +53,11 @@ export class HorizontalContainerEntity<ValidChild extends Entity = Entity> exten
       const childCollider = child.getConstantCollider()
 
       const childSize = childCollider.getSize()
-      const childWidth = childSize.x
+      const childWidth = childSize.y
 
-      position.x += childWidth + spacing
+      position.y += childWidth + spacing
     }
   }
 }
 
-export default HorizontalContainerEntity
+export default VerticalContainerEntity

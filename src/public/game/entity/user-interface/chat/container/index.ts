@@ -1,6 +1,6 @@
 import ChatMessageEntity, { type Text, type Overflow } from './message'
 import { type TextOptions } from '../../../../../engine/entity/text'
-import VerticalContainerEntity from '../../../../../engine/entity/vertical-container'
+import VerticalContainerEntity from '../../../../../engine/entity/container/vertical'
 import align from '../../../../../engine/patch/align'
 import Vec2 from '../../../../../engine/util/vec2'
 import { MarkupParser } from '../../../../util/chat'

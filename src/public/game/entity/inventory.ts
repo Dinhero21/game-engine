@@ -4,7 +4,7 @@ import Vec2 from '../../engine/util/vec2'
 import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../util/inventory'
 import { TypedEventTarget } from '../../engine/util/typed-event-target'
 import { loader } from '../../asset/loader'
-import GridContainerEntity from '../../engine/entity/grid-container'
+import GridContainerEntity from '../../engine/entity/container/grid'
 
 export class TypeUpdateEvent extends Event {
   public readonly data

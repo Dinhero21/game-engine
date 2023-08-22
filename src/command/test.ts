@@ -7,5 +7,5 @@ registerCommand('test', helper => {
 
   const args = helper.args
 
-  console.log('Args:', args)
+  console.info('Args:', args)
 })

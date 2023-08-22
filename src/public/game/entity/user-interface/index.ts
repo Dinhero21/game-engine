@@ -2,12 +2,14 @@ import type Entity from '../../../engine/entity'
 import ChatEntity from './chat'
 import PlayerInventoryEntity from './inventory'
 import CraftingEntity from './crafting'
-import recipes from '../../../asset/recipe'
+import recipes, { type Recipe } from '../../../asset/recipe'
 import AnchorEntity from '../../../engine/entity/anchor'
 import ViewportEntity from '../../../engine/entity/viewport'
 import keyboard from '../../../engine/util/input/keyboard'
 import Vec2 from '../../../engine/util/vec2'
 import { type IClientSocket as Socket } from '../../../../socket.io'
+import { loader } from '../../../asset/loader'
+import { isEqual } from 'lodash'
 
 export type UIState = 'open' | 'closed'
 
@@ -30,13 +32,17 @@ export class UserInterfaceEntity extends ViewportEntity {
 
     this.crafting = crafting
 
+    loader.addEventListener('load', () => {
+      crafting.renderList()
+    })
+
+    // --- Inventory ---
+
     const centeredUi = new AnchorEntity(new Vec2(0.5, 0.5))
     this.addChild(centeredUi)
 
     const inventoryEntity = new PlayerInventoryEntity(socket)
     centeredUi.addChild(inventoryEntity)
-
-    // --- Inventory ---
 
     const inventory = inventoryEntity.inventory
 
@@ -107,20 +113,37 @@ export class UserInterfaceEntity extends ViewportEntity {
     this.setState(this, this.state)
   }
 
+  private oldCraftableRecipes = new Set<Recipe>()
+
   private updateRecipes (): void {
-    const crafting = this.crafting
     const inventoryEntity = this.inventory
     const inventory = inventoryEntity.inventory
 
     const list = inventory.list()
 
-    crafting.clearRecipes()
+    const craftableRecipes = new Set<Recipe>()
 
     for (const recipe of recipes) {
       if (!recipe.inputs.every(input => (list.get(input.type) ?? 0) >= input.amount)) continue
 
-      crafting.addRecipe(recipe)
+      craftableRecipes.add(recipe)
     }
+
+    const oldCraftableRecipes = this.oldCraftableRecipes
+
+    if (isEqual(oldCraftableRecipes, craftableRecipes)) return
+
+    this.oldCraftableRecipes = craftableRecipes
+
+    this.setRecipes(craftableRecipes)
+  }
+
+  private setRecipes (recipes: Iterable<Recipe>): void {
+    const crafting = this.crafting
+
+    crafting.clearRecipes()
+
+    for (const recipe of recipes) crafting.addRecipe(recipe)
   }
 
   protected setState (entity: Entity, state: UIState): void {

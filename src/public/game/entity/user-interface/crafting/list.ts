@@ -1,7 +1,7 @@
 import type Frame from '../../../../engine/util/frame'
 import type Entity from '../../../../engine/entity'
 import { type Color } from '../../../util/types'
-import VerticalContainerEntity from '../../../../engine/entity/vertical-container'
+import VerticalContainerEntity from '../../../../engine/entity/container/vertical'
 import Vec2 from '../../../../engine/util/vec2'
 import ClippingEntity from '../../../../engine/entity/clipper'
 
@@ -15,7 +15,7 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
 
     this.color = color
 
-    const listContainer = new VerticalContainerEntity(spacing, padding)
+    const listContainer = new VerticalContainerEntity<ValidItem>(spacing, padding)
     this.addChild(listContainer)
 
     this.container = listContainer
@@ -50,11 +50,15 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
   public addItem (item: ValidItem): this {
     this.container.addChild(item)
 
+    this.render()
+
     return this
   }
 
   public removeItem (item: ValidItem): this {
     this.container.removeChild(item)
+
+    this.render()
 
     return this
   }
@@ -63,6 +67,8 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
     const container = this.container
 
     for (const child of container.children) container.removeChild(child)
+
+    this.render()
 
     return this
   }

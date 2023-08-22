@@ -23,7 +23,9 @@ export class ClippingEntity extends Entity {
     return new RectangularCollider(this.offset, this.size)
   }
 
-  public draw (frame: Frame): void {
+  // This code is not on draw because it takes over 15 milliseconds to drawImage this.CANVAS after being called
+  // ! See https://stackoverflow.com/questions/63138513/canvas-drawimage-slow-first-time-another-canvas-is-used-as-the-source-argument
+  public render (): void {
     const size = this.size
 
     const subFrame = new Frame()
@@ -45,10 +47,14 @@ export class ClippingEntity extends Entity {
     )
 
     subFrame.draw(context)
+  }
 
-    // This is currently taking over 15 ms to render
-    // slowing the game down to less than 30 ups
-    // TODO: Optimize this
+  public draw (frame: Frame): void {
+    const canvas = this.CANVAS
+
+    if (canvas.width === 0) return
+    if (canvas.height === 0) return
+
     frame._drawImage(
       canvas,
       0, 0,

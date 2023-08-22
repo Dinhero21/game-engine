@@ -8,8 +8,8 @@ import { TRANSFORMATIONS, animatePosition } from '../../../../engine/patch/anima
 import { MouseButtonMap } from '../../../../engine/util/input/mouse'
 import { chunk } from '../../../util/string'
 import Vec2 from '../../../../engine/util/vec2'
-import VerticalContainerEntity from '../../../../engine/entity/vertical-container'
-import HorizontalContainerEntity from '../../../../engine/entity/horizontal-container'
+import VerticalContainerEntity from '../../../../engine/entity/container/vertical'
+import HorizontalContainerEntity from '../../../../engine/entity/container/horizontal'
 
 const COLORS = {
   BACKGROUND: [0x1F, 0x1F, 0x1F, 0.75],
@@ -178,6 +178,10 @@ export class CraftingEntity extends HorizontalContainerEntity {
     this.list.clearItems()
 
     return this
+  }
+
+  public renderList (): void {
+    this.list.render()
   }
 }
 

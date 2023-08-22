@@ -1,6 +1,6 @@
 import type Frame from '../../../../../../engine/util/frame'
 import ChatMessageTextEntity from './text'
-import HorizontalContainerEntity from '../../../../../../engine/entity/horizontal-container'
+import HorizontalContainerEntity from '../../../../../../engine/entity/container/horizontal'
 import { type TextOptions } from '../../../../../../engine/entity/text'
 import Vec2 from '../../../../../../engine/util/vec2'
 import { merge } from 'lodash'

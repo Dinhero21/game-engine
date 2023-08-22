@@ -1,7 +1,7 @@
 import type Entity from '.'
-import HorizontalContainerEntity from './horizontal-container'
-import VerticalContainerEntity from './vertical-container'
-import Vec2 from '../util/vec2'
+import HorizontalContainerEntity from './horizontal'
+import VerticalContainerEntity from './vertical'
+import Vec2 from '../../util/vec2'
 
 export class GridContainerEntity<ValidChild extends Entity = Entity> extends VerticalContainerEntity<HorizontalContainerEntity<ValidChild>> {
   public readonly spacing2D
