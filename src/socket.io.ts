@@ -3,12 +3,9 @@ import { type Recipe } from './public/asset/recipe'
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
 
-// Engine.ioified methods
+// engine.io-friendly types
 
 export type Vec2 = [number, number]
-
-// TODO: Make it possible to dynamically generate this using index.js's chunk
-export type Chunk = Array<[string, string]>
 
 // ? Should I define Player here?
 export interface Player {
@@ -23,6 +20,7 @@ export interface ServerToClientEvents {
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
   'tile.set': (tilePosition: Vec2, type: string) => void
+  'chunk.set': (chunkPosition: Vec2, tiles: Array<string | null>) => void
   'slot.set': (id: number, type: SlotType, amount: SlotAmount) => void
   'chat.message': (message: string) => void
 }

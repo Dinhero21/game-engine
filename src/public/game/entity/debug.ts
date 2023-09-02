@@ -67,26 +67,16 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
       // ? Should I make this its own function? (probably something like isMouseColliding)
       if (viewportCollider.overlapping(mouseCollider)) {
         frame.drawFancyRectRGBA(
-          position.x,
-          position.y,
-          size.x,
-          size.y,
-          0x98,
-          0xC3,
-          0x78,
-          1,
+          position.x, position.y,
+          size.x, size.y,
+          0x98, 0xC3, 0x78, 1,
           3
         )
       } else {
         frame.drawFancyRectRGBA(
-          position.x,
-          position.y,
-          size.x,
-          size.y,
-          0xE0,
-          0x6C,
-          0x75,
-          1,
+          position.x, position.y,
+          size.x, size.y,
+          0xE0, 0x6C, 0x75, 1,
           3
         )
       }

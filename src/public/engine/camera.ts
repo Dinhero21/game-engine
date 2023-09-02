@@ -94,6 +94,8 @@ export class Camera {
       )
     }
 
+    // TODO: Render directly to canvas
+
     // Frame -> Camera Context
     frame.draw(viewportContext)
 

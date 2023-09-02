@@ -13,6 +13,7 @@ export interface TileRendererTile {
 
 // TODO: "Global" Chunk Cache
 
+// TODO: Make it so you don't need position
 export class Chunk<ValidTile extends Tile = Tile> {
   public tiles = new Map<number, Map<number, ValidTile>>()
   public boundingBox
@@ -143,12 +144,12 @@ export class Chunk<ValidTile extends Tile = Tile> {
     return this.tiles.get(x)?.get(y)
   }
 
-  public setTile (tile: ValidTile, tilePosition: Vec2): void {
+  public setTile (tile: ValidTile, x: number, y: number): void {
     const tiles = this.tiles
 
-    const row = tiles.get(tilePosition.x) ?? new Map()
-    tiles.set(tilePosition.x, row)
+    const row = tiles.get(x) ?? new Map()
+    tiles.set(x, row)
 
-    row.set(tilePosition.y, tile)
+    row.set(y, tile)
   }
 }

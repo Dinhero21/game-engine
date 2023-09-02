@@ -4,7 +4,7 @@ import type Tile from '../util/tilemap/tile'
 import Entity from '.'
 import Vec2 from '../util/vec2'
 import { Chunk } from '../util/tilemap/chunk'
-import { CHUNK_SIZE, tilePositionToPosition, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition, TILE_SIZE } from '../util/tilemap/position-conversion'
+import { CHUNK_SIZE, tilePositionToChunkPosition, chunkPositionToTilePosition, positionToTilePosition, TILE_SIZE, tilePositionToPosition } from '../util/tilemap/position-conversion'
 
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
@@ -29,19 +29,34 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     const camera = scene.camera
     const viewport = camera.getViewport()
 
-    for (const [x, row] of this.getChunks()) {
-      for (const [y, chunk] of row) {
-        if (!chunk.boundingBox.overlapping(viewport)) continue
+    const viewportPosition = viewport.getPosition()
+    const viewportSize = viewport.getSize()
 
-        const chunkChunkPosition = new Vec2(x, y)
+    // TODO: Use ceil instead of floor for position -> chunk vector conversion instead of adding + 1 to the max relative chunk position
+
+    const viewportTilePosition = positionToTilePosition(viewportPosition)
+    const viewportChunkPosition = tilePositionToChunkPosition(viewportTilePosition)
+
+    const viewportTileSize = positionToTilePosition(viewportSize)
+    const viewportChunkSize = tilePositionToChunkPosition(viewportTileSize)
+
+    for (let relativeX = 0; relativeX <= viewportChunkSize.x + 1; relativeX++) {
+      for (let relativeY = 0; relativeY <= viewportChunkSize.y + 1; relativeY++) {
+        const chunkPositionX = relativeX + viewportChunkPosition.x
+        const chunkPositionY = relativeY + viewportChunkPosition.y
+
+        const chunkChunkPosition = new Vec2(chunkPositionX, chunkPositionY)
         const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
         const chunkPosition = tilePositionToPosition(chunkTilePosition)
+
+        const chunk = this.getChunk(chunkPositionX, chunkPositionY)
+
+        if (chunk === undefined) continue
 
         const chunkImage = chunk.getImage()
 
         if (chunkImage === undefined) continue
 
-        // ? Should I resize the image?
         frame._drawImage(
           chunkImage,
           chunkPosition.x, chunkPosition.y
@@ -65,6 +80,8 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     chunks.set(x, row)
 
     row.set(y, chunk)
+
+    this.clearNearbyChunkCache(x, y)
   }
 
   public removeChunk (chunk: Chunk<ValidTile> | Vec2): void {
@@ -77,6 +94,15 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     }
 
     this.chunks.get(chunk.x)?.delete(chunk.y)
+
+    // this.clearNearbyChunkCache(chunk.x, chunk.y)
+  }
+
+  protected clearNearbyChunkCache (x: number, y: number): void {
+    this._clearChunkCache(x - 1, y)
+    this._clearChunkCache(x + 1, y)
+    this._clearChunkCache(x, y - 1)
+    this._clearChunkCache(x, y + 1)
   }
 
   protected _clearChunkCache (x: number, y: number): void {
@@ -85,6 +111,11 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     if (chunk === undefined) return
 
     chunk.clearCache()
+  }
+
+  // TODO: Use x, y instead of Vec2
+  protected _createChunk (position: Vec2): Chunk<ValidTile> {
+    return new Chunk<ValidTile>(position, chunkTileSize, (x: number, y: number) => this.getTile(new Vec2(x, y)))
   }
 
   public setTile (tile: ValidTile, tilePosition: Vec2): void {
@@ -98,11 +129,11 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     let chunk = this.getChunk(chunkChunkPosition.x, chunkChunkPosition.y)
 
     if (chunk === undefined) {
-      chunk = new Chunk<ValidTile>(chunkChunkPosition, chunkTileSize, (x: number, y: number) => this.getTile(new Vec2(x, y)))
+      chunk = this._createChunk(chunkChunkPosition)
       this.setChunk(chunk, chunkChunkPosition.x, chunkChunkPosition.y)
     }
 
-    chunk.setTile(tile, tilePosition)
+    chunk.setTile(tile, tilePosition.x, tilePosition.y)
 
     chunk.clearCache()
 
@@ -110,9 +141,9 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
 
     if (tilePosition.x === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x + 1, chunkChunkPosition.y)
 
-    if (tilePosition.y === 0) this._clearChunkCache(chunkChunkPosition.x + 0, chunkChunkPosition.y - 1)
+    if (tilePosition.y === 0) this._clearChunkCache(chunkChunkPosition.x, chunkChunkPosition.y - 1)
 
-    if (tilePosition.y === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x + 0, chunkChunkPosition.y + 1)
+    if (tilePosition.y === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x, chunkChunkPosition.y + 1)
   }
 
   // TODO: Use x, y instead of Vec2

@@ -4,11 +4,11 @@ import { World } from '../world'
 import { WorldGen } from '../world/gen'
 import { sleep } from '../public/engine/util/sleep'
 import Vec2 from '../public/engine/util/vec2'
-import { positionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
+import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
 import Tiles from '../world/tile'
 
-const SCREEN_SIZE = new Vec2(1920, 1080)
-const HALF_SCREEN_SIZE = SCREEN_SIZE.divided(2)
+const VIEWPORT_SIZE = new Vec2(1920, 1080)
+const HALF_VIEWPORT_SIZE = VIEWPORT_SIZE.divided(2)
 
 const gen = new WorldGen()
 
@@ -43,38 +43,64 @@ io.on('connection', socket => {
 
   if (player === undefined) return
 
+  const lastTopLeftViewportChunkPosition = new Vec2(NaN, NaN)
+  const lastBottomRightViewportChunkPosition = new Vec2(NaN, NaN)
+
   socket.on('physics.update', rawPosition => {
     const position = new Vec2(...rawPosition)
 
-    const topLeftScreenPositionPosition = position.minus(HALF_SCREEN_SIZE)
-    const bottomRightScreenPositionPosition = position.plus(HALF_SCREEN_SIZE)
+    const topLeftViewportPosition = position.minus(HALF_VIEWPORT_SIZE)
+    const bottomRightViewportPosition = position.plus(HALF_VIEWPORT_SIZE)
 
-    const topLeftScreenTilePosition = positionToTilePosition(topLeftScreenPositionPosition)
-    const bottomRightScreenTilePosition = positionToTilePosition(bottomRightScreenPositionPosition)
+    const topLeftViewportTilePosition = positionToTilePosition(topLeftViewportPosition)
+    const bottomRightViewportTilePosition = positionToTilePosition(bottomRightViewportPosition)
 
-    const topLeftScreenChunkPosition = tilePositionToChunkPosition(topLeftScreenTilePosition)
-    const bottomRightScreenChunkPosition = tilePositionToChunkPosition(bottomRightScreenTilePosition)
+    const topLeftViewportChunkPosition = tilePositionToChunkPosition(topLeftViewportTilePosition)
+    const bottomRightViewportChunkPosition = tilePositionToChunkPosition(bottomRightViewportTilePosition)
 
-    for (let chunkY = topLeftScreenChunkPosition.y; chunkY <= bottomRightScreenChunkPosition.y; chunkY++) {
-      for (let chunkX = topLeftScreenChunkPosition.x; chunkX <= bottomRightScreenChunkPosition.x; chunkX++) {
+    const topLeftViewportChunkPositionChanged = topLeftViewportChunkPosition.x !== lastTopLeftViewportChunkPosition.x || topLeftViewportChunkPosition.y !== lastTopLeftViewportChunkPosition.y
+    const bottomRightViewportChunkPositionChanged = bottomRightViewportChunkPosition.x !== lastBottomRightViewportChunkPosition.x || bottomRightViewportChunkPosition.y !== lastBottomRightViewportChunkPosition.y
+
+    if (!topLeftViewportChunkPositionChanged && !bottomRightViewportChunkPositionChanged) return
+
+    lastTopLeftViewportChunkPosition.update(topLeftViewportPosition)
+    lastBottomRightViewportChunkPosition.update(bottomRightViewportPosition)
+
+    // TODO: Use ceil instead of floor for position -> chunk vector conversion instead of adding + 1 to the max relative chunk position
+
+    for (let chunkY = topLeftViewportChunkPosition.y; chunkY <= bottomRightViewportChunkPosition.y + 1; chunkY++) {
+      for (let chunkX = topLeftViewportChunkPosition.x; chunkX <= bottomRightViewportChunkPosition.x + 1; chunkX++) {
         const chunkPosition = new Vec2(chunkX, chunkY)
 
         const chunk = world.getChunk(chunkPosition)
 
         if (chunk.references.has(player)) continue
 
-        const chunkTilePosition = chunk.getTilePosition()
-
         const tiles = chunk.getTiles()
 
-        for (const [relativeX, row] of tiles.entries()) {
-          for (const [relativeY, tile] of row.entries()) {
-            const x = relativeX + chunkTilePosition.x
-            const y = relativeY + chunkTilePosition.y
+        const tileTypes: Array<string | null> = []
 
-            socket.emit('tile.set', [x, y], tile.type)
+        for (let y = 0; y < CHUNK_SIZE; y++) {
+          for (let x = 0; x < CHUNK_SIZE; x++) {
+            let type: string | null = null;
+
+            (() => {
+              const row = tiles.get(x)
+
+              if (row === undefined) return
+
+              const tile = row.get(y)
+
+              if (tile === undefined) return
+
+              type = tile.type
+            })()
+
+            tileTypes.push(type)
           }
         }
+
+        socket.emit('chunk.set', chunkPosition.toArray(), tileTypes)
 
         chunk.references.add(player)
       }

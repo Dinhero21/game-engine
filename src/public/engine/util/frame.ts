@@ -374,7 +374,15 @@ export class Frame {
 
       color++
 
-      this.drawFancyRectRGBA(dx, dy, dw, dh, [0xFF, 0, 0][color % 3], [0, 0xFF, 0][color % 3], [0, 0, 0xFF][color % 3], 0.5, 1)
+      this.drawFancyRectRGBA(
+        dx, dy,
+        dw, dh,
+        [0xFF, 0x00, 0x00][color % 3],
+        [0x00, 0xFF, 0x00][color % 3],
+        [0x00, 0x00, 0xFF][color % 3],
+        0.5,
+        1
+      )
     }
 
     return this

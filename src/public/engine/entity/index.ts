@@ -48,7 +48,12 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
       const position = collider.getPosition()
       const size = collider.getSize()
 
-      frame.drawFancyRectRGBA(position.x, position.y, size.x, size.y, r, g, b, 0.5, 1)
+      frame.drawFancyRectRGBA(
+        position.x, position.y,
+        size.x, size.y,
+        r, g, b, 0.5,
+        1
+      )
     }
   }
 

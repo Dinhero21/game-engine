@@ -70,12 +70,12 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
     const velocity = this.velocity
 
-    const delta = velocity.scaled(0.1)
+    const vector = velocity.scaled(0.1)
 
     frame
-      .drawLine(0, 0, delta.x, 0, '#e06c75', 3)
-      .drawLine(0, 0, 0, delta.y, '#98c379', 3)
-      .drawLine(0, 0, delta.x, delta.y, '#e5c07b', 3)
+      .drawLine(0, 0, vector.x, 0, '#e06c75', 3)
+      .drawLine(0, 0, 0, vector.y, '#98c379', 3)
+      .drawLine(0, 0, vector.x, vector.y, '#e5c07b', 3)
   }
 
   public update (delta: number): void {
