@@ -33,7 +33,7 @@ export async function createTile (type: string, meta: unknown): Promise<Tile> {
 
       // nearby[0] = up
       if (nearby[0]) {
-        context.globalAlpha = pressure
+        context.globalAlpha = Math.max(pressure, 0.5)
       } else {
         const delta = (1 - pressure) * TILE_TEXTURE_SIZE
 
