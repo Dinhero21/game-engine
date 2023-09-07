@@ -93,7 +93,7 @@ io.on('connection', socket => {
 
               if (tile === undefined) return
 
-              serializedTile = [tile.type, tile.properties]
+              serializedTile = [tile.type, tile.getMeta()]
             })()
 
             tileArray.push(serializedTile)

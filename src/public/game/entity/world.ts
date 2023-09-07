@@ -46,6 +46,10 @@ export class WorldEntity extends TileMapEntity<Tile> {
     socket.on('tile.set', async (rawTilePosition, type, meta) => {
       const tilePosition = new Vec2(...rawTilePosition)
 
+      const oldTile = this.getTile(tilePosition)
+
+      if (oldTile !== undefined && oldTile.type === type && oldTile.meta === meta) return
+
       const tile = await createTile(type, meta)
 
       this.setTile(tile, tilePosition)

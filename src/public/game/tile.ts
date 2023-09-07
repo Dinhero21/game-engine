@@ -29,13 +29,17 @@ export async function createTile (type: string, meta: unknown): Promise<Tile> {
     if (type === 'water') {
       if (typeof meta !== 'number') throw new TypeError('Expected WaterTile.meta to be a number')
 
+      // Range: [0,8]
       const pressure = meta
 
       // nearby[0] = up
       if (nearby[0]) {
-        context.globalAlpha = Math.max(pressure, 0.5)
+        const normalizedPressure = pressure / 8
+
+        context.globalAlpha = Math.max(normalizedPressure, 0.25)
       } else {
-        const delta = (1 - pressure) * TILE_TEXTURE_SIZE
+        const height = pressure + 1
+        const delta = (8 - height)
 
         position.y += delta
 

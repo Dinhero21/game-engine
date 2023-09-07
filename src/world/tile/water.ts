@@ -48,14 +48,6 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
 
     const tilePosition = this.getTilePosition()
 
-    const pressure = this.pressure
-
-    if (pressure < 0.03125) {
-      world.setTile(Tiles.air.instance(), tilePosition, undefined, true)
-
-      return
-    }
-
     const belowTilePosition = tilePosition.offset(0, 1)
 
     const belowTile = world.getTile(belowTilePosition)
@@ -63,6 +55,14 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
     if (belowTile === undefined) return
 
     this.merge(belowTile)
+
+    const pressure = this.pressure
+
+    if (pressure < 1 / 1024) {
+      world.setTile(Tiles.air.instance(), tilePosition, undefined, false)
+
+      return
+    }
 
     const side = Math.random() < 0.5 ? 1 : -1
 
@@ -100,7 +100,7 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
     return newTile
   }
 
-  public updateTile (tile: TileInstance): void {
+  public syncTile (tile: TileInstance): void {
     const world = this.getWorld()
 
     const tilePosition = tile.getTilePosition()
@@ -108,7 +108,6 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
 
     const chunk = world.getChunk(chunkPosition)
 
-    // TODO: Have a tile(Update|Set|Sync|whatever) function
     chunk.emit('tile.set', tile)
   }
 
@@ -126,10 +125,12 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
     const averagePressure = (selfPressure + instancePressure) / 2
 
     this.pressure = averagePressure
+
+    this.syncTile(this)
+
     waterInstance.pressure = averagePressure
 
-    this.updateTile(this)
-    this.updateTile(waterInstance)
+    this.syncTile(waterInstance)
 
     return true
   }
@@ -147,16 +148,20 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
     const maxPressureDelta = 1 - instancePressure
     const pressureDelta = Math.min(maxPressureDelta, selfPressure)
 
+    if (pressureDelta === 0) return false
+
     this.pressure -= pressureDelta
     waterInstance.pressure += pressureDelta
 
-    this.updateTile(this)
-    this.updateTile(waterInstance)
+    this.syncTile(this)
+    this.syncTile(waterInstance)
 
     return true
   }
 
   public getMeta (): number {
-    return this.pressure
+    const height = this.pressure * 8
+
+    return Math.floor(height)
   }
 }
