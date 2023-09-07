@@ -1,7 +1,7 @@
 import type Player from '../player'
 import { getPlayer } from './player'
 import { io } from './server'
-import { type AsyncVoid, EventHandler } from '../util/events'
+import { type AsyncVoid, EventHandler } from '../util/event'
 
 export interface ChatPluginEventMap {
   'message': (message: string, sender: Player, cancel: VoidFunction) => AsyncVoid

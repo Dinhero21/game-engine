@@ -19,6 +19,6 @@ for (const file of await fs.readdir(PLUGIN_DIR_PATH)) {
 
 console.time('Loading Plugins')
 
-await Promise.all(promises)
+// await Promise.all(promises)
 
 console.timeEnd('Loading Plugins')

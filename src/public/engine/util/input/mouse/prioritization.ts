@@ -1,6 +1,8 @@
 import { type MouseEventEmitter, type MouseEventEmitterEventMap, Mouse } from '.'
 import { TypedEventTarget } from '../../typed-event-target'
 
+// TODO: Transform these into tests
+
 /*
 a instanceof PrioritizedMouseEventEmitter
 b instanceof PrioritizedMouseEventEmitter

@@ -1,6 +1,6 @@
 
 import type CommandHelper from '../util/command'
-import { type AsyncVoid } from '../util/events'
+import { type AsyncVoid } from '../util/event'
 
 export const PREFIX = '/'
 
