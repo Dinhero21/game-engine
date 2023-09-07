@@ -42,6 +42,13 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     return overlapping(collider)
   }
 
+  // TODO: Multiplayer Physics
+  // There would be two physics objects, one would be private and the other would be shared.
+  // The private one represents the physics of the local player.
+  // The shared one represents how other players will see the local player.
+  // Only when the private and shared desync would the shared one be updated.
+  // This would allow for less packets to be sent potentially improving client and server performance.
+
   public readonly physics = new PhysicsObject(
     collider => this.isOverlapping(collider),
     () => this.getConstantCollider()
@@ -80,8 +87,6 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
   public update (delta: number): void {
     this.move(delta)
-
-    if (keyboard.isKeyDown('c')) throw new Error('c was pressed')
 
     super.update(delta)
 
