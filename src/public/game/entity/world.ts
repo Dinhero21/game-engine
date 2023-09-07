@@ -26,12 +26,14 @@ export class WorldEntity extends TileMapEntity<Tile> {
       for (let y = 0; y < CHUNK_SIZE; y++) {
         for (let x = 0; x < CHUNK_SIZE; x++) {
           void (async () => {
-            const type = tiles.shift()
+            const rawTile = tiles.shift()
 
-            if (type === undefined) return
-            if (type === null) return
+            if (rawTile === undefined) return
+            if (rawTile === null) return
 
-            const tile = await createTile(type)
+            const [type, properties] = rawTile
+
+            const tile = await createTile(type, properties)
 
             chunk.setTile(tile, x, y)
           })()
@@ -41,10 +43,10 @@ export class WorldEntity extends TileMapEntity<Tile> {
       this.setChunk(chunk, chunkPosition.x, chunkPosition.y)
     })
 
-    socket.on('tile.set', async (rawTilePosition, type) => {
+    socket.on('tile.set', async (rawTilePosition, type, meta) => {
       const tilePosition = new Vec2(...rawTilePosition)
 
-      const tile = await createTile(type)
+      const tile = await createTile(type, meta)
 
       this.setTile(tile, tilePosition)
     })

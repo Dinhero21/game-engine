@@ -6,6 +6,7 @@ import { LeavesTile } from './leaves'
 import { StoneTile } from './stone'
 import { StructureTile } from './structure'
 import { TrunkTile } from './trunk'
+import { WaterTile } from './water'
 
 export const Tiles = {
   air: new AirTile({}),
@@ -21,7 +22,10 @@ export const Tiles = {
     ])
   }),
   leaves: new LeavesTile({}),
-  trunk: new TrunkTile({})
+  trunk: new TrunkTile({}),
+  water: new WaterTile({
+    pressure: 1
+  })
 } as const
 
 export default Tiles

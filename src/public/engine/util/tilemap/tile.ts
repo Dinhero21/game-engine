@@ -8,12 +8,14 @@ export interface TileRendererData {
 export type TileRenderer = (context: OffscreenCanvasRenderingContext2D, data: TileRendererData) => void
 
 export class Tile {
-  public readonly type: string
-  public readonly collidable: boolean
+  public readonly type
+  public readonly meta
+  public readonly collidable
   public readonly render
 
-  constructor (type: string, collidable: boolean, render: TileRenderer) {
+  constructor (type: string, meta: unknown, collidable: boolean, render: TileRenderer) {
     this.type = type
+    this.meta = meta
     this.collidable = collidable
     this.render = render
   }

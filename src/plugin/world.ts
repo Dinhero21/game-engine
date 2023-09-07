@@ -17,7 +17,7 @@ const world = new World(gen)
 world.on('tile.set', tile => {
   const tilePosition = tile.getTilePosition()
 
-  io.emit('tile.set', tilePosition.toArray(), tile.type)
+  io.emit('tile.set', tilePosition.toArray(), tile.type, tile.getMeta())
 })
 
 void (async () => {
@@ -78,11 +78,11 @@ io.on('connection', socket => {
 
         const tiles = chunk.getTiles()
 
-        const tileTypes: Array<string | null> = []
+        const tileArray: Array<[string, Record<string, unknown>] | null> = []
 
         for (let y = 0; y < CHUNK_SIZE; y++) {
           for (let x = 0; x < CHUNK_SIZE; x++) {
-            let type: string | null = null;
+            let serializedTile: [string, Record<string, unknown>] | null = null;
 
             (() => {
               const row = tiles.get(x)
@@ -93,14 +93,14 @@ io.on('connection', socket => {
 
               if (tile === undefined) return
 
-              type = tile.type
+              serializedTile = [tile.type, tile.properties]
             })()
 
-            tileTypes.push(type)
+            tileArray.push(serializedTile)
           }
         }
 
-        socket.emit('chunk.set', chunkPosition.toArray(), tileTypes)
+        socket.emit('chunk.set', chunkPosition.toArray(), tileArray)
 
         chunk.references.add(player)
       }

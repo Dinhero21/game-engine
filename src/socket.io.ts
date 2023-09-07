@@ -19,8 +19,8 @@ export interface ServerToClientEvents {
   'player.add': (player: Player) => void
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
-  'tile.set': (tilePosition: Vec2, type: string) => void
-  'chunk.set': (chunkPosition: Vec2, tiles: Array<string | null>) => void
+  'tile.set': (tilePosition: Vec2, type: string, meta: unknown) => void
+  'chunk.set': (chunkPosition: Vec2, tiles: Array<[string, unknown] | null>) => void
   'slot.set': (id: number, type: SlotType, amount: SlotAmount) => void
   'chat.message': (message: string) => void
 }

@@ -1,12 +1,13 @@
 import Tile from '../engine/util/tilemap/tile'
 import { loader } from '../asset/loader'
+import Vec2 from '../engine/util/vec2'
 
 export const TILE_TEXTURE_SIZE = 8
 
-export async function createTile (type: string): Promise<Tile> {
+export async function createTile (type: string, meta: unknown): Promise<Tile> {
   const tileData = await loader.getTileData(type)
 
-  return new Tile(type, tileData.collidable, (context, data) => {
+  return new Tile(type, meta, tileData.collidable, (context, data) => {
     const nearby = data.nearby
 
     const tileX = (Number(nearby[0]) << 0) + (Number(nearby[1]) << 1)
@@ -17,14 +18,39 @@ export async function createTile (type: string): Promise<Tile> {
 
     const texture = loader.getTileTexture(tileData.texture)
 
-    const position = data.position
+    const position = data.position.clone()
+
+    const size = new Vec2(TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE)
+
+    // TODO: Make it possible for tiles to "inject" their own rendering function automatically
+
+    const oldGlobalAlpha = context.globalAlpha
+
+    if (type === 'water') {
+      if (typeof meta !== 'number') throw new TypeError('Expected WaterTile.meta to be a number')
+
+      const pressure = meta
+
+      // nearby[0] = up
+      if (nearby[0]) {
+        context.globalAlpha = pressure
+      } else {
+        const delta = (1 - pressure) * TILE_TEXTURE_SIZE
+
+        position.y += delta
+
+        size.y -= delta
+      }
+    }
 
     context.drawImage(
       texture,
       x, y,
       TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE,
       position.x, position.y,
-      TILE_TEXTURE_SIZE, TILE_TEXTURE_SIZE
+      size.x, size.y
     )
+
+    context.globalAlpha = oldGlobalAlpha
   })
 }

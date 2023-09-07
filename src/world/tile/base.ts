@@ -22,9 +22,11 @@ export abstract class Tile<Properties = any> {
 export abstract class TileInstance<Properties = any> {
   public readonly abstract type: TileType
 
-  protected readonly properties: Properties
+  public readonly properties: Properties
 
   constructor (tileProperties: TileProperties, properties: Properties) {
+    Object.freeze(properties)
+
     this.properties = properties
 
     this.chunk = tileProperties.chunk
@@ -61,4 +63,6 @@ export abstract class TileInstance<Properties = any> {
 
     return chunkTilePosition.plus(relativeTilePosition)
   }
+
+  public getMeta (): any {}
 }
