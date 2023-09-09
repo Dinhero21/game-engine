@@ -28,15 +28,6 @@ export class ClippingEntity extends Entity {
   public render (): void {
     const size = this.size
 
-    const subFrame = new Frame()
-    subFrame.offset = this.offset
-
-    super.draw(subFrame)
-
-    const canvas = this.CANVAS
-    if (canvas.width !== size.x) canvas.width = size.x
-    if (canvas.height !== size.y) canvas.height = size.y
-
     const context = this.CONTEXT
 
     if (context === null) throw new Error('Failed to get canvas context')
@@ -46,7 +37,14 @@ export class ClippingEntity extends Entity {
       size.x, size.y
     )
 
-    subFrame.draw(context)
+    const subFrame = new Frame(context)
+    subFrame.offset = this.offset
+
+    super.draw(subFrame)
+
+    const canvas = this.CANVAS
+    if (canvas.width !== size.x) canvas.width = size.x
+    if (canvas.height !== size.y) canvas.height = size.y
   }
 
   public draw (frame: Frame): void {

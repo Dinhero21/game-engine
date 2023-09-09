@@ -71,14 +71,6 @@ export class Camera {
 
     // Scene -> Frame -> Camera Context -> Context
 
-    const frame = new Frame()
-    frame.offset = viewport.getPosition().scaled(-1)
-
-    if (DebugGlobals.camera.movable) frame.offset.add(scene.getMouseViewportPosition().minus(viewport.getSize().divided(2)))
-
-    // Scene -> Frame
-    scene.draw(frame)
-
     const viewportCanvas = this.VIEWPORT_CANVAS
     if (viewportCanvas.width !== viewportSize.x) viewportCanvas.width = viewportSize.x
     if (viewportCanvas.height !== viewportSize.y) viewportCanvas.height = viewportSize.y
@@ -96,8 +88,13 @@ export class Camera {
 
     // TODO: Render directly to canvas
 
-    // Frame -> Camera Context
-    frame.draw(viewportContext)
+    const frame = new Frame(viewportContext)
+    frame.offset = viewport.getPosition().scaled(-1)
+
+    if (DebugGlobals.camera.movable) frame.offset.add(scene.getMouseViewportPosition().minus(viewport.getSize().divided(2)))
+
+    // Scene -> Frame
+    scene.draw(frame)
 
     if (this.clear) {
       context.clearRect(

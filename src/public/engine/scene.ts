@@ -26,12 +26,10 @@ export class Scene {
 
   public draw (frame: Frame): void {
     for (const child of this.children) {
-      const childFrame = new Frame()
+      const childFrame = new Frame(frame)
       childFrame.offset = child.position
 
       child.draw(childFrame)
-
-      childFrame.draw(frame)
     }
   }
 

@@ -13,88 +13,83 @@ export type HTMLRenderingContext2D = CanvasRenderingContext2D | OffscreenCanvasR
 export type RenderingContext2D = Frame | HTMLRenderingContext2D
 
 export class Frame {
-  private readonly queue: Array<(context: RenderingContext2D) => void> = []
-
+  // TODO: (Optionally) use CanvasRenderingContext2D.translate
   public offset: Vec2 = new Vec2(0, 0)
+
+  protected readonly context
+
+  constructor (context: RenderingContext2D) {
+    this.context = context
+  }
 
   // Context properties
 
   public setFillStyle (fillStyle: HTMLRenderingContext2D['fillStyle']): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context.setFillStyle(fillStyle)
+    if (context instanceof Frame) {
+      context.setFillStyle(fillStyle)
 
-        return
-      }
+      return this
+    }
 
-      context.fillStyle = fillStyle
-    })
+    context.fillStyle = fillStyle
 
     return this
   }
 
   public setStrokeStyle (strokeStyle: HTMLRenderingContext2D['strokeStyle']): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context.setStrokeStyle(strokeStyle)
+    if (context instanceof Frame) {
+      context.setStrokeStyle(strokeStyle)
 
-        return
-      }
+      return this
+    }
 
-      context.strokeStyle = strokeStyle
-    })
+    context.strokeStyle = strokeStyle
 
     return this
   }
 
   public setLineWidth (lineWidth: HTMLRenderingContext2D['lineWidth']): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context.setLineWidth(lineWidth)
+    if (context instanceof Frame) {
+      context.setLineWidth(lineWidth)
 
-        return
-      }
+      return this
+    }
 
-      context.lineWidth = lineWidth
-    })
+    context.lineWidth = lineWidth
 
     return this
   }
 
   public setFont (font: HTMLRenderingContext2D['font']): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context.setFont(font)
+    if (context instanceof Frame) {
+      context.setFont(font)
 
-        return
-      }
+      return this
+    }
 
-      context.font = font
-    })
+    context.font = font
 
     return this
   }
 
   public setAlpha (globalAlpha: HTMLRenderingContext2D['globalAlpha']): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context.setAlpha(globalAlpha)
+    if (context instanceof Frame) {
+      context.setAlpha(globalAlpha)
 
-        return
-      }
+      return this
+    }
 
-      context.globalAlpha = globalAlpha
-    })
+    context.globalAlpha = globalAlpha
 
     return this
   }
@@ -102,247 +97,200 @@ export class Frame {
   // Context methods
 
   public _fillRect (x: number, y: number, w: number, h: number): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      const offset = this.offset
+    const offset = this.offset
 
-      if (context instanceof Frame) {
-        if (FrameGlobals.integer_approximation.frame) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      } else {
-        if (FrameGlobals.integer_approximation.canvas) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      }
+    const type = context instanceof Frame ? 'frame' : 'canvas'
 
-      x += offset.x
-      y += offset.y
+    if (FrameGlobals.integer_approximation[type]) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
-      if (context instanceof Frame) {
-        context._fillRect(x, y, w, h)
+    x += offset.x
+    y += offset.y
 
-        return
-      }
+    if (context instanceof Frame) {
+      context._fillRect(x, y, w, h)
 
-      context.fillRect(x, y, w, h)
-    })
+      return this
+    }
+
+    context.fillRect(x, y, w, h)
 
     return this
   }
 
   public _strokeRect (x: number, y: number, w: number, h: number): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      const offset = this.offset
+    const offset = this.offset
 
-      if (context instanceof Frame) {
-        if (FrameGlobals.integer_approximation.frame) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      } else {
-        if (FrameGlobals.integer_approximation.canvas) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      }
+    const type = context instanceof Frame ? 'frame' : 'canvas'
 
-      x += offset.x
-      y += offset.y
+    if (FrameGlobals.integer_approximation[type]) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
-      if (context instanceof Frame) {
-        context._strokeRect(x, y, w, h)
+    x += offset.x
+    y += offset.y
 
-        return
-      }
+    if (context instanceof Frame) {
+      context._strokeRect(x, y, w, h)
 
-      context.strokeRect(x, y, w, h)
-    })
+      return this
+    }
+
+    context.strokeRect(x, y, w, h)
 
     return this
   }
 
   public _beginPath (): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context._beginPath()
+    if (context instanceof Frame) {
+      context._beginPath()
 
-        return
-      }
+      return this
+    }
 
-      context.beginPath()
-    })
+    context.beginPath()
 
     return this
   }
 
   public _moveTo (x: number, y: number): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      const offset = this.offset
+    const offset = this.offset
 
-      if (context instanceof Frame) {
-        if (FrameGlobals.integer_approximation.frame) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      } else {
-        if (FrameGlobals.integer_approximation.canvas) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      }
+    const type = context instanceof Frame ? 'frame' : 'canvas'
 
-      x += offset.x
-      y += offset.y
+    if (FrameGlobals.integer_approximation[type]) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
-      if (context instanceof Frame) {
-        context._moveTo(x, y)
+    x += offset.x
+    y += offset.y
 
-        return
-      }
+    if (context instanceof Frame) {
+      context._moveTo(x, y)
 
-      context.moveTo(x, y)
-    })
+      return this
+    }
+
+    context.moveTo(x, y)
 
     return this
   }
 
   public _lineTo (x: number, y: number): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      const offset = this.offset
+    const offset = this.offset
 
-      if (context instanceof Frame) {
-        if (FrameGlobals.integer_approximation.frame) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      } else {
-        if (FrameGlobals.integer_approximation.canvas) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      }
+    const type = context instanceof Frame ? 'frame' : 'canvas'
 
-      x += offset.x
-      y += offset.y
+    if (FrameGlobals.integer_approximation[type]) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
-      if (context instanceof Frame) {
-        context._lineTo(x, y)
+    x += offset.x
+    y += offset.y
 
-        return
-      }
+    if (context instanceof Frame) {
+      context._lineTo(x, y)
 
-      context.lineTo(x, y)
-    })
+      return this
+    }
+
+    context.lineTo(x, y)
 
     return this
   }
 
   public _stroke (): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      if (context instanceof Frame) {
-        context._stroke()
+    if (context instanceof Frame) {
+      context._stroke()
 
-        return
-      }
+      return this
+    }
 
-      context.stroke()
-    })
+    context.stroke()
 
     return this
   }
 
   public _fillText (text: string, x: number, y: number, maxWidth?: number): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      const offset = this.offset
+    const offset = this.offset
 
-      if (context instanceof Frame) {
-        if (FrameGlobals.integer_approximation.frame) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      } else {
-        if (FrameGlobals.integer_approximation.canvas) {
-          x = Math.floor(x)
-          y = Math.floor(y)
-        }
-      }
+    const type = context instanceof Frame ? 'frame' : 'canvas'
 
-      x += offset.x
-      y += offset.y
+    if (FrameGlobals.integer_approximation[type]) {
+      x = Math.floor(x)
+      y = Math.floor(y)
+    }
 
-      if (context instanceof Frame) {
-        context._fillText(text, x, y, maxWidth)
+    x += offset.x
+    y += offset.y
 
-        return
-      }
+    if (context instanceof Frame) {
+      context._fillText(text, x, y, maxWidth)
 
-      context.fillText(text, x, y, maxWidth)
-    })
+      return this
+    }
+
+    context.fillText(text, x, y, maxWidth)
 
     return this
   }
 
   public _drawImage (image: CanvasImageSource, dx: number, dy: number, dw?: number, dh?: number, imageSmoothingEnabled: boolean = true): this {
-    const queue = this.queue
+    const context = this.context
 
-    queue.push(context => {
-      const offset = this.offset
+    const offset = this.offset
 
-      if (context instanceof Frame) {
-        if (FrameGlobals.integer_approximation.frame) {
-          dx = Math.floor(dx)
-          dy = Math.floor(dy)
-          if (dw !== undefined) dw = Math.floor(dw)
-          if (dh !== undefined) dh = Math.floor(dh)
-        }
-      } else {
-        if (FrameGlobals.integer_approximation.canvas) {
-          dx = Math.floor(dx)
-          dy = Math.floor(dy)
-          if (dw !== undefined) dw = Math.floor(dw)
-          if (dh !== undefined) dh = Math.floor(dh)
-        }
-      }
+    const type = context instanceof Frame ? 'frame' : 'canvas'
 
-      dx += offset.x
-      dy += offset.y
+    if (FrameGlobals.integer_approximation[type]) {
+      dx = Math.floor(dx)
+      dy = Math.floor(dy)
+      if (dw !== undefined) dw = Math.floor(dw)
+      if (dh !== undefined) dh = Math.floor(dh)
+    }
 
-      if (context instanceof Frame) {
-        context._drawImage(
-          image,
-          dx, dy,
-          dw, dh,
-          imageSmoothingEnabled
-        )
+    dx += offset.x
+    dy += offset.y
 
-        return
-      }
+    if (context instanceof Frame) {
+      context._drawImage(
+        image,
+        dx, dy,
+        dw, dh,
+        imageSmoothingEnabled
+      )
 
-      const smoothing = context.imageSmoothingEnabled
+      return this
+    }
 
-      context.imageSmoothingEnabled = imageSmoothingEnabled
+    const smoothing = context.imageSmoothingEnabled
 
-      if (dw === undefined || dh === undefined) context.drawImage(image, dx, dy)
-      else context.drawImage(image, dx, dy, dw, dh)
+    context.imageSmoothingEnabled = imageSmoothingEnabled
 
-      context.imageSmoothingEnabled = smoothing
-    })
+    // TODO: Find out if this really increases performance
+    if (dw === undefined || dh === undefined) context.drawImage(image, dx, dy)
+    else context.drawImage(image, dx, dy, dw, dh)
+
+    context.imageSmoothingEnabled = smoothing
 
     if (Debug.frame.outline_drawImage) {
       let width = 0
@@ -455,12 +403,6 @@ export class Frame {
   public drawFancyRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
     this.outlineRectRGBA(x, y, w, h, r, g, b, a, outlineWidth)
     this.drawRectRGBA(x, y, w, h, r, g, b, a * 0.20)
-
-    return this
-  }
-
-  public draw (context: RenderingContext2D): this {
-    for (const f of this.queue) f(context)
 
     return this
   }
