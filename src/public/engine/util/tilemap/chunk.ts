@@ -1,10 +1,9 @@
 import type Tile from './tile'
-import { CHUNK_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion'
+import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToPosition } from './position-conversion'
 import Vec2 from '../vec2'
 import RectangularCollider from '../collision/rectangular'
 import { loader } from '../../../asset/loader'
-import { setOrigin } from '../../../game/util/debug'
-import { TILE_TEXTURE_SIZE } from '../../../game/tile'
+import { setOrigin } from '../debug'
 
 export interface TileRendererTile {
   position: Vec2
@@ -44,12 +43,15 @@ export class Chunk<ValidTile extends Tile = Tile> {
   public getImage (cache: boolean = true): OffscreenCanvas | undefined {
     if (cache && this.cache !== undefined) return this.cache
 
-    const CANVAS_SIZE = CHUNK_SIZE * TILE_TEXTURE_SIZE
+    const boundingBox = this.boundingBox
+    const size = boundingBox.getSize()
 
     const canvas = new OffscreenCanvas(
-      CANVAS_SIZE,
-      CANVAS_SIZE
+      size.x,
+      size.y
     )
+
+    setOrigin(canvas, `${this.constructor.name}.getImage`)
 
     const context = canvas.getContext('2d')
 
@@ -59,7 +61,7 @@ export class Chunk<ValidTile extends Tile = Tile> {
     context.imageSmoothingEnabled = false
 
     for (const [tileTilePosition, tile] of this.getTiles()) {
-      const tilePosition = tileTilePosition.scaled(TILE_TEXTURE_SIZE)
+      const tilePosition = tilePositionToPosition(tileTilePosition)
 
       // ? Should I make translating and resizing the tile's responsibility?
       tile.render(context, {
@@ -68,31 +70,9 @@ export class Chunk<ValidTile extends Tile = Tile> {
       })
     }
 
-    const boundingBox = this.boundingBox
-    const size = boundingBox.getSize()
+    if (cache) this.cache = canvas
 
-    const scaledCanvas = new OffscreenCanvas(
-      size.x,
-      size.y
-    )
-
-    setOrigin(scaledCanvas, `${this.constructor.name}.getImage`)
-
-    const scaledContext = scaledCanvas.getContext('2d')
-
-    if (scaledContext === null) return
-
-    scaledContext.imageSmoothingEnabled = false
-
-    scaledContext.drawImage(
-      canvas,
-      0, 0,
-      size.x, size.y
-    )
-
-    if (cache) this.cache = scaledCanvas
-
-    return scaledCanvas
+    return canvas
   }
 
   protected getNearby (x: number, y: number): [boolean, boolean, boolean, boolean] {

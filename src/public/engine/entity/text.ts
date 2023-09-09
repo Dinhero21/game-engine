@@ -2,7 +2,7 @@ import type Frame from '../util/frame'
 import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Vec2 from '../util/vec2'
-import { setOrigin } from '../../game/util/debug'
+import { setOrigin } from '../util/debug'
 
 export interface FontOptions {
   style?: string

@@ -25,7 +25,8 @@ export const Debug = {
 }
 
 export const Experiments = {
-  '3d': false
+  '3d': false,
+  cursed_water: false
 }
 
 export const globals = {

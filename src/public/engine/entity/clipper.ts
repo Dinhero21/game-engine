@@ -2,7 +2,7 @@ import type Vec2 from '../util/vec2'
 import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Frame from '../util/frame'
-import { setOrigin } from '../../game/util/debug'
+import { setOrigin } from '../util/debug'
 
 export class ClippingEntity extends Entity {
   protected offset

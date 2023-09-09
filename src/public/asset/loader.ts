@@ -1,4 +1,4 @@
-import { setOrigin } from '../game/util/debug'
+import { setOrigin } from '../engine/util/debug'
 
 export interface RawTileData {
   texture: string

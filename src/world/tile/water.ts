@@ -28,6 +28,8 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
 
   public pressure
 
+  public last = 0
+
   constructor (tileProperties: TileProperties, properties: WaterTileProperties) {
     super(tileProperties, properties)
 
@@ -39,42 +41,57 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
   public update (): void {
     super.update()
 
-    const chunk = this.getChunk()
+    if (false as boolean) {
+      const now = performance.now()
 
-    // Don't run if the chunk is not being loaded by any players
-    if (chunk.references.size === 0) return
+      const delta = now - this.last
 
-    const world = this.getWorld()
+      this.last = now
 
-    const tilePosition = this.getTilePosition()
+      this.pressure += delta / 1000
+      this.pressure %= 1
 
-    const belowTilePosition = tilePosition.offset(0, 1)
-
-    const belowTile = world.getTile(belowTilePosition)
-
-    if (belowTile === undefined) return
-
-    this.merge(belowTile)
-
-    const pressure = this.pressure
-
-    if (pressure < 1 / 1024) {
-      world.setTile(Tiles.air.instance(), tilePosition, undefined, false)
-
-      return
+      this.syncTile(this)
     }
 
-    const side = Math.random() < 0.5 ? 1 : -1
+    if (true as boolean) {
+      const chunk = this.getChunk()
 
-    const positiveTilePosition = tilePosition.offset(side, 0)
-    const positiveTile = world.getTile(positiveTilePosition)
+      // Don't run if the chunk is not being loaded by any players
+      if (chunk.references.size === 0) return
 
-    if (positiveTile !== undefined) this.balance(positiveTile)
+      const world = this.getWorld()
 
-    const negativeTilePosition = tilePosition.offset(-side, 0)
-    const negativeTile = world.getTile(negativeTilePosition)
+      const tilePosition = this.getTilePosition()
 
-    if (negativeTile !== undefined) this.balance(negativeTile)
+      const belowTilePosition = tilePosition.offset(0, 1)
+
+      const belowTile = world.getTile(belowTilePosition)
+
+      if (belowTile === undefined) return
+
+      this.merge(belowTile)
+
+      const pressure = this.pressure
+
+      if (pressure < 1 / 1024) {
+        world.setTile(Tiles.air.instance(), tilePosition, undefined, false)
+
+        return
+      }
+
+      const side = Math.random() < 0.5 ? 1 : -1
+
+      const positiveTilePosition = tilePosition.offset(side, 0)
+      const positiveTile = world.getTile(positiveTilePosition)
+
+      if (positiveTile !== undefined) this.balance(positiveTile)
+
+      const negativeTilePosition = tilePosition.offset(-side, 0)
+      const negativeTile = world.getTile(negativeTilePosition)
+
+      if (negativeTile !== undefined) this.balance(negativeTile)
+    }
   }
 
   public ensureTileIsWater (tile: TileInstance): WaterTileInstance | undefined {
@@ -160,8 +177,14 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
   }
 
   public getMeta (): number {
-    const height = this.pressure * 8
+    let pressure = this.pressure
 
-    return Math.floor(height)
+    if (pressure > 1 - (1 / 32)) pressure = 1
+
+    let height = Math.floor(pressure * 8)
+
+    if (height < 1) height = 1
+
+    return height
   }
 }
