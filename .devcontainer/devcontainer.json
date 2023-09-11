@@ -1,0 +1,75 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
+{
+	// ? What should I name this?
+	"name": "Existing Docker Compose (Extend)",
+
+	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
+	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+	"dockerComposeFile": [
+		"../compose.yml",
+		"docker-compose.yml"
+	],
+
+	// The 'service' property is the name of the service for the container that VS Code should
+	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+	"service": "server",
+
+	// The optional 'workspaceFolder' property is the path VS Code should open by default when
+	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": [],
+
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	// "shutdownAction": "none",
+
+	// TODO: Make dev package installation happen during building (somehow)
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "npm ci",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"aaron-bond.better-comments",
+				"ms-vscode-remote.remote-containers",
+				"usernamehw.errorlens",
+				"streetsidesoftware.code-spell-checker",
+				"Codeium.codeium",
+				"adpyke.codesnap",
+				"ms-azuretools.vscode-docker",
+				"dbaeumer.vscode-eslint",
+				"cprogrammer1994.eval-selection",
+				"waderyan.gitblame",
+				"donjayamanne.git-extension-pack",
+				"pomber.git-file-history",
+				"mhutchie.git-graph",
+				"donjayamanne.githistory",
+				"GitHub.vscode-pull-request-github",
+				"codezombiech.gitignore",
+				"eamodio.gitlens",
+				"XuangeAha.just-enough-git",
+				"Cardinal90.multi-cursor-case-preserve",
+				"christian-kohler.npm-intellisense",
+				"ziyasal.vscode-open-in-github",
+				"christian-kohler.path-intellisense",
+				"yoavbls.pretty-ts-errors",
+				"meganrogge.template-string-converter",
+				"Gruntfuggly.todo-tree",
+				"redhat.vscode-yaml"
+			]
+		}
+	}
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}

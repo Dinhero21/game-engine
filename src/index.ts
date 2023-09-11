@@ -7,6 +7,10 @@ const __filename = fileURLToPath(import.meta.url)
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const __dirname = dirname(__filename)
 
+const NODE_ENV = process.env.NODE_ENV
+
+console.info('Environment:', NODE_ENV)
+
 const PLUGIN_DIR_PATH = join(__dirname, 'plugin')
 
 const promises = []
@@ -19,6 +23,6 @@ for (const file of await fs.readdir(PLUGIN_DIR_PATH)) {
 
 console.time('Loading Plugins')
 
-// await Promise.all(promises)
+await Promise.all(promises)
 
 console.timeEnd('Loading Plugins')

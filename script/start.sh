@@ -1,1 +1,1 @@
-script/run-once.sh $@
+node dist/index.js $@

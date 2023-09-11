@@ -1,4 +1,4 @@
-import { io } from './server'
+import { io } from './web'
 import Player from '../player'
 import Vec2 from '../public/engine/util/vec2'
 import { type SocketId } from 'socket.io-adapter'

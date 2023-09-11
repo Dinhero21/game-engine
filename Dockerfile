@@ -1,20 +1,32 @@
-FROM node:18
+# syntax=docker/dockerfile:1
 
-RUN apt-get update
+ARG NODE_VERSION=18.17.1
 
-RUN apt-get install -y rsync
+FROM node:${NODE_VERSION}-alpine
 
-ENV PORT=8080
+WORKDIR /usr/src/app
+
 EXPOSE 8080
 
-# ! These files should be copied before others because of docker cache
-COPY package.json .
+# Install Dependencies
+
+## NPM
+
+# ! Copy package[-lock].json first
+COPY package.json      .
 COPY package-lock.json .
 
 RUN npm ci
 
+## Packages
+
+RUN apk update
+
+RUN apk add rsync
+
+
+# Finalize
+
 COPY . .
 
-RUN npm run build
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "build-start"]

@@ -1,4 +1,4 @@
-import { io } from './server'
+import { io } from './web'
 import { getPlayer } from './player'
 import { World } from '../world'
 import { WorldGen } from '../world/gen'

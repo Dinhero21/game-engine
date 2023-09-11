@@ -1,6 +1,6 @@
 import type CommandHelper from '../util/command'
 import { registerCommand } from '.'
-import { io } from '../plugin/server'
+import { io } from '../plugin/web'
 
 function teleport (helper: CommandHelper): void {
   const [x, y] = helper.args

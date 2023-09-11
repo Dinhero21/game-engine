@@ -1,6 +1,6 @@
 import type Player from '../player'
 import { getPlayer } from './player'
-import { io } from './server'
+import { io } from './web'
 import { type AsyncVoid, EventHandler } from '../util/event'
 
 export interface ChatPluginEventMap {

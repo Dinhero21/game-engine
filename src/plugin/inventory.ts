@@ -1,5 +1,5 @@
 import { getPlayer } from './player'
-import { io } from './server'
+import { io } from './web'
 
 io.on('connection', socket => {
   const player = getPlayer(socket.id)

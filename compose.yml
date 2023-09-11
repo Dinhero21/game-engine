@@ -1,0 +1,8 @@
+services:
+  server:
+    build: .
+    environment:
+      NODE_ENV: production
+      PORT: 8080
+    ports:
+      - 8080:8080
