@@ -3,6 +3,7 @@ import { AirTileInstance } from './air'
 import { Tile, TileInstance, type TileProperties } from './base'
 import loop from './decorator/loop'
 import once from './decorator/once'
+import fixed from './decorator/fixed'
 import { tilePositionToChunkPosition } from '../../public/engine/util/tilemap/position-conversion'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -38,6 +39,7 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
 
   @once()
   @loop(true)
+  @fixed(1000 / 8)
   public update (): void {
     super.update()
 
