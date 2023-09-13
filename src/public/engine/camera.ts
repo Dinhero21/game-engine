@@ -38,8 +38,11 @@ export class Camera {
 
     const size = targetSize.scaled(scale)
 
-    // TODO: Make this less ugly
-    const position = viewportPosition.minus(this.position).scaled(targetSize.divided(viewportSize)).scaled(scale).plus(this.position)
+    const position = viewportPosition
+      .minus(this.position)
+      .scaled(targetSize.divided(viewportSize))
+      .scaled(scale)
+      .plus(this.position)
 
     if (INTEGER_APPROXIMATION) {
       size.floor()
@@ -55,10 +58,6 @@ export class Camera {
     this.scene = scene
   }
 
-  // ! See https://stackoverflow.com/questions/63138513/canvas-drawimage-slow-first-time-another-canvas-is-used-as-the-source-argument
-  protected readonly VIEWPORT_CANVAS = new OffscreenCanvas(0, 0)
-  protected readonly VIEWPORT_CONTEXT = this.VIEWPORT_CANVAS.getContext('2d')
-
   public render (): void {
     const scene = this.scene
     const context = scene.context
@@ -69,32 +68,7 @@ export class Camera {
     const viewport = this.getViewport()
     const viewportSize = viewport.getSize()
 
-    // Scene -> Frame -> Camera Context -> Context
-
-    const viewportCanvas = this.VIEWPORT_CANVAS
-    if (viewportCanvas.width !== viewportSize.x) viewportCanvas.width = viewportSize.x
-    if (viewportCanvas.height !== viewportSize.y) viewportCanvas.height = viewportSize.y
-
-    const viewportContext = this.VIEWPORT_CONTEXT
-
-    if (viewportContext === null) throw new Error('Failed to get canvas context')
-
-    if (this.clear) {
-      viewportContext.clearRect(
-        0, 0,
-        viewportSize.x, viewportSize.y
-      )
-    }
-
-    // TODO: Render directly to canvas
-
-    const frame = new Frame(viewportContext)
-    frame.offset = viewport.getPosition().scaled(-1)
-
-    if (DebugGlobals.camera.movable) frame.offset.add(scene.getMouseViewportPosition().minus(viewport.getSize().divided(2)))
-
-    // Scene -> Frame
-    scene.draw(frame)
+    // Scene -> Frame -> Context
 
     if (this.clear) {
       context.clearRect(
@@ -103,12 +77,33 @@ export class Camera {
       )
     }
 
-    // Camera Context -> Context
-    context.drawImage(
-      viewportCanvas,
-      0, 0,
-      canvasSize.x, canvasSize.y
+    const transform = context.getTransform()
+
+    // When the screen is in a different resolution then used in development (for me, 16:9) we do not want every UI element to resize as that would cause, among other things, alignment issues and overlapping, to prevent that the game is rendered at a constant scaling and clipped and resized at runtime. This is what the code below is for.
+    context.scale(
+      canvasSize.x / viewportSize.x,
+      canvasSize.y / viewportSize.y
     )
+
+    const viewportPosition = viewport.getPosition()
+
+    const frame = new Frame(context)
+    frame.offset = viewportPosition.scaled(-1)
+
+    if (DebugGlobals.camera.movable) {
+      const viewportSize = viewport.getSize()
+
+      const mousePosition = scene.getMouseViewportPosition()
+
+      const offset = mousePosition.minus(viewportSize.divided(2))
+
+      frame.offset.add(offset)
+    }
+
+    // Scene -> Frame
+    scene.draw(frame)
+
+    context.setTransform(transform)
   }
 }
 
