@@ -119,8 +119,24 @@ io.on('connection', socket => {
 
   // ? Should this be in the World or Inventory Plugin?
 
-  socket.on('tile.click', rawTilePosition => {
+  socket.on('tile.click', (rawTilePosition, button) => {
     const tilePosition = new Vec2(...rawTilePosition)
+
+    switch (button) {
+      case 'left':
+        onLeftClick(tilePosition)
+        break
+      case 'right':
+        onRightClick(tilePosition)
+        break
+      default:
+        // ? Should I throw an error here? This might lead to a server-crashing exploit.
+        throw new Error(`Unknown tile click button: ${JSON.stringify(button)}`)
+    }
+  })
+
+  function onLeftClick (tilePosition: Vec2): void {
+    if (player === undefined) return
 
     const tile = world.getTile(tilePosition)
 
@@ -141,5 +157,15 @@ io.on('connection', socket => {
     }
 
     if (player.inventory.addItem(tile.type, 1)) world.setTile(Tiles.air.instance(), tilePosition, true, true)
-  })
+  }
+
+  function onRightClick (tilePosition: Vec2): void {
+    if (player === undefined) return
+
+    const tile = world.getTile(tilePosition)
+
+    if (tile === undefined) return
+
+    tile.onInteraction(player)
+  }
 })

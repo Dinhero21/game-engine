@@ -6,6 +6,7 @@ import { Experiments } from '../../globals'
 
 export interface CustomTileRendererData extends TileRendererData {
   size: Vec2
+  texturePath: string
 }
 
 export type CustomTileRenderer = (context: OffscreenCanvasRenderingContext2D, data: CustomTileRendererData) => void
@@ -14,6 +15,8 @@ export const TILE_TEXTURE_SIZE = 8
 
 export async function createTile (type: string, meta: unknown): Promise<Tile> {
   const tileData = await loader.getTileData(type)
+
+  // TODO: Use import * to dynamically define custom renderers
 
   const RENDERER = new Map<string, CustomTileRenderer>()
 
@@ -84,6 +87,21 @@ export async function createTile (type: string, meta: unknown): Promise<Tile> {
     }
   )
 
+  const ELECTRICAL_TILES = ['wire', 'switch']
+
+  const electrical: CustomTileRenderer = (context, data) => {
+    const active = meta
+
+    data.texturePath += `.${String(active)}`
+  }
+
+  for (const tile of ELECTRICAL_TILES) {
+    RENDERER.set(
+      tile,
+      electrical
+    )
+  }
+
   return new Tile(type, meta, tileData.collidable, render)
 
   function render (context: OffscreenCanvasRenderingContext2D, data: TileRendererData): void {
@@ -95,22 +113,29 @@ export async function createTile (type: string, meta: unknown): Promise<Tile> {
     const x = tileX * TILE_TEXTURE_SIZE
     const y = tileY * TILE_TEXTURE_SIZE
 
-    const texture = loader.getTileTexture(tileData.texture)
-
     const position = data.position
 
     const size = new Vec2(TILE_SIZE, TILE_SIZE)
+
+    let texturePath = tileData.texture
 
     const oldGlobalAlpha = context.globalAlpha
 
     const renderer = RENDERER.get(tileData.type)
 
     if (renderer !== undefined) {
-      renderer(context, {
+      const rendererData = {
         ...data,
-        size
-      })
+        size,
+        texturePath
+      }
+
+      renderer(context, rendererData)
+
+      texturePath = rendererData.texturePath
     }
+
+    const texture = loader.getTileTexture(texturePath)
 
     context.drawImage(
       texture,

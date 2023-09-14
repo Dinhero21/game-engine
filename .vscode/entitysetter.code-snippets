@@ -1,0 +1,15 @@
+{
+	"Entity Setter": {
+		"scope": "typescript",
+		"prefix": "entitysetter",
+		"body": [
+			"public set$1 ($2: $4): $3 {",
+			"	return new $3({",
+			"		...this.properties,",
+			"		$2",
+			"	})",
+			"}"
+		],
+		"description": "Creates a new Entity Setter"
+	}
+}

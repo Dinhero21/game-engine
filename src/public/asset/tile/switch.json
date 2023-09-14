@@ -1,0 +1,7 @@
+{
+  "texture": "switch",
+  "collidable": false,
+  "connects": [
+    "wire"
+  ]
+}

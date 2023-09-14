@@ -4,8 +4,6 @@ import WorldEntity from './entity/world'
 import UserInterfaceEntity from './entity/user-interface'
 import DebugEntity from './entity/debug'
 import { ViewportGenerators } from '../engine/camera'
-import { PrioritizedMouse } from '../engine/util/input/mouse/prioritization'
-import { positionToTilePosition } from '../engine/util/tilemap/position-conversion'
 import Scene from '../engine/scene'
 import Loop from '../engine/util/loop'
 import globals from '../globals'
@@ -186,17 +184,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const world = new WorldEntity(socket)
   scene.addChild(world)
-
-  // TODO: Make this part of the world
-  new PrioritizedMouse(() => world.getPath()).addEventListener('left.down', () => {
-    const mouseGlobalPosition = world.getMouseGlobalPosition()
-
-    if (mouseGlobalPosition === undefined) return
-
-    const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
-
-    socket.emit('tile.click', globalMouseTilePosition.toArray())
-  })
 
   const multiplayerContainer = new MultiplayerContainerEntity(socket)
   scene.addChild(multiplayerContainer)

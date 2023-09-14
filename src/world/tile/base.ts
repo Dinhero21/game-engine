@@ -1,6 +1,8 @@
 import type Vec2 from '../../public/engine/util/vec2'
 import type Chunk from '../chunk'
+import type Player from '../../player'
 import { type World } from '..'
+import { tilePositionToPosition } from '../../public/engine/util/tilemap/position-conversion'
 
 export type TileType = string
 
@@ -37,6 +39,8 @@ export abstract class TileInstance<Properties = any> {
 
   public update (): void {}
 
+  public onInteraction (player: Player): void {}
+
   protected readonly chunk: Chunk
 
   public getChunk (): Chunk {
@@ -65,4 +69,42 @@ export abstract class TileInstance<Properties = any> {
   }
 
   public getMeta (): any {}
+
+  public syncTile (tile: TileInstance): void {
+    const world = this.getWorld()
+
+    const tilePosition = tile.getTilePosition()
+    const chunkPosition = tilePositionToPosition(tilePosition)
+
+    const chunk = world.getChunk(chunkPosition)
+
+    chunk.emit('tile.set', tile)
+  }
+
+  public * getNeighbors (): Iterable<TileInstance> {
+    const position = this.getTilePosition()
+
+    const neighborPositions = [
+      position.offset(1, 0),
+      position.offset(-1, 0),
+      position.offset(0, 1),
+      position.offset(0, -1)
+    ]
+
+    const world = this.getWorld()
+
+    for (const neighborPosition of neighborPositions) {
+      const neighbor = world.getTile(neighborPosition)
+
+      if (neighbor === undefined) continue
+
+      yield neighbor
+    }
+  }
+
+  public updateNeighbors (): void {
+    for (const neighbor of this.getNeighbors()) {
+      neighbor.update()
+    }
+  }
 }

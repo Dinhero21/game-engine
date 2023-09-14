@@ -1,5 +1,5 @@
 import type Tile from '../../engine/util/tilemap/tile'
-import { type IClientSocket as Socket } from '../../../socket.io'
+import { TILE_CLICK_BUTTONS, type IClientSocket as Socket } from '../../../socket.io'
 import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../../engine/util/tilemap/position-conversion'
 import { createTile } from '../util/tile'
 import { loader } from '../../asset/loader'
@@ -7,6 +7,7 @@ import Vec2 from '../../engine/util/vec2'
 import TileMapEntity from '../../engine/entity/tilemap'
 import { watch } from '../../engine/util/object'
 import { Experiments } from '../../globals'
+import { PrioritizedMouse } from '../../engine/util/input/mouse/prioritization'
 
 export class WorldEntity extends TileMapEntity<Tile> {
   private readonly socket
@@ -15,6 +16,20 @@ export class WorldEntity extends TileMapEntity<Tile> {
     super()
 
     this.socket = socket
+
+    const mouse = new PrioritizedMouse(() => this.getPath())
+
+    for (const button of TILE_CLICK_BUTTONS) {
+      mouse.addEventListener(`${button}.down`, () => {
+        const mouseGlobalPosition = this.getMouseGlobalPosition()
+
+        if (mouseGlobalPosition === undefined) return
+
+        const globalMouseTilePosition = positionToTilePosition(mouseGlobalPosition)
+
+        socket.emit('tile.click', globalMouseTilePosition.toArray(), button)
+      })
+    }
   }
 
   public ready (): void {

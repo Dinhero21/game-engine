@@ -3,6 +3,10 @@ import { type Recipe } from './public/asset/recipe'
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
 
+export const TILE_CLICK_BUTTONS = ['left', 'right'] as const
+export type TileClickButtons = typeof TILE_CLICK_BUTTONS
+export type TileClickButton = TileClickButtons[number]
+
 // engine.io-friendly types
 
 export type Vec2 = [number, number]
@@ -30,7 +34,7 @@ export interface ClientToServerEvents {
   'physics.update': (position: Vec2, velocity: Vec2) => void
   // ? Should I make Chunk Removal the client's responsibility?
   'chunk.remove': (chunkPosition: Vec2) => void
-  'tile.click': (tilePosition: Vec2) => void
+  'tile.click': (tilePosition: Vec2, button: TileClickButton) => void
   'slot.click': (id: number) => void
   'recipe.crafted': (recipe: Recipe) => void
   'chat.message': (message: string) => void

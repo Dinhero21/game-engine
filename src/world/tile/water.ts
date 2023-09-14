@@ -4,7 +4,6 @@ import { Tile, TileInstance, type TileProperties } from './base'
 import loop from './decorator/loop'
 import once from './decorator/once'
 import fixed from './decorator/fixed'
-import { tilePositionToChunkPosition } from '../../public/engine/util/tilemap/position-conversion'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface WaterTileProperties {
@@ -41,8 +40,6 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
   @loop(true)
   @fixed(1000 / 8)
   public update (): void {
-    super.update()
-
     if (false as boolean) {
       const now = performance.now()
 
@@ -117,17 +114,6 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
     if (!(newTile instanceof WaterTileInstance)) throw new TypeError('Expected WaterTile')
 
     return newTile
-  }
-
-  public syncTile (tile: TileInstance): void {
-    const world = this.getWorld()
-
-    const tilePosition = tile.getTilePosition()
-    const chunkPosition = tilePositionToChunkPosition(tilePosition)
-
-    const chunk = world.getChunk(chunkPosition)
-
-    chunk.emit('tile.set', tile)
   }
 
   public balance (instance: TileInstance): boolean {

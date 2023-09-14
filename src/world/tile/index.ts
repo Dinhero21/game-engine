@@ -5,8 +5,10 @@ import { HyperStoneTile } from './hyperstone'
 import { LeavesTile } from './leaves'
 import { StoneTile } from './stone'
 import { StructureTile } from './structure'
+import { SwitchTile } from './electric/switch'
 import { TrunkTile } from './trunk'
 import { WaterTile } from './water'
+import { WireTile } from './electric/wire'
 
 export const Tiles = {
   air: new AirTile({}),
@@ -25,6 +27,12 @@ export const Tiles = {
   trunk: new TrunkTile({}),
   water: new WaterTile({
     pressure: 1
+  }),
+  wire: new WireTile({
+    active: false
+  }),
+  switch: new SwitchTile({
+    active: false
   })
 } as const
 
