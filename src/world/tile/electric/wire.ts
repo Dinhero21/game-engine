@@ -1,4 +1,4 @@
-import { isSignalActive } from './signal'
+import { activateSignal, deactivateSignal, isSignalActive } from './signal'
 import { Tile, TileInstance, type TileProperties } from '../base'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -21,15 +21,15 @@ export class WireTile extends Tile<WireTileProperties> {
 export class WireTileInstance extends TileInstance<WireTileProperties> {
   type = 'wire'
 
-  public signal?: symbol
+  public signal?: TileInstance
 
-  protected getActiveSignal (): symbol | undefined {
+  protected getActiveSignal (): TileInstance | undefined {
     for (const neighbor of this.getNeighbors()) {
       if (!('signal' in neighbor)) continue
 
       const signal = neighbor.signal
 
-      if (typeof signal !== 'symbol') continue
+      if (!(signal instanceof TileInstance)) continue
 
       const active = isSignalActive(signal)
 
@@ -47,6 +47,24 @@ export class WireTileInstance extends TileInstance<WireTileProperties> {
     this.updateNeighbors()
 
     this.syncTile(this)
+  }
+
+  public destroy (): void {
+    const signal = this.signal
+
+    if (signal === undefined) return
+
+    const active = isSignalActive(signal)
+
+    if (!active) return
+
+    deactivateSignal(signal)
+
+    this.updateNeighbors()
+
+    activateSignal(signal)
+
+    signal.updateNeighbors()
   }
 
   public getMeta (): boolean {

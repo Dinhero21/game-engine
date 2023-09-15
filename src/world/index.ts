@@ -36,11 +36,14 @@ export class World extends TypedEmitter<WorldEvents> {
 
     const old = chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
 
+    chunk.setTile(Instance, relativeTilePosition, emit)
+
+    // ? Should destroy be called before of after tile replacement
+    // ? or more importantly, should there be a pre and post destroy?
+
     if (old !== undefined) {
       old.destroy()
     }
-
-    chunk.setTile(Instance, relativeTilePosition, emit)
 
     if (update) {
       for (let y = -1; y <= 1; y++) {

@@ -14,17 +14,15 @@ export class SwitchTile extends Tile<SwitchTileProperties> {
 export class SwitchTileInstance extends TileInstance<SwitchTileProperties> {
   type = 'switch'
 
-  private readonly signal = Symbol('signal.switch')
+  public signal = this
 
   public onInteraction (player: Player): void {
-    const signal = this.signal
-
-    const active = isSignalActive(signal)
+    const active = isSignalActive(this)
 
     if (active) {
-      deactivateSignal(signal)
+      deactivateSignal(this)
     } else {
-      activateSignal(signal)
+      activateSignal(this)
     }
 
     this.syncTile(this)
@@ -33,15 +31,11 @@ export class SwitchTileInstance extends TileInstance<SwitchTileProperties> {
   }
 
   public destroy (): void {
-    const signal = this.signal
-
-    deactivateSignal(signal)
+    deactivateSignal(this)
   }
 
   public getMeta (): boolean {
-    const signal = this.signal
-
-    const active = isSignalActive(signal)
+    const active = isSignalActive(this)
 
     return active
   }
