@@ -34,6 +34,12 @@ export class World extends TypedEmitter<WorldEvents> {
     const chunkTilePosition = chunk.getTilePosition()
     const relativeTilePosition = tilePosition.minus(chunkTilePosition)
 
+    const old = chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
+
+    if (old !== undefined) {
+      old.destroy()
+    }
+
     chunk.setTile(Instance, relativeTilePosition, emit)
 
     if (update) {

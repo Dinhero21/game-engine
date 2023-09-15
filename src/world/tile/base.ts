@@ -41,6 +41,8 @@ export abstract class TileInstance<Properties = any> {
 
   public onInteraction (player: Player): void {}
 
+  public destroy (): void {}
+
   protected readonly chunk: Chunk
 
   public getChunk (): Chunk {

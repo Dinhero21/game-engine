@@ -28,12 +28,8 @@ export const Tiles = {
   water: new WaterTile({
     pressure: 1
   }),
-  wire: new WireTile({
-    active: false
-  }),
-  switch: new SwitchTile({
-    active: false
-  })
+  wire: new WireTile({}),
+  switch: new SwitchTile({})
 } as const
 
 export default Tiles
