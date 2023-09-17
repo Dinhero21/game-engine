@@ -15,6 +15,16 @@ export interface TileData {
 }
 
 export class AssetLoader extends EventTarget {
+  public state = Symbol(`${this.constructor.name}.state (constructor)`)
+
+  constructor () {
+    super()
+
+    this.addEventListener('load', () => {
+      this.state = Symbol(`${this.constructor.name}.state (load)`)
+    })
+  }
+
   private readonly textureCache = new Map<string, HTMLImageElement>()
   public getTexture (name: string): HTMLImageElement {
     const cache = this.textureCache

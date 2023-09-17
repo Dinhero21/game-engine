@@ -9,15 +9,7 @@ import { CHUNK_SIZE, tilePositionToChunkPosition, chunkPositionToTilePosition, p
 const chunkTileSize = new Vec2(CHUNK_SIZE, CHUNK_SIZE)
 
 export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> {
-  private readonly chunks = new Map<number, Map<number, Chunk<ValidTile>>>()
-
-  public clearCache (): void {
-    for (const row of this.getChunks().values()) {
-      for (const chunk of row.values()) {
-        chunk.clearCache()
-      }
-    }
-  }
+  // Game Loop
 
   public draw (frame: Frame): void {
     super.draw(frame)
@@ -53,14 +45,24 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
 
         if (chunk === undefined) continue
 
-        const chunkImage = chunk.getImage()
-
-        if (chunkImage === undefined) continue
+        chunk.renderQueue()
 
         frame._drawImage(
-          chunkImage,
+          chunk.canvas,
           chunkPosition.x, chunkPosition.y
         )
+      }
+    }
+  }
+
+  // Chunk Manipulation
+
+  private readonly chunks = new Map<number, Map<number, Chunk<ValidTile>>>()
+
+  public renderAll (): void {
+    for (const row of this.getChunks().values()) {
+      for (const chunk of row.values()) {
+        chunk.queueAll()
       }
     }
   }
@@ -80,8 +82,6 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     chunks.set(x, row)
 
     row.set(y, chunk)
-
-    this.clearNearbyChunkCache(x, y)
   }
 
   public removeChunk (chunk: Chunk<ValidTile> | Vec2): void {
@@ -94,37 +94,29 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
     }
 
     this.chunks.get(chunk.x)?.delete(chunk.y)
-
-    // this.clearNearbyChunkCache(chunk.x, chunk.y)
-  }
-
-  protected clearNearbyChunkCache (x: number, y: number): void {
-    this._clearChunkCache(x - 1, y)
-    this._clearChunkCache(x + 1, y)
-    this._clearChunkCache(x, y - 1)
-    this._clearChunkCache(x, y + 1)
-  }
-
-  protected _clearChunkCache (x: number, y: number): void {
-    const chunk = this.getChunk(x, y)
-
-    if (chunk === undefined) return
-
-    chunk.clearCache()
   }
 
   // TODO: Use x, y instead of Vec2
   protected _createChunk (position: Vec2): Chunk<ValidTile> {
-    return new Chunk<ValidTile>(position, chunkTileSize, (x: number, y: number) => this.getTile(new Vec2(x, y)))
+    return new Chunk<ValidTile>(position, chunkTileSize, (x: number, y: number) => this.getChunk(x, y))
   }
 
-  public setTile (tile: ValidTile, tilePosition: Vec2): void {
-    const chunkChunkPosition = tilePositionToChunkPosition(tilePosition)
+  // Tile Manipulation
+
+  private _queueTile (tileTilePosition: Vec2): void {
+    const tileChunkPosition = tilePositionToChunkPosition(tileTilePosition)
+
+    const chunk = this.getChunk(tileChunkPosition.x, tileChunkPosition.y)
+
+    if (chunk === undefined) return
+
+    chunk.queueTile(tileTilePosition.x, tileTilePosition.y)
+  }
+
+  public setTile (tile: ValidTile, tileTilePosition: Vec2): void {
+    const chunkChunkPosition = tilePositionToChunkPosition(tileTilePosition)
 
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
-
-    tilePosition = tilePosition
-      .minus(chunkTilePosition)
 
     let chunk = this.getChunk(chunkChunkPosition.x, chunkChunkPosition.y)
 
@@ -133,17 +125,10 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
       this.setChunk(chunk, chunkChunkPosition.x, chunkChunkPosition.y)
     }
 
-    chunk.setTile(tile, tilePosition.x, tilePosition.y)
+    // ? Should I mutate
+    tileTilePosition.subtract(chunkTilePosition)
 
-    chunk.clearCache()
-
-    if (tilePosition.x === 0) this._clearChunkCache(chunkChunkPosition.x - 1, chunkChunkPosition.y)
-
-    if (tilePosition.x === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x + 1, chunkChunkPosition.y)
-
-    if (tilePosition.y === 0) this._clearChunkCache(chunkChunkPosition.x, chunkChunkPosition.y - 1)
-
-    if (tilePosition.y === CHUNK_SIZE - 1) this._clearChunkCache(chunkChunkPosition.x, chunkChunkPosition.y + 1)
+    chunk.setTile(tile, tileTilePosition)
   }
 
   // TODO: Use x, y instead of Vec2

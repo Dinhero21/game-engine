@@ -3,6 +3,7 @@ import Entity from '.'
 import RectangularCollider from '../util/collision/rectangular'
 import Frame from '../util/frame'
 import { setOrigin } from '../util/debug'
+import { valid } from '../../none'
 
 export class ClippingEntity extends Entity {
   protected offset
@@ -17,7 +18,10 @@ export class ClippingEntity extends Entity {
 
   // ! See https://stackoverflow.com/questions/63138513/canvas-drawimage-slow-first-time-another-canvas-is-used-as-the-source-argument
   protected readonly CANVAS = setOrigin(new OffscreenCanvas(0, 0), `${this.constructor.name}.draw`)
-  protected readonly CONTEXT = this.CANVAS.getContext('2d')
+  protected readonly CONTEXT = valid(
+    this.CANVAS.getContext('2d'),
+    new Error('Failed to get canvas context')
+  )
 
   public getConstantCollider (): RectangularCollider {
     return new RectangularCollider(this.offset, this.size)
@@ -29,8 +33,6 @@ export class ClippingEntity extends Entity {
     const size = this.size
 
     const context = this.CONTEXT
-
-    if (context === null) throw new Error('Failed to get canvas context')
 
     context.clearRect(
       0, 0,

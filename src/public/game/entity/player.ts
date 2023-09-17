@@ -109,6 +109,7 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     if (keyboard.isKeyDown('d')) horizontalDirection++
 
     if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) verticalDirection--
+    if (keyboard.isKeyDown('shift') || keyboard.isKeyDown('s')) verticalDirection++
 
     return new Vec2(horizontalDirection, verticalDirection)
   }
@@ -125,8 +126,8 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
       velocity.add(direction.scaled(new Vec2(25000, 12500)).scaled(delta))
     }
 
-    // velocity.y += gravity
-    velocity.y += 3750 * delta
+    // // velocity.y += gravity
+    // velocity.y += 3750 * delta
 
     // Friction
     velocity.x /= 1 + (FRICTION.x * delta)

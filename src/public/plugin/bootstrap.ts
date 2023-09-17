@@ -1,8 +1,11 @@
 import createScene from '../game'
+import { valid } from '../none'
 
-const view = document.getElementById('view')
+const view = valid(
+  document.getElementById('view'),
+  new Error('null #view')
+)
 
-if (view === null) throw new Error('null #view')
 if (!(view instanceof HTMLCanvasElement)) throw new Error('#view not HTMLCanvasElement')
 
 view.addEventListener('contextmenu', event => {
@@ -13,9 +16,10 @@ view.addEventListener('contextmenu', event => {
   return false
 })
 
-const context = view.getContext('2d')
-
-if (context === null) throw new Error('null #view context')
+const context = valid(
+  view.getContext('2d'),
+  new Error('Failed to get canvas context')
+)
 
 export const scene = createScene(context)
 
@@ -24,7 +28,6 @@ updateViewSize()
 window.addEventListener('resize', updateViewSize)
 
 function updateViewSize (): void {
-  if (view === null) throw new Error('null #view')
   if (!(view instanceof HTMLCanvasElement)) throw new Error('#view not HTMLCanvasElement')
 
   view.width = window.innerWidth

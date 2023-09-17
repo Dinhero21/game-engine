@@ -1,12 +1,14 @@
 import Entity from '.'
+import { valid } from '../../none'
 import RectangularCollider from '../util/collision/rectangular'
 import Vec2 from '../util/vec2'
 
 export class ViewportEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public getConstantCollider (): RectangularCollider {
-    const scene = this.getScene()
-
-    if (scene === undefined) throw new Error('ViewportEntity.getConstantCollider called before scene initialization')
+    const scene = valid(
+      this.getScene(),
+      new Error('ViewportEntity.getConstantCollider called before scene initialization')
+    )
 
     const parentGlobalPosition = this.getParentGlobalPosition()
 

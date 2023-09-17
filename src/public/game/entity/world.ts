@@ -52,7 +52,9 @@ export class WorldEntity extends TileMapEntity<Tile> {
 
             const tile = await createTile(type, properties)
 
-            chunk.setTile(tile, x, y)
+            const tileTilePosition = new Vec2(x, y)
+
+            chunk.setTile(tile, tileTilePosition)
           })()
         }
       }
@@ -73,12 +75,12 @@ export class WorldEntity extends TileMapEntity<Tile> {
     })
 
     loader.addEventListener('load', () => {
-      this.clearCache()
+      this.renderAll()
     })
 
     watch(Experiments, 'cursed_water', {
       set: () => {
-        this.clearCache()
+        this.renderAll()
       }
     })
   }
