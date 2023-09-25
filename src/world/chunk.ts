@@ -3,6 +3,7 @@ import type Player from '../player'
 import { type World } from '.'
 import { type TileProperties, type TileInstance } from './tile/base'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion'
+import { Map2D } from '../public/engine/util/2d'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 export interface ChunkData {
@@ -75,17 +76,18 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
 
   // Tile
 
-  private readonly tiles = new Map<number, Map<number, TileInstance>>()
+  private readonly tiles = new Map2D<number, number, TileInstance>()
 
-  public setTile (Instance: (properties: TileProperties) => TileInstance, relativeTilePosition: Vec2, emit: boolean = true): void {
+  public setTile (Instance: (properties: TileProperties) => TileInstance, relativeTilePosition: Vec2, emit: boolean = true): TileInstance {
     const tiles = this.tiles
-
-    const row = tiles.get(relativeTilePosition.x) ?? new Map()
-    tiles.set(relativeTilePosition.x, row)
 
     const tile = Instance({ chunk: this, position: relativeTilePosition })
 
-    row.set(relativeTilePosition.y, tile)
+    tiles.set(
+      relativeTilePosition.x,
+      relativeTilePosition.y,
+      tile
+    )
 
     if (emit) this.emit('tile.set', tile)
 
@@ -94,14 +96,20 @@ export class Chunk extends TypedEmitter<ChunkEvents> {
     world.queueTick(() => {
       tile.ready()
     })
+
+    return tile
   }
 
   public getTile (x: number, y: number): TileInstance | undefined {
-    return this.tiles.get(x)?.get(y)
+    return this.tiles.get(x, y)
   }
 
-  public getTiles (): Map<number, Map<number, TileInstance>> {
+  public getTileMap (): Map2D<number, number, TileInstance> {
     return this.tiles
+  }
+
+  public getTiles (): Iterable<TileInstance> {
+    return this.getTileMap().values()
   }
 }
 

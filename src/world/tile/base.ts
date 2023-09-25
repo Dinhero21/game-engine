@@ -2,7 +2,6 @@ import type Vec2 from '../../public/engine/util/vec2'
 import type Chunk from '../chunk'
 import type Player from '../../player'
 import { type World } from '..'
-import { tilePositionToPosition } from '../../public/engine/util/tilemap/position-conversion'
 
 export type TileType = string
 
@@ -22,9 +21,9 @@ export abstract class Tile<Properties = any> {
 }
 
 export abstract class TileInstance<Properties = any> {
-  public readonly abstract type: TileType
+  public readonly abstract type: string
 
-  public readonly properties: Properties
+  public readonly properties
 
   constructor (tileProperties: TileProperties, properties: Properties) {
     Object.freeze(properties)
@@ -35,6 +34,8 @@ export abstract class TileInstance<Properties = any> {
     this.position = tileProperties.position
   }
 
+  // Game Loop
+
   public ready (): void {}
 
   public update (): void {}
@@ -42,6 +43,8 @@ export abstract class TileInstance<Properties = any> {
   public onInteraction (player: Player): void {}
 
   public destroy (): void {}
+
+  // Getters
 
   protected readonly chunk: Chunk
 
@@ -72,18 +75,15 @@ export abstract class TileInstance<Properties = any> {
 
   public getMeta (): any {}
 
+  // Helpers
+
   public syncTile (tile: TileInstance): void {
     const world = this.getWorld()
 
-    const tilePosition = tile.getTilePosition()
-    const chunkPosition = tilePositionToPosition(tilePosition)
-
-    const chunk = world.getChunk(chunkPosition)
-
-    chunk.emit('tile.set', tile)
+    world.syncTile(tile)
   }
 
-  public * getNeighbors (): Iterable<TileInstance> {
+  public * getNeighbors (generate: boolean = false): Iterable<TileInstance> {
     const position = this.getTilePosition()
 
     const neighborPositions = [
@@ -96,7 +96,7 @@ export abstract class TileInstance<Properties = any> {
     const world = this.getWorld()
 
     for (const neighborPosition of neighborPositions) {
-      const neighbor = world.getTile(neighborPosition)
+      const neighbor = world.getTile(neighborPosition, generate)
 
       if (neighbor === undefined) continue
 
@@ -108,5 +108,42 @@ export abstract class TileInstance<Properties = any> {
     for (const neighbor of this.getNeighbors()) {
       neighbor.update()
     }
+  }
+
+  // Lighting
+
+  public LIGHT_ABSORPTION = 1 / 8
+
+  public light: number = 0
+
+  public updateLight (): void {
+    const neighbors = this.getNeighbors()
+
+    let light = 0
+
+    for (const neighbor of neighbors) {
+      light = Math.max(light, neighbor.light)
+    }
+
+    const world = this.getWorld()
+    const tilePosition = this.getTilePosition()
+    const topTilePosition = tilePosition.offset(0, -1)
+    const topTile = world.getTile(topTilePosition, false)
+
+    const topTileLight = topTile?.light ?? 1
+
+    light = Math.max(light, topTileLight)
+
+    light -= this.LIGHT_ABSORPTION
+
+    if (light < 0) light = 0
+
+    this.light = light
+  }
+
+  public queueLight (): void {
+    const world = this.getWorld()
+
+    world.queueLight(this)
   }
 }

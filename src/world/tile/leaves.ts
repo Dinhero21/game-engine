@@ -11,4 +11,5 @@ export class LeavesTile extends Tile<LeavesTileProperties> {
 
 export class LeavesTileInstance extends TileInstance<LeavesTileProperties> {
   type = 'leaves'
+  LIGHT_ABSORPTION = 1 / 16
 }

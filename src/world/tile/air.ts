@@ -9,6 +9,15 @@ export class AirTile extends Tile<AirTileProperties> {
   }
 }
 
+export const LIGHT_ABSORPTION = 1 / 64
+
 export class AirTileInstance extends TileInstance<AirTileProperties> {
   type = 'air'
+  LIGHT_ABSORPTION = LIGHT_ABSORPTION
+
+  public updateLight (): void {
+    super.updateLight()
+
+    this.light = Math.max(this.light, 1)
+  }
 }

@@ -17,7 +17,7 @@ export function loop (checkTile: boolean): (target: TileInstance, propertyKey: s
         if (checkTile) {
           const position = this.getTilePosition()
 
-          const tile = world.getTile(position)
+          const tile = world.getTile(position, false)
 
           if (tile !== this) return
         }

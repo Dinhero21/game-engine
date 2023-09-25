@@ -48,9 +48,13 @@ export class WorldEntity extends TileMapEntity<Tile> {
             if (rawTile === undefined) return
             if (rawTile === null) return
 
-            const [type, properties] = rawTile
+            const [
+              type,
+              light,
+              meta
+            ] = rawTile
 
-            const tile = await createTile(type, properties)
+            const tile = await createTile(type, light, meta)
 
             const tileTilePosition = new Vec2(x, y)
 
@@ -62,16 +66,30 @@ export class WorldEntity extends TileMapEntity<Tile> {
       this.setChunk(chunk, chunkPosition.x, chunkPosition.y)
     })
 
-    socket.on('tile.set', async (rawTilePosition, type, meta) => {
-      const tilePosition = new Vec2(...rawTilePosition)
+    socket.on('tile.set[]', async tiles => {
+      for (const [rawX, row] of Object.entries(tiles)) {
+        for (const [rawY, rawTile] of Object.entries(row)) {
+          const x = parseInt(rawX)
+          const y = parseInt(rawY)
 
-      const oldTile = this.getTile(tilePosition)
+          const tilePosition = new Vec2(x, y)
 
-      if (oldTile !== undefined && oldTile.type === type && oldTile.meta === meta) return
+          const oldTile = this.getTile(tilePosition)
 
-      const tile = await createTile(type, meta)
+          const [type, light, meta] = rawTile
 
-      this.setTile(tile, tilePosition)
+          if (
+            oldTile !== undefined &&
+            oldTile.type === type &&
+            oldTile.light === light &&
+            oldTile.meta === meta
+          ) continue
+
+          const tile = await createTile(type, light, meta)
+
+          this.setTile(tile, tilePosition)
+        }
+      }
     })
 
     loader.addEventListener('load', () => {

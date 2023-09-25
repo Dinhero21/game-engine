@@ -1,27 +1,17 @@
 import { activateSignal, deactivateSignal, isSignalActive } from './signal'
 import { Tile, TileInstance, type TileProperties } from '../base'
-import { LIGHT_ABSORPTION } from '../air'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface WireTileProperties {
-}
+export interface LightTileProperties {}
 
-export class WireTile extends Tile<WireTileProperties> {
-  public setActiveState (active: boolean): WireTile {
-    return new WireTile({
-      ...this.properties,
-      active
-    })
-  }
-
+export class LightTile extends Tile<LightTileProperties> {
   public instance () {
-    return (tileProperties: TileProperties) => new WireTileInstance(tileProperties, this.properties)
+    return (tileProperties: TileProperties) => new LightTileInstance(tileProperties, this.properties)
   }
 }
 
-export class WireTileInstance extends TileInstance<WireTileProperties> {
-  type = 'wire'
-  LIGHT_ABSORPTION = LIGHT_ABSORPTION
+export class LightTileInstance extends TileInstance<LightTileProperties> {
+  type = 'light'
 
   public signal?: TileInstance
 
@@ -48,7 +38,7 @@ export class WireTileInstance extends TileInstance<WireTileProperties> {
 
     this.updateNeighbors()
 
-    this.updateLight()
+    this.queueLight()
 
     this.syncTile(this)
   }

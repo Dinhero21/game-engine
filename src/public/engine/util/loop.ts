@@ -6,6 +6,7 @@ export const Loop = {
       const now = performance.now()
       const delta = (now - lastTime) / 1000
 
+      // Avoid divisions by 0
       if (delta !== 0) callback(delta)
 
       setTimeout(() => { this.interval(ms, now)(callback) }, ms)
@@ -23,6 +24,24 @@ export const Loop = {
   },
   instant () {
     return this.interval()
+  },
+  precise (ms: number, lastTime = performance.now()) {
+    return (callback: Callback, warning?: Callback) => {
+      const now = performance.now()
+      const delta = now - lastTime
+
+      if (delta !== 0) callback(delta)
+
+      const sleep = ms - delta
+
+      if (warning !== undefined) {
+        if (sleep < 0) {
+          warning(-sleep)
+        }
+      }
+
+      setTimeout(() => { this.precise(ms, now)(callback, warning) }, sleep)
+    }
   }
 }
 

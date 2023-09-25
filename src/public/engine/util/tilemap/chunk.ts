@@ -1,5 +1,6 @@
 import type Tile from './tile'
 import { TILE_SIZE, chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from './position-conversion'
+import { type Nearby } from './tile'
 import Vec2 from '../vec2'
 import RectangularCollider from '../collision/rectangular'
 import { loader } from '../../../asset/loader'
@@ -53,7 +54,7 @@ export class Chunk<ValidTile extends Tile = Tile> {
 
   protected getChunk
 
-  protected getNearby (tileTilePosition: Vec2): [boolean, boolean, boolean, boolean] {
+  protected getNearby (tileTilePosition: Vec2): Nearby {
     const tile = this.getTile(tileTilePosition.x, tileTilePosition.y)
 
     if (tile === undefined) return [false, false, false, false]

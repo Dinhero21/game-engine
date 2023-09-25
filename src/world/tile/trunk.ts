@@ -11,4 +11,5 @@ export class TrunkTile extends Tile<TrunkTileProperties> {
 
 export class TrunkTileInstance extends TileInstance<TrunkTileProperties> {
   type = 'trunk'
+  LIGHT_ABSORPTION = 1 / 16
 }

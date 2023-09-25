@@ -1,0 +1,7 @@
+{
+  "texture": "void",
+  "collidable": false,
+  "connects": [
+    "debug"
+  ]
+}

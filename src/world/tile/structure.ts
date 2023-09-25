@@ -47,7 +47,7 @@ export class StructureTileInstance extends TileInstance<StructureTileProperties>
         setTile (tile: Tile, x: number, y: number) {
           const offsetedPosition = position.offset(x, y)
 
-          const offsetedTile = world.getTile(offsetedPosition)
+          const offsetedTile = world.getTile(offsetedPosition, false)
           const offsetedTileType = offsetedTile?.type
 
           if (offsetedTileType !== undefined && !tiles.has(offsetedTileType)) return

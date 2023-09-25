@@ -3,6 +3,7 @@
   "collidable": false,
   "connects": [
     "wire",
-    "switch"
+    "switch",
+    "light"
   ]
 }

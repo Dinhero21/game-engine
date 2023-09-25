@@ -21,6 +21,10 @@ export const Debug = {
   },
   frame: {
     outline_drawImage: false
+  },
+  player: {
+    collision: true,
+    gravity: true
   }
 }
 

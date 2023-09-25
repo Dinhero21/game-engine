@@ -9,6 +9,7 @@ import { SwitchTile } from './electric/switch'
 import { TrunkTile } from './trunk'
 import { WaterTile } from './water'
 import { WireTile } from './electric/wire'
+import { LightTile } from './electric/light'
 
 export const Tiles = {
   air: new AirTile({}),
@@ -29,7 +30,8 @@ export const Tiles = {
     pressure: 1
   }),
   wire: new WireTile({}),
-  switch: new SwitchTile({})
+  switch: new SwitchTile({}),
+  light: new LightTile({})
 } as const
 
 export default Tiles

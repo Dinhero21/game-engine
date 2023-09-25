@@ -1,42 +1,106 @@
+import type Chunk from '../world/chunk'
 import { io } from './web'
 import { getPlayer } from './player'
 import { World } from '../world'
 import { WorldGen } from '../world/gen'
-import { sleep } from '../public/engine/util/sleep'
 import Vec2 from '../public/engine/util/vec2'
 import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
 import Tiles from '../world/tile'
+import Loop from '../public/engine/util/loop'
+import { Map2D } from '../public/engine/util/2d'
+import { type TileInstance } from '../world/tile/base'
+import { type TileMap } from '../socket.io'
+
+export type BaseSerializedTile = [
+  type: string,
+  light: number,
+  meta: unknown
+]
+
+export type SerializedTile = BaseSerializedTile | null
+
+// ! Babel will refuse to transpile the code below with the error
+// ! "Tuple members must all have names or all not have names."
+// ! even though it is supposed to only transpile and not do any
+// ! kind of type-checking.
+// TODO: Fix Babel Errors
+// export type PositionedSerializedTile = [
+//   /* x: */ number,
+//   /* y: */ number,
+//   ...BaseSerializedTile
+// ]
 
 const VIEWPORT_SIZE = new Vec2(1920, 1080)
 const HALF_VIEWPORT_SIZE = VIEWPORT_SIZE.divided(2)
 
-const gen = new WorldGen()
+export const gen = new WorldGen()
 
-const world = new World(gen)
+export const world = new World(gen)
+
+const tileQueue = new Map<Chunk, Map2D<number, number, TileInstance>>()
 
 world.on('tile.set', tile => {
   const tilePosition = tile.getTilePosition()
+  const chunk = tile.getChunk()
 
-  io.emit('tile.set', tilePosition.toArray(), tile.type, tile.getMeta())
+  const tileMap = tileQueue.get(
+    chunk
+  ) ?? new Map2D()
+
+  tileQueue.set(
+    chunk,
+    tileMap
+  )
+
+  tileMap.set(
+    tilePosition.x,
+    tilePosition.y,
+    tile
+  )
 })
 
-void (async () => {
-  while (true) {
-    const start = performance.now()
-
+Loop.precise(1000 / 12)(
+  () => {
     world.tick()
-
-    const end = performance.now()
-
-    const duration = end - start
-
-    const sleepTime = (1000 / 12) - duration
-
-    if (sleepTime < 0) console.warn(`Tick took too long! ${(-sleepTime).toPrecision(3)}ms behind`)
-
-    await sleep(sleepTime)
+  },
+  behind => {
+    console.warn(`Tick took too long! ${behind.toPrecision(3)}ms behind`)
   }
-})()
+)
+
+Loop.instant()(delta => {
+  if (delta > 100) console.warn(`Lighting took too long! ${delta.toPrecision(3)}ms`)
+
+  world.updateLights()
+})
+
+Loop.interval(1000 / 12)(() => {
+  if (tileQueue.size === 0) return
+
+  const tiles: TileMap = {}
+
+  for (const [chunk, tileMap] of tileQueue.entries()) {
+    // TODO: Per-player tile.set-ing
+    if (chunk.references.size === 0) continue
+
+    for (const [position, tile] of tileMap.entries()) {
+      const [rawX, rawY] = position
+      const [x, y] = [String(rawX), String(rawY)]
+
+      const row = tiles[x] ?? (tiles[x] = {})
+
+      row[y] = [
+        tile.type,
+        tile.light,
+        tile.getMeta()
+      ]
+    }
+  }
+
+  tileQueue.clear()
+
+  io.emit('tile.set[]', tiles)
+})
 
 io.on('connection', socket => {
   const player = getPlayer(socket.id)
@@ -76,24 +140,24 @@ io.on('connection', socket => {
 
         if (chunk.references.has(player)) continue
 
-        const tiles = chunk.getTiles()
+        const tiles = chunk.getTileMap()
 
-        const tileArray: Array<[string, Record<string, unknown>] | null> = []
+        const tileArray: Array<SerializedTile | null> = []
 
         for (let y = 0; y < CHUNK_SIZE; y++) {
           for (let x = 0; x < CHUNK_SIZE; x++) {
-            let serializedTile: [string, Record<string, unknown>] | null = null;
+            let serializedTile: SerializedTile | null = null;
 
             (() => {
-              const row = tiles.get(x)
-
-              if (row === undefined) return
-
-              const tile = row.get(y)
+              const tile = tiles.get(x, y)
 
               if (tile === undefined) return
 
-              serializedTile = [tile.type, tile.getMeta()]
+              serializedTile = [
+                tile.type,
+                tile.light,
+                tile.getMeta()
+              ]
             })()
 
             tileArray.push(serializedTile)
@@ -138,7 +202,7 @@ io.on('connection', socket => {
   function onLeftClick (tilePosition: Vec2): void {
     if (player === undefined) return
 
-    const tile = world.getTile(tilePosition)
+    const tile = world.getTile(tilePosition, true)
 
     if (tile === undefined) return
 
@@ -162,10 +226,12 @@ io.on('connection', socket => {
   function onRightClick (tilePosition: Vec2): void {
     if (player === undefined) return
 
-    const tile = world.getTile(tilePosition)
+    const tile = world.getTile(tilePosition, true)
 
     if (tile === undefined) return
 
     tile.onInteraction(player)
   }
 })
+
+export default world

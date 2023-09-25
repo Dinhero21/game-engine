@@ -31,7 +31,7 @@ export class HyperStoneTileInstance extends TileInstance<HyperStoneTilePropertie
 
     const offsetedPosition = position.offset(x, y)
 
-    const oldTile = world.getTile(offsetedPosition)
+    const oldTile = world.getTile(offsetedPosition, false)
 
     if (!(oldTile instanceof AirTileInstance)) return
 

@@ -211,6 +211,9 @@ export class TextEntity extends Entity<never> {
       textPosition.x + textBoundingBoxPosition.x,
       textPosition.y + textBoundingBoxPosition.y
     )
+
+    // TODO: Restore opacity instead of setting to 1
+    frame.setAlpha(1)
   }
 }
 

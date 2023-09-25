@@ -5,6 +5,7 @@ import keyboard from '../../engine/util/input/keyboard'
 import RectangularCollider from '../../engine/util/collision/rectangular'
 import { type Color } from '../util/types'
 import { type OverlapDetector, PhysicsObject } from '../util/physics'
+import { Debug } from '../../globals'
 import Alea from 'alea'
 
 const FRICTION = new Vec2(50, 5)
@@ -127,7 +128,9 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     }
 
     // velocity.y += gravity
-    velocity.y += 3750 * delta
+    if (Debug.player.gravity) {
+      velocity.y += 3750 * delta
+    }
 
     // Friction
     velocity.x /= 1 + (FRICTION.x * delta)
@@ -137,7 +140,13 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
 
     const oldPosition = position.clone()
 
-    physics.moveSlide(velocity.scaled(delta))
+    const scaledVelocity = velocity.scaled(delta)
+
+    if (Debug.player.collision) {
+      physics.moveSlide(scaledVelocity)
+    } else {
+      physics.position.add(scaledVelocity)
+    }
 
     const positionDelta = position.minus(oldPosition)
 

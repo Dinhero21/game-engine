@@ -3,6 +3,7 @@ import { type WorldGen } from './gen'
 import Chunk from './chunk'
 import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
 import Vec2 from '../public/engine/util/vec2'
+import { Map2D } from '../public/engine/util/2d'
 import { TypedEmitter } from 'tiny-typed-emitter'
 
 export type Tick = () => void
@@ -13,13 +14,7 @@ export interface WorldEvents {
 
 // TODO: Separate Tick and Chunk logic
 export class World extends TypedEmitter<WorldEvents> {
-  // Chunk
-
-  private readonly chunks = new Map<number, Map<number, Chunk>>()
-
   private readonly gen
-
-  public currentTick: symbol = Symbol('load')
 
   constructor (gen: WorldGen) {
     super()
@@ -27,49 +22,9 @@ export class World extends TypedEmitter<WorldEvents> {
     this.gen = gen
   }
 
-  public setTile (Instance: (properties: TileProperties) => TileInstance, tilePosition: Vec2, emit: boolean = true, update: boolean = false): void {
-    const chunkPosition = tilePositionToChunkPosition(tilePosition)
-    const chunk = this.getChunk(chunkPosition)
+  // Chunk
 
-    const chunkTilePosition = chunk.getTilePosition()
-    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
-
-    const old = chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
-
-    chunk.setTile(Instance, relativeTilePosition, emit)
-
-    // ? Should destroy be called before of after tile replacement
-    // ? or more importantly, should there be a pre and post destroy?
-
-    if (old !== undefined) {
-      old.destroy()
-    }
-
-    if (update) {
-      for (let y = -1; y <= 1; y++) {
-        for (let x = -1; x <= 1; x++) {
-          this.queueTick(() => {
-            const offsetedPosition = tilePosition.offset(x, y)
-            const tile = this.getTile(offsetedPosition)
-
-            if (tile === undefined) return
-
-            tile.update()
-          })
-        }
-      }
-    }
-  }
-
-  public getTile (tilePosition: Vec2): TileInstance | undefined {
-    const tileChunkPosition = tilePositionToChunkPosition(tilePosition)
-    const chunk = this.getChunk(tileChunkPosition)
-
-    const chunkTilePosition = chunk.getTilePosition()
-    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
-
-    return chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
-  }
+  private readonly chunks = new Map2D<number, number, Chunk>()
 
   public setChunk (chunk: Chunk, x: number, y: number): void {
     // TODO: Remove events from old chunk
@@ -80,19 +35,18 @@ export class World extends TypedEmitter<WorldEvents> {
 
     const chunks = this.chunks
 
-    const row = chunks.get(x) ?? new Map()
-    chunks.set(x, row)
+    chunks.set(x, y, chunk)
 
-    row.set(y, chunk)
-  }
-
-  protected _getChunk (x: number, y: number): Chunk | undefined {
-    return this.chunks.get(x)?.get(y)
+    for (const tile of chunk.getTiles()) {
+      this.queueLight(tile)
+    }
   }
 
   // TODO: Use x, y
   public getChunk (chunkPosition: Vec2): Chunk {
-    let chunk = this._getChunk(chunkPosition.x, chunkPosition.y)
+    const chunks = this.chunks
+
+    let chunk = chunks.get(chunkPosition.x, chunkPosition.y)
 
     if (chunk !== undefined) return chunk
 
@@ -103,13 +57,17 @@ export class World extends TypedEmitter<WorldEvents> {
     return chunk
   }
 
+  public generateEmptyChunk (chunkChunkPosition: Vec2): Chunk {
+    return new Chunk(this, { position: chunkChunkPosition })
+  }
+
   // TODO: Use x, y
   public generateChunk (chunkChunkPosition: Vec2): Chunk {
     const gen = this.gen
 
     const chunkTilePosition = chunkPositionToTilePosition(chunkChunkPosition)
 
-    const chunk = new Chunk(this, { position: chunkChunkPosition })
+    const chunk = this.generateEmptyChunk(chunkChunkPosition)
 
     for (let x = 0; x < CHUNK_SIZE; x++) {
       for (let y = 0; y < CHUNK_SIZE; y++) {
@@ -126,23 +84,137 @@ export class World extends TypedEmitter<WorldEvents> {
     return chunk
   }
 
+  public getChunkMap (): Map2D<number, number, Chunk> {
+    return this.chunks
+  }
+
+  public getChunks (): Iterable<Chunk> {
+    return this.chunks.values()
+  }
+
+  // Tile
+
+  public syncTile (tile: TileInstance): void {
+    const tilePosition = tile.getTilePosition()
+    const chunkPosition = tilePositionToChunkPosition(tilePosition)
+
+    const chunk = this.getChunk(chunkPosition)
+
+    chunk.emit('tile.set', tile)
+  }
+
+  public setTile (Instance: (properties: TileProperties) => TileInstance, tilePosition: Vec2, emit: boolean = true, update: boolean = false): void {
+    const chunkPosition = tilePositionToChunkPosition(tilePosition)
+    const chunk = this.getChunk(chunkPosition)
+
+    const chunkTilePosition = chunk.getTilePosition()
+    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
+
+    const old = chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
+
+    const tile = chunk.setTile(Instance, relativeTilePosition, emit)
+
+    // ? Should destroy be called before of after tile replacement
+    // ? or more importantly, should there be a pre and post destroy?
+
+    if (old !== undefined) {
+      old.destroy()
+    }
+
+    this.queueLight(tile)
+
+    if (update) {
+      for (let y = -1; y <= 1; y++) {
+        for (let x = -1; x <= 1; x++) {
+          this.queueTick(() => {
+            const offsetedPosition = tilePosition.offset(x, y)
+            const tile = this.getTile(offsetedPosition, false)
+
+            if (tile === undefined) return
+
+            tile.update()
+          })
+        }
+      }
+    }
+  }
+
+  public getTile (tilePosition: Vec2, generate: boolean): TileInstance | undefined {
+    const tileChunkPosition = tilePositionToChunkPosition(tilePosition)
+
+    const chunks = this.chunks
+
+    const chunk = generate
+      ? this.getChunk(tileChunkPosition)
+      : chunks.get(tileChunkPosition.x, tileChunkPosition.y)
+
+    if (chunk === undefined) return
+
+    const chunkTilePosition = chunk.getTilePosition()
+    const relativeTilePosition = tilePosition.minus(chunkTilePosition)
+
+    return chunk.getTile(relativeTilePosition.x, relativeTilePosition.y)
+  }
+
   // Ticking
 
-  private readonly queue = new Set<Tick>()
+  private readonly tickQueue = new Set<Tick>()
+
+  public queueTick (tick: Tick): void {
+    const queue = this.tickQueue
+
+    queue.add(tick)
+  }
+
+  public currentTick: symbol = Symbol('load')
 
   public tick (): void {
     this.currentTick = Symbol('tick')
 
-    const queue = new Set(this.queue)
+    const _queue = this.tickQueue
 
-    this.queue.clear()
+    const queue = new Set(_queue)
+
+    _queue.clear()
 
     for (const f of queue) f()
   }
 
-  public queueTick (tick: Tick): void {
-    const queue = this.queue
+  // Light Updates
 
-    queue.add(tick)
+  private readonly lightQueue = new Set<TileInstance>()
+
+  public queueLight (tile: TileInstance): void {
+    const queue = this.lightQueue
+
+    queue.add(tile)
+  }
+
+  public updateLights (): void {
+    const _queue = this.lightQueue
+
+    const queue = new Set(_queue)
+
+    _queue.clear()
+
+    for (const tile of queue) {
+      const oldLight = tile.light
+
+      tile.updateLight()
+
+      const newLight = tile.light
+
+      const equal = oldLight === newLight
+
+      if (equal) continue
+
+      this.syncTile(tile)
+
+      const neighbors = tile.getNeighbors()
+
+      for (const neighbor of neighbors) {
+        this.queueLight(neighbor)
+      }
+    }
   }
 }

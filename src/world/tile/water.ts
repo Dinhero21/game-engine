@@ -65,7 +65,7 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
 
       const belowTilePosition = tilePosition.offset(0, 1)
 
-      const belowTile = world.getTile(belowTilePosition)
+      const belowTile = world.getTile(belowTilePosition, false)
 
       if (belowTile === undefined) return
 
@@ -82,12 +82,12 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
       const side = Math.random() < 0.5 ? 1 : -1
 
       const positiveTilePosition = tilePosition.offset(side, 0)
-      const positiveTile = world.getTile(positiveTilePosition)
+      const positiveTile = world.getTile(positiveTilePosition, false)
 
       if (positiveTile !== undefined) this.balance(positiveTile)
 
       const negativeTilePosition = tilePosition.offset(-side, 0)
-      const negativeTile = world.getTile(negativeTilePosition)
+      const negativeTile = world.getTile(negativeTilePosition, false)
 
       if (negativeTile !== undefined) this.balance(negativeTile)
     }
@@ -108,7 +108,7 @@ export class WaterTileInstance extends TileInstance<WaterTileProperties> {
       world.setTile(instance, position, undefined, true)
     }
 
-    const newTile = world.getTile(position)
+    const newTile = world.getTile(position, false)
 
     if (newTile === undefined) throw new Error('Unexpected undefined tile')
     if (!(newTile instanceof WaterTileInstance)) throw new TypeError('Expected WaterTile')

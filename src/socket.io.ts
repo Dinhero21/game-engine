@@ -1,5 +1,6 @@
 import { type SlotAmount, type SlotType } from './public/game/util/inventory'
 import { type Recipe } from './public/asset/recipe'
+import { type BaseSerializedTile, type SerializedTile } from './plugin/world'
 import { type Socket as ServerSocket, type Server as ServerServer } from 'socket.io'
 import { type Socket as ClientSocket } from 'socket.io-client'
 
@@ -10,6 +11,12 @@ export type TileClickButton = TileClickButtons[number]
 // engine.io-friendly types
 
 export type Vec2 = [number, number]
+
+// I really did want to use "Sparse Array"s instead of Objects but
+// engine.io (or socket.io) didn't support them and simply replaced
+// all instances of "empty" with null which probably reverted the
+// possible performance improvements gained from this.
+export type TileMap = Record<string, Record<string, BaseSerializedTile>>
 
 // ? Should I define Player here?
 export interface Player {
@@ -23,8 +30,8 @@ export interface ServerToClientEvents {
   'player.add': (player: Player) => void
   'player.remove': (player: Player) => void
   'player.physics.update': (player: Player) => void
-  'tile.set': (tilePosition: Vec2, type: string, meta: unknown) => void
-  'chunk.set': (chunkPosition: Vec2, tiles: Array<[string, unknown] | null>) => void
+  'tile.set[]': (tiles: TileMap) => void
+  'chunk.set': (chunkPosition: Vec2, tiles: Array<SerializedTile | null>) => void
   'slot.set': (id: number, type: SlotType, amount: SlotAmount) => void
   'chat.message': (message: string) => void
 }
