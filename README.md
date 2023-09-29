@@ -4,7 +4,7 @@
 
 A Fully Open Source Game and Game Engine written in [TypeScript](https://typescriptlang.org/).
 
-[nodejs](https://nodejs.org/) for backend.
+[Node.js](https://nodejs.org/) for backend.
 
 [Socket.IO](https://socket.io/) for API.
 
