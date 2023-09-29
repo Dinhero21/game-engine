@@ -1,5 +1,7 @@
 # Game Engine
 
+[![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
+
 A Fully Open Source Game and Game Engine written in [TypeScript](https://typescriptlang.org/).
 
 [nodejs](https://nodejs.org/) for backend.
