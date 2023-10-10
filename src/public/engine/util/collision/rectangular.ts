@@ -132,7 +132,7 @@ export class RectangularCollider extends RectangularlyApproximatableCollider {
 
       if (positionUnchanged(oldPosition, position)) distance = scaleDistancePreservingDirection(distance, 2)
 
-      if (i > maxIterations) return new Vec2(0, 0)
+      if (i > maxIterations) return Vec2.ZERO
     }
 
     return position.minus(oldPosition)

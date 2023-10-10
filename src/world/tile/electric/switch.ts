@@ -1,6 +1,6 @@
-import type Player from '../../../player'
 import { activateSignal, deactivateSignal, isSignalActive } from './signal'
 import { Tile, TileInstance, type TileProperties } from '../base'
+import { type IPlayer } from '../../entity'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SwitchTileProperties {}
@@ -16,7 +16,7 @@ export class SwitchTileInstance extends TileInstance<SwitchTileProperties> {
 
   public signal = this
 
-  public onInteraction (player: Player): void {
+  public onInteraction (player: IPlayer): void {
     const active = isSignalActive(this)
 
     if (active) {

@@ -21,3 +21,11 @@ export type MaybeParameters<T> = T extends AnyFunction ? Parameters<T> : any
 export type MaybeFunction<T> = (...args: MaybeParameters<T>) => MaybeReturnType<T>
 
 export type FunctionKeys<T> = ExtractKeys<T, AnyFunction>
+
+export type UnionToIntersection<U> = (
+  U extends any ? (arg: U) => void : never
+) extends (arg: infer I) => void
+  ? I
+  : never
+
+export type ArrayToIntersection<T extends any[]> = UnionToIntersection<T[number]>

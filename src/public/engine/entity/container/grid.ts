@@ -1,4 +1,4 @@
-import type Entity from '.'
+import type Entity from '..'
 import HorizontalContainerEntity from './horizontal'
 import VerticalContainerEntity from './vertical'
 import Vec2 from '../../util/vec2'
@@ -12,7 +12,7 @@ export class GridContainerEntity<ValidChild extends Entity = Entity> extends Ver
     this.spacing2D = spacing
 
     for (let y = 0; y < size.y; y++) {
-      const row = new HorizontalContainerEntity<ValidChild>(spacing.y, new Vec2(0, 0))
+      const row = new HorizontalContainerEntity<ValidChild>(spacing.y, Vec2.ZERO)
 
       for (let x = 0; x < size.x; x++) {
         const child = callback(x, y)

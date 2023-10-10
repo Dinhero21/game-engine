@@ -1,26 +1,22 @@
 import { io } from './web'
-import Player from '../player'
+import world from './world'
 import Vec2 from '../public/engine/util/vec2'
+import { PlayerConstructor, type IPlayer } from '../world/entity'
 import { type SocketId } from 'socket.io-adapter'
 
-export const PLAYERS = new Map<SocketId, Player>()
+export const PLAYERS = new Map<SocketId, IPlayer>()
 
 io.on('connection', socket => {
-  const player = new Player(socket, io)
-
-  //                     Approximate position of where simplex noise breaks
-  // player.position.x = 0b11000011001101101010101100100000000000000
-
-  io.emit('player.add', player.getClientPlayer())
-
-  for (const player of PLAYERS.values()) socket.emit('player.add', player.getClientPlayer())
+  const player = new PlayerConstructor(world, socket)
 
   PLAYERS.set(socket.id, player)
+
+  world.addEntity(player)
 
   socket.on('disconnect', () => {
     PLAYERS.delete(socket.id)
 
-    io.emit('player.remove', player.getClientPlayer())
+    world.removeEntity(player)
 
     player.removeAllListeners()
   })
@@ -34,10 +30,10 @@ io.on('connection', socket => {
     player.position = position
     player.velocity = velocity
 
-    socket.broadcast.emit('player.physics.update', player.getClientPlayer())
+    player.sync()
   })
 })
 
-export function getPlayer (id: SocketId): Player | undefined {
+export function getPlayer (id: SocketId): IPlayer | undefined {
   return PLAYERS.get(id)
 }

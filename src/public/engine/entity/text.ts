@@ -158,7 +158,7 @@ export class TextEntity extends Entity<never> {
     }
 
     return new RectangularCollider(
-      new Vec2(0, 0),
+      Vec2.ZERO,
       new Vec2(width, height)
     )
   }

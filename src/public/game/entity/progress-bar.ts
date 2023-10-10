@@ -28,7 +28,7 @@ export class ProgressBarEntity<ValidChild extends Entity = Entity> extends Entit
   public getConstantCollider (): RectangularCollider {
     const options = this.options
 
-    return new RectangularCollider(new Vec2(0, 0), options.size)
+    return new RectangularCollider(Vec2.ZERO, options.size)
   }
 
   public draw (frame: Frame): void {

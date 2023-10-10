@@ -75,7 +75,9 @@ export class LightTileInstance extends TileInstance<LightTileProperties> {
     const active = this.getMeta()
 
     if (active) {
-      this.light += 1.5
+      const light = this.light
+
+      this.light = Math.min(light, 1.5)
     }
   }
 }

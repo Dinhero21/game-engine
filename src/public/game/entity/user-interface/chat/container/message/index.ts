@@ -14,7 +14,7 @@ export class ChatMessageEntity extends HorizontalContainerEntity<ChatMessageText
   protected options
 
   constructor (options: TextOptions) {
-    super(0, new Vec2(0, 0))
+    super(0, Vec2.ZERO)
 
     this.options = options
   }

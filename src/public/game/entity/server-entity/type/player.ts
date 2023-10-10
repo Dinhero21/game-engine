@@ -1,30 +1,25 @@
-import type Frame from '../../engine/util/frame'
-import Entity from '../../engine/entity'
-import Vec2 from '../../engine/util/vec2'
-import keyboard from '../../engine/util/input/keyboard'
-import RectangularCollider from '../../engine/util/collision/rectangular'
-import { type Color } from '../util/types'
-import { type OverlapDetector, PhysicsObject } from '../util/physics'
-import { Debug } from '../../globals'
+import type Frame from '../../../../engine/util/frame'
+import ServerEntityEntity from './base'
+import Vec2 from '../../../../engine/util/vec2'
+import keyboard from '../../../../engine/util/input/keyboard'
+import RectangularCollider from '../../../../engine/util/collision/rectangular'
+import { type Color } from '../../../util/types'
+import { PhysicsObject } from '../../../util/physics'
+import { Debug } from '../../../../globals'
+import socket from '../../../socket.io'
 import Alea from 'alea'
 
 const FRICTION = new Vec2(50, 5)
 
-export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
-  public id
-
-  public velocity: Vec2 = Vec2.ZERO
+export class ServerPlayerEntity extends ServerEntityEntity {
+  public velocity = Vec2.ZERO
 
   public controllable: boolean = false
-
-  public _overlapping?: OverlapDetector
 
   protected color: Color
 
   constructor (id: string) {
-    super()
-
-    this.id = id
+    super(id)
 
     const prng = Alea(id)
 
@@ -36,11 +31,11 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
   }
 
   protected isOverlapping (collider: RectangularCollider): boolean {
-    const overlapping = this._overlapping
+    const world = this.world
 
-    if (overlapping === undefined) return false
+    if (world === undefined) return false
 
-    return overlapping(collider)
+    return world.overlapping(collider)
   }
 
   // TODO: Multiplayer Physics
@@ -155,7 +150,13 @@ export class PlayerEntity<ValidChild extends Entity = Entity> extends Entity<Val
     velocity.update(newVelocity)
 
     this.position.update(position)
+
+    if (this.controllable) {
+      socket.emit(
+        'physics.update',
+        this.position.toArray(),
+        this.velocity.toArray()
+      )
+    }
   }
 }
-
-export default PlayerEntity

@@ -1,10 +1,13 @@
+import type Entity from './entity/base'
 import { type TileInstance, type TileProperties } from './tile/base'
 import { type WorldGen } from './gen'
 import Chunk from './chunk'
+import Spawner from './spawner'
 import { CHUNK_SIZE, chunkPositionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
 import Vec2 from '../public/engine/util/vec2'
 import { Map2D } from '../public/engine/util/2d'
-import { TypedEmitter } from 'tiny-typed-emitter'
+import { TypedEmitter } from '../util/event'
+import { io } from '../plugin/web'
 
 export type Tick = () => void
 
@@ -12,7 +15,7 @@ export interface WorldEvents {
   'tile.set': (tile: TileInstance) => void
 }
 
-// TODO: Separate Tick and Chunk logic
+// TODO: Separate Tick, Tile/Chunk, Lighting and Entity logic
 export class World extends TypedEmitter<WorldEvents> {
   private readonly gen
 
@@ -217,4 +220,50 @@ export class World extends TypedEmitter<WorldEvents> {
       }
     }
   }
+
+  // Entity
+
+  public readonly entities = new Set<Entity>()
+
+  public addEntity (entity: Entity): void {
+    this.entities.add(entity)
+
+    io.emit('entity.add', entity.getClientData())
+  }
+
+  public removeEntity (entity: Entity): void {
+    this.entities.delete(entity)
+
+    io.emit('entity.remove', entity.id)
+  }
+
+  public updateEntities (delta: number): void {
+    for (const entity of this.entities) {
+      entity.update(delta)
+    }
+  }
+
+  // Entity Syncing
+
+  private readonly entityQueue = new Set<Entity>()
+
+  public queueEntity (entity: Entity): void {
+    const queue = this.entityQueue
+
+    queue.add(entity)
+  }
+
+  public syncEntities (): void {
+    const queue = this.entityQueue
+
+    for (const entity of queue) {
+      io.emit('entity.update', entity.getClientData())
+    }
+
+    queue.clear()
+  }
+
+  // Entity Spawning
+
+  public readonly spawner = new Spawner(this)
 }

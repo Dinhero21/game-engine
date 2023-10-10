@@ -15,7 +15,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
 
   protected drawText
 
-  constructor (title: string = 'Debug', collider: DebugCollider = new Vec2(0, 0), drawText: boolean = true) {
+  constructor (title: string = 'Debug', collider: DebugCollider = Vec2.ZERO, drawText: boolean = true) {
     super()
 
     let getCollider: () => RectangularCollider
@@ -23,7 +23,7 @@ export class DebugEntity<ValidChild extends Entity = Entity> extends Entity<Vali
     if ('getConstantCollider' in collider) getCollider = () => collider.getConstantCollider()
     else if (collider instanceof RectangularCollider) getCollider = () => collider
     // TODO: Stop instantiating a new RectangularCollider every time getCollider is called
-    else getCollider = () => new RectangularCollider(new Vec2(0, 0), collider)
+    else getCollider = () => new RectangularCollider(Vec2.ZERO, collider)
 
     this.title = title
     this.getConstantCollider = getCollider

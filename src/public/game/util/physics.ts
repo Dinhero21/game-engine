@@ -7,7 +7,7 @@ export type ColliderGetter = () => RectangularCollider
 const EPSILON = 0.001
 
 export class PhysicsObject {
-  public position = new Vec2(0, 0)
+  public position = Vec2.ZERO
 
   protected isOverlapping
   protected _getCollider

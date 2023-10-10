@@ -1,7 +1,7 @@
 import type Vec2 from '../public/engine/util/vec2'
-import type Player from '../player'
 import { type World } from '.'
 import { type TileProperties, type TileInstance } from './tile/base'
+import { type IPlayer } from './entity'
 import { chunkPositionToTilePosition, positionToTilePosition, tilePositionToChunkPosition, tilePositionToPosition } from '../public/engine/util/tilemap/position-conversion'
 import { Map2D } from '../public/engine/util/2d'
 import { TypedEmitter } from 'tiny-typed-emitter'
@@ -17,7 +17,7 @@ export interface ChunkEvents {
 export class Chunk extends TypedEmitter<ChunkEvents> {
   private readonly world: World
 
-  public references = new Set<Player>()
+  public references = new Set<IPlayer>()
 
   public getWorld (): World {
     return this.world

@@ -14,7 +14,7 @@ export type RenderingContext2D = Frame | HTMLRenderingContext2D
 
 export class Frame {
   // TODO: (Optionally) use CanvasRenderingContext2D.translate
-  public offset: Vec2 = new Vec2(0, 0)
+  public offset: Vec2 = Vec2.ZERO
 
   protected readonly context
 

@@ -1,4 +1,4 @@
-import type Player from '../player'
+import { type IPlayer } from '../world/entity'
 import json5 from 'json5'
 
 export function * parseArgs (data: string): Generator<any, void, unknown> {
@@ -22,7 +22,7 @@ export class CommandHelper {
   public readonly args
   public readonly sender
 
-  constructor (args: unknown[], sender: Player) {
+  constructor (args: unknown[], sender: IPlayer) {
     this.args = args
     this.sender = sender
   }

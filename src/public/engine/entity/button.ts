@@ -34,7 +34,7 @@ export class ButtonEntity<ValidChild extends Entity = Entity> extends Entity<Val
   }
 
   public getConstantCollider (): RectangularCollider {
-    return new RectangularCollider(new Vec2(0, 0), this.size)
+    return new RectangularCollider(Vec2.ZERO, this.size)
   }
 
   public free (): this {

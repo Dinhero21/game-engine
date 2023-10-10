@@ -1,3 +1,5 @@
+export type Vec2Array = [number, number]
+
 export class Vec2 {
   public x: number
   public y: number
@@ -7,75 +9,77 @@ export class Vec2 {
     this.y = y
   }
 
-  set (x: number, y: number): this {
+  // Methods
+
+  public set (x: number, y: number): this {
     this.x = x
     this.y = y
 
     return this
   }
 
-  update (other: Vec2): this {
+  public update (other: Vec2): this {
     this.x = other.x
     this.y = other.y
 
     return this
   }
 
-  rounded (): Vec2 {
+  public rounded (): Vec2 {
     return new Vec2(Math.round(this.x), Math.round(this.y))
   }
 
-  round (): this {
+  public round (): this {
     this.x = Math.round(this.x)
     this.y = Math.round(this.y)
 
     return this
   }
 
-  floored (): Vec2 {
+  public floored (): Vec2 {
     return new Vec2(Math.floor(this.x), Math.floor(this.y))
   }
 
-  floor (): this {
+  public floor (): this {
     this.x = Math.floor(this.x)
     this.y = Math.floor(this.y)
 
     return this
   }
 
-  offset (dx: number, dy: number): Vec2 {
+  public offset (dx: number, dy: number): Vec2 {
     return new Vec2(this.x + dx, this.y + dy)
   }
 
-  translate (dx: number, dy: number): this {
+  public translate (dx: number, dy: number): this {
     this.x += dx
     this.y += dy
 
     return this
   }
 
-  add (other: Vec2): this {
+  public add (other: Vec2): this {
     this.x += other.x
     this.y += other.y
 
     return this
   }
 
-  subtract (other: Vec2): this {
+  public subtract (other: Vec2): this {
     this.x -= other.x
     this.y -= other.y
 
     return this
   }
 
-  multiply (other: Vec2): this {
+  public multiply (other: Vec2): this {
     this.x *= other.x
     this.y *= other.y
 
     return this
   }
 
-  divide (value: number | Vec2): this {
+  public divide (value: number | Vec2): this {
     value = this.vectorize(value)
 
     this.x /= value.x
@@ -84,35 +88,35 @@ export class Vec2 {
     return this
   }
 
-  divided (value: number | Vec2): Vec2 {
+  public divided (value: number | Vec2): Vec2 {
     value = this.vectorize(value)
 
     return new Vec2(this.x / value.x, this.y / value.y)
   }
 
-  plus (other: Vec2): Vec2 {
+  public plus (other: Vec2): Vec2 {
     return this.offset(other.x, other.y)
   }
 
-  minus (other: Vec2): Vec2 {
+  public minus (other: Vec2): Vec2 {
     return this.offset(-other.x, -other.y)
   }
 
-  scaled (scalar: number | Vec2): Vec2 {
+  public scaled (scalar: number | Vec2): Vec2 {
     scalar = this.vectorize(scalar)
 
     return new Vec2(this.x * scalar.x, this.y * scalar.y)
   }
 
-  abs (): Vec2 {
+  public abs (): Vec2 {
     return new Vec2(Math.abs(this.x), Math.abs(this.y))
   }
 
-  area (): number {
+  public area (): number {
     return this.x * this.y
   }
 
-  mod (other: Vec2 | number): Vec2 {
+  public mod (other: Vec2 | number): Vec2 {
     other = this.vectorize(other)
 
     return new Vec2(
@@ -121,48 +125,48 @@ export class Vec2 {
     )
   }
 
-  distanceTo (other: Vec2): number {
+  public distanceTo (other: Vec2): number {
     const distanceSquared = this.distanceSquared(other)
 
     return Math.sqrt(distanceSquared)
   }
 
-  distanceSquared (other: Vec2): number {
+  public distanceSquared (other: Vec2): number {
     const dx = other.x - this.x
     const dy = other.y - this.y
 
     return dx * dx + dy * dy
   }
 
-  equals (other: Vec2): boolean {
+  public equals (other: Vec2): boolean {
     return this.x === other.x && this.y === other.y
   }
 
-  toString (): string {
+  public toString (): string {
     return `(${this.x}, ${this.y})`
   }
 
-  clone (): Vec2 {
+  public clone (): Vec2 {
     return this.offset(0, 0)
   }
 
-  min (other: Vec2): Vec2 {
+  public min (other: Vec2): Vec2 {
     return new Vec2(Math.min(this.x, other.x), Math.min(this.y, other.y))
   }
 
-  max (other: Vec2): Vec2 {
+  public max (other: Vec2): Vec2 {
     return new Vec2(Math.max(this.x, other.x), Math.max(this.y, other.y))
   }
 
-  length (): number {
+  public length (): number {
     return Math.sqrt(this.x * this.x + this.y * this.y)
   }
 
-  dot (other: Vec2): number {
+  public dot (other: Vec2): number {
     return this.x * other.x + this.y * other.y
   }
 
-  unit (): this | Vec2 {
+  public unit (): this | Vec2 {
     const length = this.length()
 
     if (length === 0) {
@@ -172,7 +176,7 @@ export class Vec2 {
     }
   }
 
-  capped (maximumLength: number): Vec2 {
+  public capped (maximumLength: number): Vec2 {
     const length = this.length()
 
     if (length < maximumLength) return this.clone()
@@ -180,13 +184,13 @@ export class Vec2 {
     return this.unit().scaled(maximumLength)
   }
 
-  cap (maximumLength: number): this {
+  public cap (maximumLength: number): this {
     this.update(this.capped(maximumLength))
 
     return this
   }
 
-  normalize (): this {
+  public normalize (): this {
     const norm = this.length()
 
     if (norm !== 0) {
@@ -197,7 +201,7 @@ export class Vec2 {
     return this
   }
 
-  scale (scalar: number | Vec2): this {
+  public scale (scalar: number | Vec2): this {
     scalar = this.vectorize(scalar)
 
     this.x *= scalar.x
@@ -206,22 +210,58 @@ export class Vec2 {
     return this
   }
 
-  innerProduct (other: Vec2): number {
+  public innerProduct (other: Vec2): number {
     return this.x * other.x + this.y * other.y
   }
 
-  manhattanDistanceTo (other: Vec2): number {
+  public manhattanDistanceTo (other: Vec2): number {
     return Math.abs(other.x - this.x) + Math.abs(other.y - this.y)
   }
 
-  toArray (): [number, number] {
+  public toArray (): Vec2Array {
     return [this.x, this.y]
   }
 
-  vectorize (value: number | Vec2): Vec2 {
+  public vectorize (value: number | Vec2): Vec2 {
     if (typeof value === 'number') value = new Vec2(value, value)
 
     return value
+  }
+
+  // Static Methods
+
+  public static fromArray (array: Vec2Array): Vec2 {
+    return new Vec2(...array)
+  }
+
+  // Static Getters
+
+  static get ZERO (): Vec2 {
+    return new Vec2(0, 0)
+  }
+
+  static get ONE (): Vec2 {
+    return new Vec2(1, 1)
+  }
+
+  static get UP (): Vec2 {
+    return new Vec2(0, -1)
+  }
+
+  static get DOWN (): Vec2 {
+    return new Vec2(0, 1)
+  }
+
+  static get LEFT (): Vec2 {
+    return new Vec2(-1, 0)
+  }
+
+  static get RIGHT (): Vec2 {
+    return new Vec2(1, 0)
+  }
+
+  static get CENTER (): Vec2 {
+    return new Vec2(0.5, 0.5)
   }
 }
 

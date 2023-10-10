@@ -4,7 +4,7 @@ import Vec2 from '../util/vec2'
 export class AnchorEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   protected anchor
 
-  constructor (anchor: Vec2 = new Vec2(0, 0)) {
+  constructor (anchor: Vec2 = Vec2.ZERO) {
     super()
 
     this.anchor = anchor

@@ -1,6 +1,5 @@
 import type CommandHelper from '../util/command'
 import { registerCommand } from '.'
-import { io } from '../plugin/web'
 
 function teleport (helper: CommandHelper): void {
   const [x, y] = helper.args
@@ -13,7 +12,7 @@ function teleport (helper: CommandHelper): void {
 
   position.set(x, y)
 
-  io.emit('player.physics.update', player.getClientPlayer())
+  player.sync()
 }
 
 registerCommand('tp', teleport)

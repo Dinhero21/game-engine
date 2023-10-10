@@ -11,7 +11,7 @@ export class CraftingProgressEntity extends ProgressBarEntity {
   constructor (size: Vec2, color: Colors) {
     super({ size, color })
 
-    const progressCenter = new AnchorEntity(new Vec2(0.5, 0.5))
+    const progressCenter = new AnchorEntity(Vec2.CENTER)
     this.addChild(progressCenter)
 
     const button = new ButtonEntity(new Vec2(64, 32))

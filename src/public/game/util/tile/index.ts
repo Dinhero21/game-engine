@@ -1,6 +1,7 @@
 import { get } from './renderer'
 import Tile, { type Nearby, type TileRendererData } from '../../../engine/util/tilemap/tile'
 import { loader } from '../../../asset/loader'
+import { type Vec2Array } from '../../../engine/util/vec2'
 import _ from 'lodash'
 
 // TODO: Better system for blacklisted textures
@@ -89,7 +90,7 @@ export async function createTile (type: string, light: number, meta: unknown): P
     }
   }
 
-  function getTexturePosition (nearby: Nearby): [number, number] {
+  function getTexturePosition (nearby: Nearby): Vec2Array {
     const tileX = (Number(nearby[0]) << 0) + (Number(nearby[1]) << 1)
     const tileY = (Number(nearby[2]) << 0) + (Number(nearby[3]) << 1)
 

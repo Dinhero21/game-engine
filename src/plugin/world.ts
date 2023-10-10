@@ -1,15 +1,16 @@
 import type Chunk from '../world/chunk'
+import type Entity from '../world/entity/base'
 import { io } from './web'
 import { getPlayer } from './player'
 import { World } from '../world'
 import { WorldGen } from '../world/gen'
 import Vec2 from '../public/engine/util/vec2'
 import { CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../public/engine/util/tilemap/position-conversion'
-import Tiles from '../world/tile'
 import Loop from '../public/engine/util/loop'
 import { Map2D } from '../public/engine/util/2d'
 import { type TileInstance } from '../world/tile/base'
 import { type TileMap } from '../socket.io'
+import { Entities } from '../world/entity'
 
 export type BaseSerializedTile = [
   type: string,
@@ -59,7 +60,11 @@ world.on('tile.set', tile => {
   )
 })
 
-Loop.precise(1000 / 12)(
+const OnTick = Loop.precise(1000 / 12)
+const OnInstant = Loop.instant()
+
+// Tile Ticking
+OnTick(
   () => {
     world.tick()
   },
@@ -68,13 +73,8 @@ Loop.precise(1000 / 12)(
   }
 )
 
-Loop.instant()(delta => {
-  if (delta > 100) console.warn(`Lighting took too long! ${delta.toPrecision(3)}ms`)
-
-  world.updateLights()
-})
-
-Loop.interval(1000 / 12)(() => {
+// Tile Update
+OnTick(() => {
   if (tileQueue.size === 0) return
 
   const tiles: TileMap = {}
@@ -100,6 +100,18 @@ Loop.interval(1000 / 12)(() => {
   tileQueue.clear()
 
   io.emit('tile.set[]', tiles)
+})
+
+// Light Ticking
+OnInstant(delta => {
+  if (delta > 100) console.warn(`Lighting took too long! ${delta.toPrecision(3)}ms`)
+
+  world.updateLights()
+})
+
+// Entity Ticking
+OnInstant(delta => {
+  world.updateEntities(delta)
 })
 
 io.on('connection', socket => {
@@ -181,56 +193,8 @@ io.on('connection', socket => {
     // TODO: Somehow delete the chunk while storing its data somewhere (file system?)
   })
 
-  // ? Should this be in the World or Inventory Plugin?
-
-  socket.on('tile.click', (rawTilePosition, button) => {
-    const tilePosition = new Vec2(...rawTilePosition)
-
-    switch (button) {
-      case 'left':
-        onLeftClick(tilePosition)
-        break
-      case 'right':
-        onRightClick(tilePosition)
-        break
-      default:
-        // ? Should I throw an error here? This might lead to a server-crashing exploit.
-        throw new Error(`Unknown tile click button: ${JSON.stringify(button)}`)
-    }
-  })
-
-  function onLeftClick (tilePosition: Vec2): void {
-    if (player === undefined) return
-
-    const tile = world.getTile(tilePosition, true)
-
-    if (tile === undefined) return
-
-    if (tile.type === 'air') {
-      const newTileType = player.inventory.getSlot(-1)?.getType() ?? 'air'
-
-      if (!(newTileType in Tiles)) return
-
-      const newTile = Tiles[newTileType as keyof typeof Tiles]
-
-      world.setTile(newTile.instance(), tilePosition, true, true)
-
-      player.inventory.removeAmount(-1, 1)
-
-      return
-    }
-
-    if (player.inventory.addItem(tile.type, 1)) world.setTile(Tiles.air.instance(), tilePosition, true, true)
-  }
-
-  function onRightClick (tilePosition: Vec2): void {
-    if (player === undefined) return
-
-    const tile = world.getTile(tilePosition, true)
-
-    if (tile === undefined) return
-
-    tile.onInteraction(player)
+  for (const entity of world.entities) {
+    socket.emit('entity.add', entity.getClientData())
   }
 })
 

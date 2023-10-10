@@ -14,7 +14,7 @@ export class TileMapEntity<ValidTile extends Tile = Tile> extends Entity<never> 
   public draw (frame: Frame): void {
     super.draw(frame)
 
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
     if (scene === undefined) return
 

@@ -1,20 +1,15 @@
 import type Scene from '../scene'
-import RectangularCollider from '../util/collision/rectangular'
+import type RectangularCollider from '../util/collision/rectangular'
 import Frame from '../util/frame'
 import { randomArrayFromNumber, randomFromArray } from '../util/math'
 import Vec2 from '../util/vec2'
 import { Debug as DebugGlobals } from '../../globals'
+import SharedEntity from '../../shared/entity'
 
 const DEBUG = DebugGlobals.entity
 
-export class Entity<ValidChild extends Entity = Entity<any>> {
+export class Entity<ValidChild extends Entity = Entity<any>> extends SharedEntity<ValidChild, Scene> {
   // Game Loop
-
-  public ready (): void {}
-
-  public update (delta: number): void {
-    for (const child of this.children) child.update(delta)
-  }
 
   public draw (frame: Frame): void {
     for (const child of this.children) {
@@ -57,81 +52,18 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
   // Entity Relationship
 
-  public readonly children = new Set<ValidChild>()
+  declare public parent?: Scene | Entity
 
-  public addChild (child: ValidChild): this {
-    this.children.add(child)
-
-    child.setParent(this)
-
-    child.ready()
-
-    return this
-  }
-
-  public removeChild (child: ValidChild): this {
-    this.children.delete(child)
-
-    child.deleteParent()
-
-    return this
-  }
-
-  public getChildren (): ValidChild[] {
-    return Array.from(this.children)
-  }
-
-  public parent?: Entity | Scene
-
-  public setParent (parent: Entity | Scene): this {
-    this.parent = parent
-
-    return this
-  }
-
-  public deleteParent (): this {
-    this.parent = undefined
-
-    return this
-  }
-
-  public getScene (): Scene | undefined {
-    return this.parent?.getScene()
-  }
-
-  public getPath (): number[] {
-    const parent = this.parent
-
-    if (parent === undefined) return []
-
-    const id = Array.from(parent.children)
-      .findIndex(child => child === this)
-
-    return [...parent.getPath(), id]
+  public getRoot (): Scene | undefined {
+    return super.getRoot()
   }
 
   // Position
 
-  public position: Vec2 = new Vec2(0, 0)
-
-  protected getParentGlobalPosition (): Vec2 {
-    return this.parent?.getGlobalPosition() ?? new Vec2(0, 0)
-  }
-
-  public getGlobalPosition (): Vec2 {
-    return this.position.plus(this.getParentGlobalPosition())
-  }
-
-  public setGlobalPosition (position: Vec2): this {
-    this.position = position.minus(this.getParentGlobalPosition())
-
-    return this
-  }
-
   public getViewportPosition (): Vec2 {
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
-    if (scene === undefined) return new Vec2(0, 0)
+    if (scene === undefined) return Vec2.ZERO
 
     const camera = scene.camera
     const viewport = camera.getViewport()
@@ -143,7 +75,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
   }
 
   public setViewportPosition (position: Vec2): this {
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
     if (scene === undefined) return this
 
@@ -158,30 +90,9 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
   // Collision Detection
 
-  // TODO: Find a better name
-  public getConstantCollider (): RectangularCollider {
-    return new RectangularCollider(new Vec2(0, 0), new Vec2(0, 0))
-  }
-
-  public getParentRelativeCollider (): RectangularCollider {
-    const collider = this.getConstantCollider()
-
-    const position = this.position
-
-    return collider.offset(position)
-  }
-
-  public getGlobalCollider (): RectangularCollider {
-    const collider = this.getConstantCollider()
-
-    const globalPosition = this.getGlobalPosition()
-
-    return collider.offset(globalPosition)
-  }
-
   // TODO: Make this accurate (does not work when screen resizes)
   public getViewportCollider (): RectangularCollider | undefined {
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
     if (scene === undefined) return
 
@@ -197,7 +108,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
   // IO
 
   protected getMouseViewportPosition (): Vec2 | undefined {
-    return this.getScene()?.getMouseViewportPosition()
+    return this.getRoot()?.getMouseViewportPosition()
   }
 
   public getMouseParentRelativePosition (): Vec2 | undefined {
@@ -215,7 +126,7 @@ export class Entity<ValidChild extends Entity = Entity<any>> {
 
     if (mouseViewportPosition === undefined) return
 
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
     if (scene === undefined) return
 

@@ -11,7 +11,7 @@ export class ListEntity<ValidItem extends Entity> extends ClippingEntity {
   protected color
 
   constructor (size: Vec2, spacing: number, padding: Vec2, color: Color) {
-    super(new Vec2(0, 0), size)
+    super(Vec2.ZERO, size)
 
     this.color = color
 

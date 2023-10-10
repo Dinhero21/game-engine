@@ -36,7 +36,7 @@ export class CraftingEntity extends HorizontalContainerEntity {
   constructor () {
     super(
       0,
-      new Vec2(0, 0)
+      Vec2.ZERO
     )
 
     const list = new ListEntity(new Vec2(64, 192), 32, new Vec2(16, 16), [...COLORS.BACKGROUND])
@@ -46,7 +46,7 @@ export class CraftingEntity extends HorizontalContainerEntity {
 
     const container = new VerticalContainerEntity(
       0,
-      new Vec2(0, 0)
+      Vec2.ZERO
     )
     this.addChild(container)
 

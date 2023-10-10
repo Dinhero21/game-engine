@@ -6,7 +6,7 @@ import Vec2 from '../util/vec2'
 export class ViewportEntity<ValidChild extends Entity = Entity> extends Entity<ValidChild> {
   public getConstantCollider (): RectangularCollider {
     const scene = valid(
-      this.getScene(),
+      this.getRoot(),
       new Error('ViewportEntity.getConstantCollider called before scene initialization')
     )
 
@@ -23,7 +23,7 @@ export class ViewportEntity<ValidChild extends Entity = Entity> extends Entity<V
   public update (delta: number): void {
     super.update(delta)
 
-    this.setViewportPosition(new Vec2(0, 0))
+    this.setViewportPosition(Vec2.ZERO)
   }
 }
 

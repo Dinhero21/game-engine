@@ -1,5 +1,5 @@
 import type Tile from '../../engine/util/tilemap/tile'
-import { TILE_CLICK_BUTTONS, type IClientSocket as Socket } from '../../../socket.io'
+import { TILE_CLICK_BUTTONS } from '../../../socket.io'
 import { TILE_SIZE, CHUNK_SIZE, positionToTilePosition, tilePositionToChunkPosition } from '../../engine/util/tilemap/position-conversion'
 import { createTile } from '../util/tile'
 import { loader } from '../../asset/loader'
@@ -8,14 +8,11 @@ import TileMapEntity from '../../engine/entity/tilemap'
 import { watch } from '../../engine/util/object'
 import { Experiments } from '../../globals'
 import { PrioritizedMouse } from '../../engine/util/input/mouse/prioritization'
+import socket from '../socket.io'
 
 export class WorldEntity extends TileMapEntity<Tile> {
-  private readonly socket
-
-  constructor (socket: Socket) {
+  constructor () {
     super()
-
-    this.socket = socket
 
     const mouse = new PrioritizedMouse(() => this.getPath())
 
@@ -33,8 +30,6 @@ export class WorldEntity extends TileMapEntity<Tile> {
   }
 
   public ready (): void {
-    const socket = this.socket
-
     socket.on('chunk.set', (rawChunkPosition, tiles) => {
       const chunkPosition = new Vec2(...rawChunkPosition)
 
@@ -109,7 +104,7 @@ export class WorldEntity extends TileMapEntity<Tile> {
   public update (delta: number): void {
     super.update(delta)
 
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
     if (scene === undefined) return
 
@@ -136,8 +131,6 @@ export class WorldEntity extends TileMapEntity<Tile> {
     this.lastViewportBottomRightChunkPosition = viewportBottomRightChunkPosition
 
     if (!viewportTopLeftChunkPositionChanged && !viewportBottomRightChunkPositionChanged) return
-
-    const socket = this.socket
 
     for (const row of this.getChunks().values()) {
       for (const chunk of row.values()) {

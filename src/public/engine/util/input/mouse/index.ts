@@ -111,7 +111,7 @@ export class Mouse extends TypedEventTarget<MouseEventMap> {
     frame.addEventListener('mouseup', event => { this.onMouseUp(event) })
   }
 
-  private readonly position = new Vec2(0, 0)
+  private readonly position = Vec2.ZERO
   public getPosition (): Vec2 {
     return this.position
   }

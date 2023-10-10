@@ -1,7 +1,7 @@
 import type Vec2 from '../../public/engine/util/vec2'
 import type Chunk from '../chunk'
-import type Player from '../../player'
 import { type World } from '..'
+import { type IPlayer } from '../entity'
 
 export type TileType = string
 
@@ -40,7 +40,7 @@ export abstract class TileInstance<Properties = any> {
 
   public update (): void {}
 
-  public onInteraction (player: Player): void {}
+  public onInteraction (player: IPlayer): void {}
 
   public destroy (): void {}
 

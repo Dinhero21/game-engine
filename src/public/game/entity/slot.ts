@@ -81,7 +81,7 @@ export class SlotEntity extends ButtonEntity {
     const size = this.size
     const padding = this.padding
 
-    return new RectangularCollider(new Vec2(0, 0), size.plus(padding.scaled(2)))
+    return new RectangularCollider(Vec2.ZERO, size.plus(padding.scaled(2)))
   }
 }
 

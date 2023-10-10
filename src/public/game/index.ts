@@ -1,13 +1,12 @@
-import type { IClientSocket as Socket } from '../../socket.io'
-import MultiplayerContainerEntity from './entity/multiplayer-container'
 import WorldEntity from './entity/world'
 import UserInterfaceEntity from './entity/user-interface'
 import DebugEntity from './entity/debug'
+import ServerEntityContainerEntity from './entity/server-entity/container'
+import socket from './socket.io'
 import { ViewportGenerators } from '../engine/camera'
 import Scene from '../engine/scene'
 import Loop from '../engine/util/loop'
 import globals from '../globals'
-import io from 'socket.io-client'
 import Stats from 'stats.js'
 import { GUI } from 'dat.gui'
 import _ from 'lodash'
@@ -62,20 +61,6 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     const error = event.error
 
     prettyPrintError(error)
-  })
-
-  const socket: Socket = io()
-
-  socket.on('disconnect', reason => {
-    document.write(`Disconnected: ${reason}`)
-
-    location.reload()
-  })
-
-  socket.on('connect_error', error => {
-    document.write(`Connect Error: ${error.message}`)
-
-    location.reload()
   })
 
   const scene = new Scene(context)
@@ -182,13 +167,14 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
     })
     .setValue(stats.Draw)
 
-  const world = new WorldEntity(socket)
+  const world = new WorldEntity()
   scene.addChild(world)
 
-  const multiplayerContainer = new MultiplayerContainerEntity(socket)
-  scene.addChild(multiplayerContainer)
+  const serverEntityContainer = new ServerEntityContainerEntity()
+  scene.addChild(serverEntityContainer)
 
-  multiplayerContainer.setOverlapDetector(other => world.overlapping(other))
+  // TODO: Find a better way of inter-entity data transfer
+  serverEntityContainer.setWorld(world)
 
   const ui = new UserInterfaceEntity(socket)
   scene.addChild(ui)

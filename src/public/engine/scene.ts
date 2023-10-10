@@ -3,18 +3,21 @@ import Camera from './camera'
 import Frame from './util/frame'
 import Vec2 from './util/vec2'
 import mouse from './util/input/mouse'
+import RootEntity from '../shared/root-entity'
 
 // TODO: Make canvas accessible from Entity
-export class Scene {
+export class Scene extends RootEntity<Entity> {
   public context
 
   public camera = new Camera(this)
 
   constructor (context: CanvasRenderingContext2D) {
+    super()
+
     this.context = context
   }
 
-  public getScene (): Scene {
+  public getRoot (): Scene {
     return this
   }
 
@@ -33,26 +36,7 @@ export class Scene {
     }
   }
 
-  // Entity Relationship
-
-  public readonly children = new Set<Entity>()
-
-  public addChild (child: Entity): this {
-    this.children.add(child)
-
-    child.setParent(this)
-
-    child.ready()
-
-    return this
-  }
-
-  public removeChild (child: Entity): this {
-    this.children.delete(child)
-
-    return this
-  }
-
+  // TODO: Remove if redundant
   public getPath (): number[] {
     return []
   }
@@ -60,7 +44,7 @@ export class Scene {
   // Position
 
   public getGlobalPosition (): Vec2 {
-    return new Vec2(0, 0)
+    return Vec2.ZERO
   }
 
   // IO

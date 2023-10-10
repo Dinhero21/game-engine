@@ -38,7 +38,7 @@ export class HorizontalContainerEntity<ValidChild extends Entity = Entity> exten
 
     size.add(padding.scaled(2))
 
-    return new RectangularCollider(new Vec2(0, 0), size)
+    return new RectangularCollider(Vec2.ZERO, size)
   }
 
   protected positionChildren (): void {

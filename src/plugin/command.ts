@@ -1,7 +1,7 @@
-import type Player from '../player'
 import chat from './chat'
 import CommandHelper, { parseArgs } from '../util/command'
 import { COMMAND_MAP, PREFIX } from '../command'
+import { type IPlayer } from '../world/entity'
 import { fileURLToPath } from 'url'
 import path, { dirname, join } from 'path'
 import fs from 'fs/promises'
@@ -22,7 +22,7 @@ chat.register('message', async (message, sender, cancel) => {
   await onCommand(command, args, sender)
 })
 
-async function onCommand (name: string, args: unknown[], sender: Player): Promise<void> {
+async function onCommand (name: string, args: unknown[], sender: IPlayer): Promise<void> {
   const command = COMMAND_MAP.get(name)
 
   if (command === undefined) {

@@ -38,7 +38,7 @@ export class UserInterfaceEntity extends ViewportEntity {
 
     // --- Inventory ---
 
-    const centeredUi = new AnchorEntity(new Vec2(0.5, 0.5))
+    const centeredUi = new AnchorEntity(Vec2.CENTER)
     this.addChild(centeredUi)
 
     const inventoryEntity = new PlayerInventoryEntity(socket)
@@ -51,9 +51,6 @@ export class UserInterfaceEntity extends ViewportEntity {
     inventory.manager.addEventListener('slot.update', event => {
       this.updateRecipes()
     })
-
-    const bottomUi = new AnchorEntity(new Vec2(0, 1))
-    this.addChild(bottomUi)
 
     // --- Chat ---
 
@@ -73,6 +70,9 @@ export class UserInterfaceEntity extends ViewportEntity {
           break
       }
     }, true)
+
+    const bottomUi = new AnchorEntity(Vec2.DOWN)
+    this.addChild(bottomUi)
 
     const chat = new ChatEntity({
       width: 480,

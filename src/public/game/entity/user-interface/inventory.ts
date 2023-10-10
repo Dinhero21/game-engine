@@ -57,7 +57,7 @@ export class PlayerInventoryEntity extends InventoryEntity {
   protected getClosedPosition (): Vec2 {
     const open = this.getOpenPosition()
 
-    const scene = this.getScene()
+    const scene = this.getRoot()
 
     if (scene === undefined) throw new Error('Closed Position requested before Entity Initialization')
 

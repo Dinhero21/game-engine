@@ -29,11 +29,11 @@ export class ChatMessageContainerEntity extends VerticalContainerEntity<ChatMess
   private readonly options
 
   constructor (options: TextOptions) {
-    super(0, new Vec2(0, 0))
+    super(0, Vec2.ZERO)
 
     this.options = options
 
-    align(this, new Vec2(0, 1), true)
+    align(this, Vec2.DOWN, true)
   }
 
   public appendText (text: string, options?: Partial<TextOptions>): void {
