@@ -6,6 +6,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <script src="bootstrap.js" type="module" defer></script>
+  <script type="module" defer>
+    (() => {
+      if ('BOOTSTRAP_LOADED' in window) return
+
+      const message = document.getElementById('message')
+
+      if (message !== null) message.innerText = 'failed to load bootstrap\nrefreshing...'
+
+      document.location.reload()
+    })()
+  </script>
   <link href="styles.css" rel="stylesheet">
 </head>
 <body>

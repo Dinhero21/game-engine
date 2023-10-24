@@ -22,14 +22,3 @@ const context = valid(
 )
 
 export const scene = createScene(context)
-
-updateViewSize()
-
-window.addEventListener('resize', updateViewSize)
-
-function updateViewSize (): void {
-  if (!(view instanceof HTMLCanvasElement)) throw new Error('#view not HTMLCanvasElement')
-
-  view.width = window.innerWidth
-  view.height = window.innerHeight
-}

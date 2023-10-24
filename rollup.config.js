@@ -6,6 +6,7 @@ import babel from '@rollup/plugin-babel'
 import sourcemaps from 'rollup-plugin-sourcemaps'
 import terser from '@rollup/plugin-terser'
 import globImport from 'rollup-plugin-glob-import'
+import livereload from 'rollup-plugin-livereload'
 
 const PRODUCTION = process.env.NODE_ENV === 'production'
 const DEVELOPMENT = !PRODUCTION
@@ -35,10 +36,15 @@ PLUGINS.push(
   })
 )
 
-// SourceMaps
 if (DEVELOPMENT) {
+  // SourceMaps
   PLUGINS.push(
     sourcemaps()
+  )
+
+  // LiveReload
+  PLUGINS.push(
+    livereload({})
   )
 }
 

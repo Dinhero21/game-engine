@@ -1,5 +1,13 @@
 import { valid } from './none'
 
+declare global {
+  interface Window {
+    BOOTSTRAP_LOADED: boolean
+  }
+}
+
+window.BOOTSTRAP_LOADED = true
+
 const message = valid(
   document.getElementById('message'),
   new Error('null #message')
@@ -10,13 +18,23 @@ message.innerText += '\nloading canvas renderer'
 let text = ''
 let progress = 0
 
-// TODO: Make this a separate file shared between /bootstrap and /plugin/bootstrap
 const view = valid(
   document.getElementById('view'),
   new Error('null #view')
 )
 
 if (!(view instanceof HTMLCanvasElement)) throw new Error('#view not HTMLCanvasElement')
+
+updateViewSize()
+
+window.addEventListener('resize', updateViewSize)
+
+function updateViewSize (): void {
+  if (!(view instanceof HTMLCanvasElement)) throw new Error('#view not HTMLCanvasElement')
+
+  view.width = window.innerWidth
+  view.height = window.innerHeight
+}
 
 const context = valid(
   view.getContext('2d'),
@@ -41,17 +59,6 @@ function render (): void {
 
   context.font = '64px monospace'
   context.fillText(text, 0, view.height)
-}
-
-updateViewSize()
-
-window.addEventListener('resize', updateViewSize)
-
-function updateViewSize (): void {
-  if (!(view instanceof HTMLCanvasElement)) throw new Error('#view not HTMLCanvasElement')
-
-  view.width = window.innerWidth
-  view.height = window.innerHeight
 }
 
 message.innerText += '\nfetching bundle'
@@ -88,6 +95,9 @@ while (true) {
 
   render()
 }
+
+// Reset Context
+updateViewSize()
 
 const blob = new Blob(chunks, { type: 'application/javascript' })
 
