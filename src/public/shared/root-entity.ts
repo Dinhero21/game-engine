@@ -1,8 +1,8 @@
-import type SharedEntity from './entity'
+import type AbstractEntity from './abstract-entity'
 import Vec2 from '../engine/util/vec2'
 
 // TODO: Find a way to make ValidRoot in ValidRoot = ValidRoot without circular dependency errors
-export class RootEntity<ValidChild extends SharedEntity = SharedEntity<any, any>, ValidRoot extends RootEntity = RootEntity<any, any>> {
+export class RootEntity<ValidChild extends AbstractEntity = AbstractEntity<any, any>, ValidRoot extends RootEntity = RootEntity<any, any>> {
   // Entity Relationship
 
   public readonly children = new Set<ValidChild>()
@@ -29,7 +29,7 @@ export class RootEntity<ValidChild extends SharedEntity = SharedEntity<any, any>
     return Array.from(this.children)
   }
 
-  public parent?: ValidRoot | SharedEntity
+  public parent?: ValidRoot | AbstractEntity
 
   public setParent (parent: ValidRoot): this {
     this.parent = parent

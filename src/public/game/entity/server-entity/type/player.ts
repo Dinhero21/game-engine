@@ -9,7 +9,7 @@ import { Debug } from '../../../../globals'
 import socket from '../../../socket.io'
 import Alea from 'alea'
 
-const FRICTION = new Vec2(50, 5)
+const FRICTION = new Vec2(32, 4)
 
 export class ServerPlayerEntity extends ServerEntityEntity {
   public velocity = Vec2.ZERO
@@ -97,17 +97,21 @@ export class ServerPlayerEntity extends ServerEntityEntity {
     }
   }
 
-  protected getUserInputDirection (): Vec2 {
-    let horizontalDirection = 0
-    let verticalDirection = 0
+  public acceleration = Vec2.ZERO
 
-    if (keyboard.isKeyDown('a')) horizontalDirection--
-    if (keyboard.isKeyDown('d')) horizontalDirection++
+  protected getAcceleration (): Vec2 {
+    if (!this.controllable) return this.acceleration
 
-    if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) verticalDirection--
-    if (keyboard.isKeyDown('shift') || keyboard.isKeyDown('s')) verticalDirection++
+    let x = 0
+    let y = 0
 
-    return new Vec2(horizontalDirection, verticalDirection)
+    if (keyboard.isKeyDown('a')) x -= 16
+    if (keyboard.isKeyDown('d')) x += 16
+
+    if (keyboard.isKeyDown('space') || keyboard.isKeyDown('w')) y -= 12
+    if (keyboard.isKeyDown('shift') || keyboard.isKeyDown('s')) y += 3
+
+    return new Vec2(x, y)
   }
 
   protected move (delta: number): void {
@@ -115,16 +119,18 @@ export class ServerPlayerEntity extends ServerEntityEntity {
 
     const velocity = this.velocity
 
-    if (this.controllable) {
-      const direction = this.getUserInputDirection()
+    const kilodelta = delta * 1000
 
-      // velocity += direction * speed
-      velocity.add(direction.scaled(new Vec2(25000, 12500)).scaled(delta))
-    }
+    const acceleration = this.getAcceleration()
+
+    this.acceleration = acceleration
+
+    // velocity += acceleration * delta
+    velocity.add(acceleration.scaled(kilodelta))
 
     // velocity.y += gravity
     if (Debug.player.gravity) {
-      velocity.y += 3750 * delta
+      velocity.y += 3.75 * kilodelta
     }
 
     // Friction
@@ -155,7 +161,8 @@ export class ServerPlayerEntity extends ServerEntityEntity {
       socket.emit(
         'physics.update',
         this.position.toArray(),
-        this.velocity.toArray()
+        this.velocity.toArray(),
+        this.acceleration.toArray()
       )
     }
   }

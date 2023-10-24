@@ -4,11 +4,11 @@ import Frame from '../util/frame'
 import { randomArrayFromNumber, randomFromArray } from '../util/math'
 import Vec2 from '../util/vec2'
 import { Debug as DebugGlobals } from '../../globals'
-import SharedEntity from '../../shared/entity'
+import AbstractEntity from '../../shared/abstract-entity'
 
 const DEBUG = DebugGlobals.entity
 
-export class Entity<ValidChild extends Entity = Entity<any>> extends SharedEntity<ValidChild, Scene> {
+export class Entity<ValidChild extends Entity = Entity<any>> extends AbstractEntity<ValidChild, Scene> {
   // Game Loop
 
   public draw (frame: Frame): void {

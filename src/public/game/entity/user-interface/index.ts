@@ -1,6 +1,6 @@
 import type Entity from '../../../engine/entity'
 import ChatEntity from './chat'
-import PlayerInventoryEntity from './inventory'
+import PlayerInventoryEntity from './player-inventory'
 import CraftingEntity from './crafting'
 import recipes, { type Recipe } from '../../../asset/recipe'
 import AnchorEntity from '../../../engine/entity/anchor'

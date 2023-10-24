@@ -1,5 +1,4 @@
 import type Chunk from '../world/chunk'
-import type Entity from '../world/entity/base'
 import { io } from './web'
 import { getPlayer } from './player'
 import { World } from '../world'
@@ -10,7 +9,6 @@ import Loop from '../public/engine/util/loop'
 import { Map2D } from '../public/engine/util/2d'
 import { type TileInstance } from '../world/tile/base'
 import { type TileMap } from '../socket.io'
-import { Entities } from '../world/entity'
 
 export type BaseSerializedTile = [
   type: string,
@@ -102,6 +100,11 @@ OnTick(() => {
   io.emit('tile.set[]', tiles)
 })
 
+// Entity Syncing
+OnTick(() => {
+  world.syncEntities()
+})
+
 // Light Ticking
 OnInstant(delta => {
   if (delta > 100) console.warn(`Lighting took too long! ${delta.toPrecision(3)}ms`)
@@ -123,7 +126,7 @@ io.on('connection', socket => {
   const lastBottomRightViewportChunkPosition = new Vec2(NaN, NaN)
 
   socket.on('physics.update', rawPosition => {
-    const position = new Vec2(...rawPosition)
+    const position = Vec2.fromArray(rawPosition)
 
     const topLeftViewportPosition = position.minus(HALF_VIEWPORT_SIZE)
     const bottomRightViewportPosition = position.plus(HALF_VIEWPORT_SIZE)
@@ -184,7 +187,7 @@ io.on('connection', socket => {
   })
 
   socket.on('chunk.remove', rawPosition => {
-    const position = new Vec2(...rawPosition)
+    const position = Vec2.fromArray(rawPosition)
 
     const chunk = world.getChunk(position)
 
@@ -193,7 +196,11 @@ io.on('connection', socket => {
     // TODO: Somehow delete the chunk while storing its data somewhere (file system?)
   })
 
+  // TODO: Run this code before Player's so that entities don't need to be filtered
   for (const entity of world.entities) {
+    // Stop the player from being sent twice
+    if (entity.id === socket.id) continue
+
     socket.emit('entity.add', entity.getClientData())
   }
 })

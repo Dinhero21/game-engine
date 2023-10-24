@@ -247,7 +247,7 @@ export class World extends TypedEmitter<WorldEvents> {
 
   private readonly entityQueue = new Set<Entity>()
 
-  public queueEntity (entity: Entity): void {
+  public queueSync (entity: Entity): void {
     const queue = this.entityQueue
 
     queue.add(entity)
@@ -257,7 +257,7 @@ export class World extends TypedEmitter<WorldEvents> {
     const queue = this.entityQueue
 
     for (const entity of queue) {
-      io.emit('entity.update', entity.getClientData())
+      entity._sync()
     }
 
     queue.clear()

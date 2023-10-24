@@ -29,7 +29,7 @@ export interface ServerToClientEvents {
 
 // Client -> Server
 export interface ClientToServerEvents {
-  'physics.update': (position: Vec2Array, velocity: Vec2Array) => void
+  'physics.update': (position: Vec2Array, velocity: Vec2Array, acceleration: Vec2Array) => void
   // ? Should I make Chunk Removal the client's responsibility?
   'chunk.remove': (chunkPosition: Vec2Array) => void
   'tile.click': (tilePosition: Vec2Array, button: TileClickButton) => void

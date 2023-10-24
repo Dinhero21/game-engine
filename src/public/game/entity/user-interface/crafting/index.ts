@@ -10,17 +10,14 @@ import { chunk } from '../../../util/string'
 import Vec2 from '../../../../engine/util/vec2'
 import VerticalContainerEntity from '../../../../engine/entity/container/vertical'
 import HorizontalContainerEntity from '../../../../engine/entity/container/horizontal'
+import { type UIState } from '..'
 
 const COLORS = {
   BACKGROUND: [0x1F, 0x1F, 0x1F, 0.75],
   FOREGROUND: [0xFF, 0xFF, 0xFF]
 } as const
 
-export type CraftingState = 'open' | 'closed'
-
 export class CraftingEntity extends HorizontalContainerEntity {
-  private animating: boolean = false
-
   public readonly list
   public readonly display
   public readonly progress
@@ -30,8 +27,6 @@ export class CraftingEntity extends HorizontalContainerEntity {
   private recipe?: Recipe
 
   private readonly _recipes = new Set<Recipe>()
-
-  public state: CraftingState = 'closed'
 
   constructor () {
     super(
@@ -79,7 +74,7 @@ export class CraftingEntity extends HorizontalContainerEntity {
     return new Vec2(position.x - size.x, position.y)
   }
 
-  protected getPosition (state: CraftingState): Vec2 {
+  protected getPosition (state: UIState): Vec2 {
     const positionMap = {
       open: this.getOpenPosition,
       closed: this.getClosedPosition
@@ -97,6 +92,10 @@ export class CraftingEntity extends HorizontalContainerEntity {
     this.updateProgress(delta)
     this.updateDisplay()
   }
+
+  public state: UIState = 'closed'
+
+  private animating: boolean = false
 
   protected async updateAnimation (): Promise<void> {
     if (this.animating) return

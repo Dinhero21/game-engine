@@ -1,5 +1,6 @@
 import type CommandHelper from '../util/command'
 import { registerCommand } from '.'
+import Vec2 from '../public/engine/util/vec2'
 
 function teleport (helper: CommandHelper): void {
   const [x, y] = helper.args
@@ -8,11 +9,9 @@ function teleport (helper: CommandHelper): void {
   if (typeof y !== 'number') throw new TypeError('y must be a number')
 
   const player = helper.sender
-  const position = player.position
+  const position = new Vec2(x, y)
 
-  position.set(x, y)
-
-  player.sync()
+  player.teleport(position)
 }
 
 registerCommand('tp', teleport)

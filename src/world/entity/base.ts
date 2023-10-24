@@ -31,7 +31,7 @@ export class Entity {
   public setPosition (position: Vec2): void {
     this.position = position
 
-    this.sync()
+    this.queueSync()
   }
 
   // Networking
@@ -49,7 +49,15 @@ export class Entity {
     }
   }
 
-  public sync (): void {
+  public queueSync (): void {
+    const world = this.world
+
+    world.queueSync(this)
+  }
+
+  // ! _sync should not be called directly as
+  // ! it might flood the client with packets
+  public _sync (): void {
     io.emit('entity.update', this.getClientData())
   }
 }

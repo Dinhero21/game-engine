@@ -10,7 +10,7 @@ io.on('connection', socket => {
   if (player === undefined) return
 
   socket.on('tile.click', (rawTilePosition, button) => {
-    const tilePosition = new Vec2(...rawTilePosition)
+    const tilePosition = Vec2.fromArray(rawTilePosition)
 
     switch (button) {
       case 'left':

@@ -1,8 +1,31 @@
 import RootEntity from './root-entity'
+import { getId } from './entity-manager'
 import Vec2 from '../engine/util/vec2'
 import RectangularCollider from '../engine/util/collision/rectangular'
+// import { setName } from '../engine/util/reflection'
 
-export class SharedEntity<ValidChild extends SharedEntity = SharedEntity<any>, ValidRoot extends RootEntity = RootEntity<any, any>> extends RootEntity<ValidChild, ValidRoot> {
+export const IdSymbol = Symbol('entity.id')
+
+export class AbstractEntity<ValidChild extends AbstractEntity = AbstractEntity<any>, ValidRoot extends RootEntity = RootEntity<any, any>> extends RootEntity<ValidChild, ValidRoot> {
+  // Debugging
+
+  public readonly [IdSymbol] = getId()
+
+  // constructor () {
+  //   super()
+
+  //   const prototype = Object.getPrototypeOf(this) as object
+  //   const constructor = prototype.constructor
+  //   const name = constructor.name
+
+  //   const id = this[IdSymbol]
+
+  //   setName(
+  //     `${name}$${id}`,
+  //     this
+  //   )
+  // }
+
   // Game Loop
 
   public ready (): void {}
@@ -53,4 +76,4 @@ export class SharedEntity<ValidChild extends SharedEntity = SharedEntity<any>, V
   }
 }
 
-export default SharedEntity
+export default AbstractEntity

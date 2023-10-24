@@ -1,6 +1,6 @@
-import { type ArrayToIntersection } from './types'
+import { type AnyFunction, type ArrayToIntersection } from './types'
 
-export function * getPrototypeChain (object: object): Iterable<any> {
+export function * getPrototypeChain (object: object): Iterable<object> {
   while (true) {
     yield object
 
@@ -10,14 +10,32 @@ export function * getPrototypeChain (object: object): Iterable<any> {
   }
 }
 
-export function dumpPrototypeChain (object: object): void {
+export function dumpPrototypeChain (object: object, dumpPropertyNames: boolean = false): void {
   console.info('--- PROTOTYPE CHAIN DUMP ---')
 
-  for (const prototype of getPrototypeChain(object)) {
-    console.group(`${String(prototype?.name)} (${String(prototype?.constructor?.name)})`)
+  let i = 0
 
-    for (const name of Object.getOwnPropertyNames(prototype)) {
-      console.info(name)
+  for (const prototype of getPrototypeChain(object)) {
+    i++
+
+    const isConstructor = typeof prototype === 'function'
+
+    console.group(`${i}. ${
+      (
+        isConstructor
+        ? prototype?.name
+        : prototype?.constructor?.name
+      ) + (
+        isConstructor
+        ? ' (constructor)'
+        : ' (instance)'
+      )
+    }`)
+
+    if (dumpPropertyNames) {
+      for (const name of Object.getOwnPropertyNames(prototype)) {
+        console.info(name)
+      }
     }
 
     console.groupEnd()
@@ -63,6 +81,7 @@ export function assign3 (a: object | null, b: object | null, c: object, assign =
   assign(c, intermediate)
 }
 
+// TODO: Make it so its possible to clone the entire prototype chain and not only the instance properties
 export function createMergedClone<T extends Array<object | null>> (...objects: T): ArrayToIntersection<T> {
   const descriptors = Object.create(null)
 
@@ -168,6 +187,22 @@ export function Merge<T extends any[], TA extends Constructor<T, any>, TB extend
         c = Object.getPrototypeOf(c)
       }
 
+      // TODO: Flag to allow you to choose between assign3 or assignPrototypeChain
+      // TODO: Benchmark assign3 vs assignPrototypeChain
+      // Time Complexities (Speculation):
+      //   assign3              : property count (only own)
+      //   assign3 (full)       : property count
+      //   assignPrototypeChain : property count (including duplicates) + prototype chain size
+      // * By assign3 I mean assign3 (full)
+      // assign3 should be faster but might introduce bugs when
+      // prototype of A|B uses super as it would try to access
+      // its prototype, which is not what it was expecting.
+      // instead, it should have used this as all the methods
+      // are flattened.
+      // assignPrototypeChain does not have that problem but it
+      // is *considerably* slower so its output should always be
+      // cached.
+      // ? assign3 or assignPrototypeChain?
       assignPrototypeChain(a, b, c)
     }
   }
@@ -175,4 +210,35 @@ export function Merge<T extends any[], TA extends Constructor<T, any>, TB extend
   assign3(A, B, C, assignFull)
 
   return C as unknown as Constructor<T, IA & IB> & (TA & TB)
+}
+
+export function nameFunction<T extends AnyFunction> (name: string, original: T): T {
+  return {
+    [name] (...args: Parameters<T>): ReturnType<T> {
+      return original.apply(this, args)
+    }
+  }[name] as T
+}
+
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
+export function nameClass<T extends Constructor<any, any>> (name: string, original?: T): T {
+  // TODO: Find a way to do this without eval
+  // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+  return new Function(
+    'original',
+    `return class ${name} ${original === undefined ? '' : 'extends original'} {}`
+  )(original)
+}
+
+export function setName (name: string, object: object): void {
+  const prototype = Object.create(
+    Object.getPrototypeOf(object),
+    {
+      constructor: {
+        value: nameClass(name)
+      }
+    }
+  )
+
+  Object.setPrototypeOf(object, prototype)
 }

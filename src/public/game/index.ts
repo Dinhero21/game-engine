@@ -11,6 +11,8 @@ import Stats from 'stats.js'
 import { GUI } from 'dat.gui'
 import _ from 'lodash'
 
+const UPDATE_INTERVAL = 0
+
 const statContainer = document.getElementById('stat-container')
 
 export function createStat (name: string): Stats {
@@ -72,8 +74,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
 
   const updateStat = createStat('update')
 
-  // Instant = Fastest Javascript Allows
-  Loop.instant()(delta => {
+  Loop.interval(UPDATE_INTERVAL)(delta => {
     if (!running) return
 
     updateStat.begin()

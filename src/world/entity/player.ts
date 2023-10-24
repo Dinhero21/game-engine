@@ -6,6 +6,7 @@ import { type World } from '..'
 import Inventory from '../../inventory'
 import { type Stack, type SlotId } from '../../public/game/util/inventory'
 import { type IServerSocket as Socket } from '../../socket.io'
+import { io } from '../../plugin/web'
 
 export interface PlayerEventMap {
   'inventory.update': (id: SlotId, stack: Stack) => void
@@ -13,17 +14,19 @@ export interface PlayerEventMap {
 
 export interface PlayerClientData extends EntityClientData {
   velocity: Vec2Array
+  acceleration: Vec2Array
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function Player (E: typeof Entity) {
-  return class PlayerEntity extends Emitting<PlayerEventMap>(E) {
+  class PlayerEntity extends Emitting<PlayerEventMap>(E) {
     public readonly type = 'player'
 
     public readonly socket
 
     public position = Vec2.ZERO
     public velocity = Vec2.ZERO
+    public acceleration = Vec2.ZERO
 
     public name: string = 'default'
 
@@ -46,13 +49,49 @@ export function Player (E: typeof Entity) {
       })
     }
 
+    public isTeleporting = false
+
+    /*
+      Use this method when the position
+      of the client needs to be updated.
+      Set Player.position directly otherwise.
+    */
+    public teleport (position: Vec2): void {
+      this.position = position
+
+      this.velocity = Vec2.ZERO
+      this.acceleration = Vec2.ZERO
+
+      this.isTeleporting = true
+
+      this.queueSync()
+    }
+
+    public _sync (): void {
+      const socket = this.socket
+
+      const emitter =
+        this.isTeleporting
+          // all (including self)
+          ? io
+          // all (except self)
+          : socket.broadcast
+
+      emitter.emit('entity.update', this.getClientData())
+
+      this.isTeleporting = false
+    }
+
     public getClientData (): PlayerClientData {
       return {
         ...super.getClientData(),
+        acceleration: this.acceleration.toArray(),
         velocity: this.velocity.toArray()
       }
     }
   }
+
+  return PlayerEntity
 }
 
 export default Player

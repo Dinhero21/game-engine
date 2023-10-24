@@ -1,15 +1,10 @@
+import { type UIState } from '.'
 import { type IClientSocket as Socket } from '../../../../socket.io'
 import { TRANSFORMATIONS, animatePosition } from '../../../engine/patch/animate'
 import Vec2 from '../../../engine/util/vec2'
 import InventoryEntity from '../inventory'
 
-export type PlayerInventoryState = 'open' | 'closed'
-
 export class PlayerInventoryEntity extends InventoryEntity {
-  private animating: boolean = false
-
-  public state: PlayerInventoryState = 'closed'
-
   constructor (socket: Socket) {
     super(
       new Vec2(3, 3),
@@ -75,7 +70,7 @@ export class PlayerInventoryEntity extends InventoryEntity {
     return new Vec2(open.x, (cameraSize.y * 0.5) - (padding.y + slotSize.y + spacing.y / 2))
   }
 
-  protected getPosition (state: PlayerInventoryState): Vec2 {
+  protected getPosition (state: UIState): Vec2 {
     const positionMap = {
       open: this.getOpenPosition,
       closed: this.getClosedPosition
@@ -91,6 +86,10 @@ export class PlayerInventoryEntity extends InventoryEntity {
 
     void this.updateAnimation()
   }
+
+  public state: UIState = 'closed'
+
+  private animating: boolean = false
 
   protected async updateAnimation (): Promise<void> {
     if (this.animating) return

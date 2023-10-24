@@ -23,14 +23,18 @@ io.on('connection', socket => {
 
   // ? Should this be here or in a Physics Plugin?
 
-  socket.on('physics.update', (rawPosition, rawVelocity) => {
-    const position = new Vec2(...rawPosition)
-    const velocity = new Vec2(...rawVelocity)
+  socket.on('physics.update', (rawPosition, rawVelocity, rawAcceleration) => {
+    if (player.isTeleporting) return
+
+    const position = Vec2.fromArray(rawPosition)
+    const velocity = Vec2.fromArray(rawVelocity)
+    const acceleration = Vec2.fromArray(rawAcceleration)
 
     player.position = position
     player.velocity = velocity
+    player.acceleration = acceleration
 
-    player.sync()
+    player.queueSync()
   })
 })
 

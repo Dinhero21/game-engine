@@ -20,9 +20,22 @@ export const EntityTypes = {
 
     if (!(entity instanceof ServerPlayerEntity)) return entity
 
+    const controllable = entity.id === socket.id
+
+    /* Now done server-side
+    // TODO: Not completely ignore self entity.update-s
+    // controllable = is me?
+    // entity.controllable defaults to false so
+    // if controllable and !entity.controllable
+    // then entity has not been initialized yet
+    //  Test if entity has been initialized
+    //  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    if (controllable && entity.controllable) return entity
+    */
+
     entity.physics.position = entity.position
 
-    entity.controllable = entity.id === socket.id
+    entity.controllable = controllable
 
     const velocity = valid(
       (data as PlayerClientData).velocity,
@@ -30,6 +43,13 @@ export const EntityTypes = {
     )
 
     entity.velocity = Vec2.fromArray(velocity)
+
+    const acceleration = valid(
+      (data as PlayerClientData).acceleration,
+      new Error('Expected ClientData<Player> to include acceleration')
+    )
+
+    entity.acceleration = Vec2.fromArray(acceleration)
 
     return entity
   }

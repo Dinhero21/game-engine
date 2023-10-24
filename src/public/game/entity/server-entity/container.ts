@@ -9,6 +9,8 @@ export class ServerEntityContainerEntity extends Entity<ServerEntityEntity> {
     super()
 
     socket.on('entity.add', data => {
+      console.log('entity.add', data)
+
       const f = EntityTypes[data.type]
       const entity = f(data)
 
@@ -18,22 +20,39 @@ export class ServerEntityContainerEntity extends Entity<ServerEntityEntity> {
     })
 
     socket.on('entity.remove', id => {
-      const entity = Array.from(this.children).find(child => child.id === id)
+      let count = 0
 
-      // ? Should I warn or throw an error?
-      if (entity === undefined) return
+      for (const entity of this.children) {
+        if (entity.id !== id) continue
 
-      this.removeChild(entity)
+        count++
+
+        this.removeChild(entity)
+      }
+
+      if (count === 1) return
+
+      console.warn(`Expected to remove 1 entity but removed ${count}`)
     })
 
     socket.on('entity.update', data => {
-      const entity = Array.from(this.children).find(child => child.id === data.id)
+      console.log('entity.update', data)
 
-      if (entity === undefined) return
+      let count = 0
 
-      const f = EntityTypes[data.type]
+      for (const entity of this.children) {
+        if (entity.id !== data.id) continue
 
-      f(data, entity)
+        count++
+
+        const f = EntityTypes[data.type]
+
+        f(data, entity)
+      }
+
+      if (count === 1) return
+
+      console.warn(`Expected to update 1 entity but updated ${count}`)
     })
   }
 

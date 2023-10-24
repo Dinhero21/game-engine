@@ -31,7 +31,7 @@ export class WorldEntity extends TileMapEntity<Tile> {
 
   public ready (): void {
     socket.on('chunk.set', (rawChunkPosition, tiles) => {
-      const chunkPosition = new Vec2(...rawChunkPosition)
+      const chunkPosition = Vec2.fromArray(rawChunkPosition)
 
       const chunk = this._createChunk(chunkPosition)
 
