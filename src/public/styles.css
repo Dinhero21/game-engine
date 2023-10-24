@@ -1,7 +1,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  background-color: #282C34;
+  background-color: black;
 }
 
 #view {
@@ -12,4 +12,15 @@ body {
 
 #stat-container {
   position: absolute;
+}
+
+#message {
+  position: absolute;
+  font: 32px monospace;
+  color: white;
+  bottom: 0;
+  left: 0;
+  text-align: left;
+  padding: 0px;
+  margin: 0px;
 }
