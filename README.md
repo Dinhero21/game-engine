@@ -1,5 +1,19 @@
 # Game Engine
 
+# IMPORTANT: I have abandoned this project
+
+Even though this was one of my favorite and most proud projects, I have chosen to abandon it.
+
+It is simply not feasible to write a game in TypeScript, JavaScript or any other interpreted (scripting) language.
+
+It is not enjoyable to work on a project where you have to constantly balance DX vs performance. Uglifying should be the optimizer's responsibility, not the developer's.
+
+This is my last commit, I don't plan to make any others. But I do plan to remake this exact game in rust (or some other compiled programming language) using bevy (or some other game engine, or none at all).
+
+Even with the project discontinued, you can still access and run it as you always could. The old readme can be found down below.
+
+---
+
 [![built with Codeium](https://codeium.com/badges/main)](https://codeium.com)
 
 A Fully Open Source Game and Game Engine written in [TypeScript](https://typescriptlang.org/).
@@ -19,6 +33,8 @@ A Fully Open Source Game and Game Engine written in [TypeScript](https://typescr
 5. Open `localhost:8080` (or the port configured in `PORT` environmental variable).
 
 ## Contributing
+
+(see [I have abandoned this project](#important-i-have-abandoned-this-project))
 
 There are many ways you contribute, here are some of them.
 
