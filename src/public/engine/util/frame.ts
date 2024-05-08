@@ -112,12 +112,18 @@ export class Frame {
     y += offset.y
 
     if (context instanceof Frame) {
-      context._fillRect(x, y, w, h)
+      context._fillRect(
+        x, y,
+        w, h
+      )
 
       return this
     }
 
-    context.fillRect(x, y, w, h)
+    context.fillRect(
+      x, y,
+      w, h
+    )
 
     return this
   }
@@ -138,12 +144,18 @@ export class Frame {
     y += offset.y
 
     if (context instanceof Frame) {
-      context._strokeRect(x, y, w, h)
+      context._strokeRect(
+        x, y,
+        w, h
+      )
 
       return this
     }
 
-    context.strokeRect(x, y, w, h)
+    context.strokeRect(
+      x, y,
+      w, h
+    )
 
     return this
   }
@@ -244,12 +256,20 @@ export class Frame {
     y += offset.y
 
     if (context instanceof Frame) {
-      context._fillText(text, x, y, maxWidth)
+      context._fillText(
+        text,
+        x, y,
+        maxWidth
+      )
 
       return this
     }
 
-    context.fillText(text, x, y, maxWidth)
+    context.fillText(
+      text,
+      x, y,
+      maxWidth
+    )
 
     return this
   }
@@ -342,13 +362,23 @@ export class Frame {
     if (!isNone(color)) this.setFillStyle(color)
     if (!isNone(font)) this.setFont(font)
 
-    this._fillText(text, x, y, maxWidth)
+    this._fillText(
+      text,
+      x, y,
+      maxWidth
+    )
 
     return this
   }
 
   public drawTextRGBA (text: string, x: number, y: number, r: number, g: number, b: number, a: number = 1, font: HTMLRenderingContext2D['font'] | None, maxWidth?: number): this {
-    this.drawText(text, x, y, `rgba(${r},${g},${b},${a})`, font, maxWidth)
+    this.drawText(
+      text,
+      x, y,
+      `rgba(${r},${g},${b},${a})`,
+      font,
+      maxWidth
+    )
 
     return this
   }
@@ -366,7 +396,12 @@ export class Frame {
   }
 
   public drawLineRGBA (startX: number, startY: number, endX: number, endY: number, r: number, g: number, b: number, a: number = 1, width: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
-    this.drawLine(startX, startY, endX, endY, `rgba(${r},${g},${b},${a})`, width)
+    this.drawLine(
+      startX, startY,
+      endX, endY,
+      `rgba(${r},${g},${b},${a})`,
+      width
+    )
 
     return this
   }
@@ -374,13 +409,20 @@ export class Frame {
   public drawRect (x: number, y: number, w: number, h: number, color: HTMLRenderingContext2D['fillStyle'] | None): this {
     if (!isNone(color)) this.setFillStyle(color)
 
-    this._fillRect(x, y, w, h)
+    this._fillRect(
+      x, y,
+      w, h
+    )
 
     return this
   }
 
   public drawRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1): this {
-    this.drawRect(x, y, w, h, `rgba(${r},${g},${b},${a})`)
+    this.drawRect(
+      x, y,
+      w, h,
+      `rgba(${r},${g},${b},${a})`
+    )
 
     return this
   }
@@ -389,20 +431,43 @@ export class Frame {
     if (!isNone(color)) this.setStrokeStyle(color)
     if (!isNone(outlineWidth)) this.setLineWidth(outlineWidth)
 
-    this._strokeRect(x, y, w, h)
+    outlineWidth ??= 0
+
+    // ? Why am I so focused with performance all of a sudden?
+    const halfOutlineWidth = outlineWidth * 0.5
+
+    this._strokeRect(
+      x + halfOutlineWidth, y + halfOutlineWidth,
+      w - outlineWidth, h - outlineWidth
+    )
 
     return this
   }
 
   public outlineRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: HTMLRenderingContext2D['lineWidth'] | None): this {
-    this.outlineRect(x, y, w, h, `rgba(${r},${g},${b},${a})`, outlineWidth)
+    this.outlineRect(
+      x, y,
+      w, h,
+      `rgba(${r},${g},${b},${a})`,
+      outlineWidth
+    )
 
     return this
   }
 
   public drawFancyRectRGBA (x: number, y: number, w: number, h: number, r: number, g: number, b: number, a: number = 1, outlineWidth: HTMLRenderingContext2D['lineWidth'] | None = 8): this {
-    this.outlineRectRGBA(x, y, w, h, r, g, b, a, outlineWidth)
-    this.drawRectRGBA(x, y, w, h, r, g, b, a * 0.20)
+    this.outlineRectRGBA(
+      x, y,
+      w, h,
+      r, g, b, a,
+      outlineWidth
+    )
+
+    this.drawRectRGBA(
+      x, y,
+      w, h,
+      r, g, b, a * 0.20
+    )
 
     return this
   }

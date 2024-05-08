@@ -82,8 +82,8 @@ interface MouseEventListenerObject {
 // TODO: Figure out why everything goes wrong if this is an interface
 export abstract class MouseEventEmitter extends EventTarget {
   abstract addEventListener (
-    type:
-    string, callback: MouseEventListener | MouseEventListenerObject | null,
+    type: string,
+    callback: MouseEventListener | MouseEventListenerObject | null,
     options?: AddEventListenerOptions | boolean
   ): void
 

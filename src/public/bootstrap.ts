@@ -100,9 +100,18 @@ while (true) {
 updateViewSize()
 
 const blob = new Blob(chunks, { type: 'application/javascript' })
+const url = URL.createObjectURL(blob)
 
 const script = document.createElement('script')
-script.src = URL.createObjectURL(blob)
+script.src = url
+
+declare global {
+  interface Window {
+    BLOB_URL: string
+  }
+}
+
+window.BLOB_URL = url
 
 document.head.appendChild(script)
 

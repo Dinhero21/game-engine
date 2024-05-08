@@ -1,5 +1,5 @@
 import type Frame from '../../engine/util/frame'
-import { type SlotType } from '../util/inventory'
+import { type SlotType } from '../../shared/inventory'
 import { loader } from '../../asset/loader'
 import ButtonEntity from '../../engine/entity/button'
 import Vec2 from '../../engine/util/vec2'
@@ -9,9 +9,6 @@ import RectangularCollider from '../../engine/util/collision/rectangular'
 export class SlotEntity extends ButtonEntity {
   public readonly size
   public readonly padding
-
-  public type: SlotType = null
-  public amount: number = 0
 
   constructor (size: Vec2, padding: Vec2) {
     super(size)
@@ -25,6 +22,7 @@ export class SlotEntity extends ButtonEntity {
 
     this.drawBackground(frame)
     this.drawItem(frame)
+    this.drawForeground(frame)
   }
 
   protected drawBackground (frame: Frame): void {
@@ -32,18 +30,16 @@ export class SlotEntity extends ButtonEntity {
     const colliderPosition = collider.getPosition()
     const colliderSize = collider.getSize()
 
-    const manager = this.manager
-    const isHovering = manager.isMouseInside()
-
-    const slot = loader.getTexture(`inventory/slot.${isHovering ? 'true' : 'false'}`)
-
-    frame._drawImage(
-      slot,
+    frame.drawRect(
       colliderPosition.x, colliderPosition.y,
       colliderSize.x, colliderSize.y,
-      false
+      // TODO: Find a better color for this
+      '#0F0F0F'
     )
   }
+
+  public type: SlotType = null
+  public amount: number = 0
 
   protected drawItem (frame: Frame): void {
     this.drawItemType(frame)
@@ -75,6 +71,36 @@ export class SlotEntity extends ButtonEntity {
     if (amount === 0 || amount === 1) return
 
     frame.drawText(`${amount}`, padding.x, padding.y + size.y, 'white', '32px monospace')
+  }
+
+  public outlineColor?: string
+
+  protected drawForeground (frame: Frame): void {
+    const collider = this.getConstantCollider()
+    const colliderPosition = collider.getPosition()
+    const colliderSize = collider.getSize()
+
+    const manager = this.manager
+    const isHovering = manager.isMouseInside()
+
+    if (isHovering) {
+      frame.drawRect(
+        colliderPosition.x, colliderPosition.y,
+        colliderSize.x, colliderSize.y,
+        '#FFFFFF0F'
+      )
+    }
+
+    const outlineColor = this.outlineColor
+
+    if (outlineColor !== undefined) {
+      frame.outlineRect(
+        colliderPosition.x, colliderPosition.y,
+        colliderSize.x, colliderSize.y,
+        outlineColor,
+        8
+      )
+    }
   }
 
   public getConstantCollider (): RectangularCollider {

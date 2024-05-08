@@ -1,10 +1,11 @@
 import type Frame from '../../engine/util/frame'
 import SlotEntity from './slot'
 import Vec2 from '../../engine/util/vec2'
-import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../util/inventory'
+import { Inventory, Slot, type SlotAmount, type SlotType, type Stack } from '../../shared/inventory'
 import { TypedEventTarget } from '../../engine/util/typed-event-target'
 import { loader } from '../../asset/loader'
 import GridContainerEntity from '../../engine/entity/container/grid'
+import ui from '../singleton/scene/plugin/entity/user-interface'
 
 export class TypeUpdateEvent extends Event {
   public readonly data
@@ -139,10 +140,10 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
     const position = collider.getPosition()
     const size = collider.getSize()
 
-    frame._drawImage(
-      loader.getTexture('inventory/background'),
+    frame.drawRect(
       position.x, position.y,
-      size.x, size.y
+      size.x, size.y,
+      '#0404047F'
     )
 
     super.draw(frame)
@@ -150,7 +151,6 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
     this.drawCursorItem(frame)
   }
 
-  // ? Should I make the cursor item a slot or implement my own logic (in the Inventory) for it?
   protected drawCursorItem (frame: Frame): void {
     const slot = this.inventory.getSlot(-1)
 
@@ -160,20 +160,7 @@ export class InventoryEntity extends GridContainerEntity<SlotEntity> {
 
     if (type === null) return
 
-    const mousePosition = this.getMouseParentRelativePosition()
-
-    if (mousePosition === undefined) return
-
-    const image = loader.getItemTexture(type)
-
-    const itemSize = this.itemSize
-
-    frame._drawImage(
-      image,
-      mousePosition.x - itemSize.x / 2, mousePosition.y - itemSize.y / 2,
-      itemSize.x, itemSize.y,
-      false
-    )
+    ui.mouse.image = loader.getItemTexture(type)
   }
 }
 

@@ -13,7 +13,7 @@ export interface Stack {
 // TODO: Max amount
 
 export class Slot {
-  protected stack: Stack = {
+  protected readonly stack: Stack = {
     type: null,
     amount: 0
   }
@@ -198,6 +198,3 @@ export class Inventory {
     }
   }
 }
-
-// ServerInventory extends Inventory
-// ClientInventory extends Inventory

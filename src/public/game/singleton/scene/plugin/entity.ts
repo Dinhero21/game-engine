@@ -1,0 +1,2 @@
+// Load entities
+import './entity/*'

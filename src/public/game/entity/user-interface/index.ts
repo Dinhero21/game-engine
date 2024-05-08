@@ -2,6 +2,7 @@ import type Entity from '../../../engine/entity'
 import ChatEntity from './chat'
 import PlayerInventoryEntity from './player-inventory'
 import CraftingEntity from './crafting'
+import MouseEntity from './mouse'
 import recipes, { type Recipe } from '../../../asset/recipe'
 import AnchorEntity from '../../../engine/entity/anchor'
 import ViewportEntity from '../../../engine/entity/viewport'
@@ -19,8 +20,8 @@ export class UserInterfaceEntity extends ViewportEntity {
 
   public readonly inventory
   public readonly crafting
-
   public readonly chat
+  public readonly mouse
 
   constructor (socket: Socket) {
     super()
@@ -95,6 +96,13 @@ export class UserInterfaceEntity extends ViewportEntity {
     socket.on('chat.message', message => {
       container.addMessage(message)
     })
+
+    // --- Mouse ---
+
+    const mouse = new MouseEntity()
+    this.addChild(mouse)
+
+    this.mouse = mouse
   }
 
   public update (delta: number): void {

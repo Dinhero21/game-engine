@@ -103,6 +103,6 @@
   "include": [
     "src/**/*.ts",
     "src/public/*"
-  ],
+, "src/mutate.ts"  ],
   "exclude": []
 }

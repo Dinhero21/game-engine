@@ -3,7 +3,7 @@ import UserInterfaceEntity from './entity/user-interface'
 import DebugEntity from './entity/debug'
 import ServerEntityContainerEntity from './entity/server-entity/container'
 import socket from './socket.io'
-import { ViewportGenerators } from '../engine/camera'
+import { VIEWPORT_GENERATOR } from '../engine/camera'
 import Scene from '../engine/scene'
 import Loop from '../engine/util/loop'
 import globals from '../globals'
@@ -68,7 +68,7 @@ export default function createScene (context: CanvasRenderingContext2D): Scene {
   const scene = new Scene(context)
   const camera = scene.camera
 
-  camera.ViewportGenerator = ViewportGenerators.Center
+  camera.ViewportGenerator = VIEWPORT_GENERATOR.Center
 
   const mouseDebug = new DebugEntity('Mouse')
 

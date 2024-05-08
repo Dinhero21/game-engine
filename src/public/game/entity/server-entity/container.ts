@@ -9,8 +9,6 @@ export class ServerEntityContainerEntity extends Entity<ServerEntityEntity> {
     super()
 
     socket.on('entity.add', data => {
-      console.log('entity.add', data)
-
       const f = EntityTypes[data.type]
       const entity = f(data)
 
@@ -36,8 +34,6 @@ export class ServerEntityContainerEntity extends Entity<ServerEntityEntity> {
     })
 
     socket.on('entity.update', data => {
-      console.log('entity.update', data)
-
       let count = 0
 
       for (const entity of this.children) {

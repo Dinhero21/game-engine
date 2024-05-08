@@ -12,7 +12,7 @@ const Align = (anchor: Vec2) => (camera: Camera) => new RectangularCollider(came
 const TopLeftCorner = Align(Vec2.ZERO)
 const Center = Align(Vec2.CENTER)
 
-export const ViewportGenerators = { Align, TopLeftCorner, Center }
+export const VIEWPORT_GENERATOR = { Align, TopLeftCorner, Center }
 
 export class Camera {
   public clear: boolean = true
@@ -20,7 +20,7 @@ export class Camera {
   public position: Vec2 = Vec2.ZERO
   public size: Vec2 = new Vec2(1920, 1080)
 
-  public ViewportGenerator: ViewportGenerator = ViewportGenerators.TopLeftCorner
+  public ViewportGenerator: ViewportGenerator = VIEWPORT_GENERATOR.TopLeftCorner
 
   public getViewport (): RectangularCollider {
     const viewport = this.ViewportGenerator(this)

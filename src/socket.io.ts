@@ -1,4 +1,4 @@
-import { type SlotAmount, type SlotType } from './public/game/util/inventory'
+import { type SlotAmount, type SlotType } from './public/shared/inventory'
 import { type Recipe } from './public/asset/recipe'
 import { type BaseSerializedTile, type SerializedTile } from './plugin/world'
 import { type EntityClientData } from './world/entity/base'

@@ -1,6 +1,7 @@
 import { type UIState } from '.'
 import { type IClientSocket as Socket } from '../../../../socket.io'
 import { TRANSFORMATIONS, animatePosition } from '../../../engine/patch/animate'
+import keyboard from '../../../engine/util/input/keyboard'
 import Vec2 from '../../../engine/util/vec2'
 import InventoryEntity from '../inventory'
 
@@ -40,6 +41,17 @@ export class PlayerInventoryEntity extends InventoryEntity {
 
     const position = this.getOpenPosition()
     this.position.update(position)
+
+    // "Trigger" a selected-slot change
+    this.setSelectedSlot(0)
+    keyboard.addEventListener('key.down', event => {
+      const number = event.getNumber()
+
+      if (Number.isNaN(number)) return
+
+      // 1 = 0th slot
+      this.setSelectedSlot(number - 1)
+    })
   }
 
   protected getOpenPosition (): Vec2 {
@@ -106,6 +118,23 @@ export class PlayerInventoryEntity extends InventoryEntity {
       .getPromise()
 
     this.animating = false
+  }
+
+  public selectedSlot = 0
+
+  private setSelectedSlot (number: number): void {
+    if (number < 0) return
+    if (number > this.children.size - 1) return
+
+    const old = this.getGridItem(this.selectedSlot)
+
+    if (old !== undefined) old.outlineColor = undefined
+
+    const current = this.getGridItem(number)
+
+    if (current !== undefined) current.outlineColor = 'white'
+
+    this.selectedSlot = number
   }
 }
 

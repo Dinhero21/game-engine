@@ -59,7 +59,6 @@ world.on('tile.set', tile => {
 })
 
 const OnTick = Loop.precise(1000 / 12)
-const OnInstant = Loop.instant()
 
 // Tile Ticking
 OnTick(
@@ -104,6 +103,8 @@ OnTick(() => {
 OnTick(() => {
   world.syncEntities()
 })
+
+const OnInstant = Loop.instant()
 
 // Light Ticking
 OnInstant(delta => {

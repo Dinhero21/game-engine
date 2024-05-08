@@ -11,6 +11,8 @@ import livereload from 'rollup-plugin-livereload'
 const PRODUCTION = process.env.NODE_ENV === 'production'
 const DEVELOPMENT = !PRODUCTION
 
+const WATCHING = process.env.ROLLUP_WATCH === 'true'
+
 const PLUGINS = []
 
 // Mods
@@ -42,10 +44,12 @@ if (DEVELOPMENT) {
     sourcemaps()
   )
 
+  if (WATCHING) {
   // LiveReload
-  PLUGINS.push(
-    livereload({})
-  )
+    PLUGINS.push(
+      livereload({})
+    )
+  }
 }
 
 // Minification

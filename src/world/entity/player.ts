@@ -4,7 +4,7 @@ import { type EntityClientData } from './base'
 import Vec2, { type Vec2Array } from '../../public/engine/util/vec2'
 import { type World } from '..'
 import Inventory from '../../inventory'
-import { type Stack, type SlotId } from '../../public/game/util/inventory'
+import { type Stack, type SlotId } from '../../public/shared/inventory'
 import { type IServerSocket as Socket } from '../../socket.io'
 import { io } from '../../plugin/web'
 
